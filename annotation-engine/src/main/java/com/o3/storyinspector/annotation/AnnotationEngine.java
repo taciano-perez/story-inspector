@@ -67,8 +67,8 @@ public class AnnotationEngine {
                         "\"Look, inspector,\" he said after a moment, \"I know what you're thinking. I have nothing to do with this crime. I was just unlucky it happened on my property--you can be assured.\"\n" +
                         "Then he turned away and disappeared into the house. I stood there, expecting the forensic officers to take the body away.\n");
 
-        InputStream inputStreamNameFinder = AnnotationEngine.class.getClass()
-                .getResourceAsStream("/models/en-ner-person.bin");
+        InputStream inputStreamNameFinder = AnnotationEngine.class
+                .getResourceAsStream("/nlp-models/en-ner-person.bin");
         TokenNameFinderModel model = new TokenNameFinderModel(
                 inputStreamNameFinder);
         NameFinderME nameFinderME = new NameFinderME(model);

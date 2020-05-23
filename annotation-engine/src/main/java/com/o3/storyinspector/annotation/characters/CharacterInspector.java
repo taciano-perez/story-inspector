@@ -1,6 +1,5 @@
 package com.o3.storyinspector.annotation.characters;
 
-import com.o3.storyinspector.annotation.AnnotationEngine;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.tokenize.SimpleTokenizer;
@@ -34,6 +33,5 @@ public class CharacterInspector {
                 .collect(Collectors.toSet());
 
         return namedCharacters;
-
     }
 }

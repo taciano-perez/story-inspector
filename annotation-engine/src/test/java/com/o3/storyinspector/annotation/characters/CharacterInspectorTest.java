@@ -64,12 +64,12 @@ class CharacterInspectorTest {
     @Test
     void inspectNamedCharacters() throws Exception {
         // given
-        final Set<String> expectedCharacters = Set.of("Carl", "Teufel", "Emma", "Jung");
+        final Set<String> expectedCharacters = Set.of("Teufel", "Emma Rauschenbach - Jung", "Zürich", "Jung", "Küsnacht", "Carl Gustav Jung", "Franz");
 
         // when
         final Set<String> namedCharacters = CharacterInspector.inspectNamedCharacters(sampleChapter);
 
         // then
-        assertEquals(namedCharacters, expectedCharacters);
+        assertEquals(expectedCharacters, namedCharacters);
     }
 }

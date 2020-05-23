@@ -23,6 +23,6 @@ class LocationInspectorTest {
         final Set<String> namedLocations = LocationInspector.inspectNamedLocations(sampleChapter);
 
         // then
-        assertEquals(namedLocations, expectedLocations);
+        assertEquals(expectedLocations, namedLocations);
     }
 }

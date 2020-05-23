@@ -10,7 +10,7 @@ public class StanfordCoreNLPSingleton {
 
     private static void init() {
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
+        props.setProperty("annotators", "tokenize, ssplit, parse, sentiment, pos, lemma, ner");
         singleton = new StanfordCoreNLP(props);
     }
 

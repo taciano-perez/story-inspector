@@ -1,6 +1,5 @@
 package com.o3.storyinspector.annotation.locations;
 
-import com.o3.storyinspector.annotation.characters.CharacterInspector;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.tokenize.SimpleTokenizer;

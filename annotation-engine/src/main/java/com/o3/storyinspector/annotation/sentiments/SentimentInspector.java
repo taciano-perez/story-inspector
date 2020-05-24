@@ -1,6 +1,6 @@
 package com.o3.storyinspector.annotation.sentiments;
 
-import com.o3.storyinspector.annotation.util.StanfordCoreNLPSingleton;
+import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -11,11 +11,11 @@ import org.ejml.simple.SimpleMatrix;
 
 public class SentimentInspector {
 
-    public static int inspectSentimentScore(final String text) throws Exception {
+    public static int inspectSentimentScore(final String text) {
         int mainSentiment = 0;
         if (text != null && text.length() > 0) {
             int longest = 0;
-            final Annotation annotation = StanfordCoreNLPSingleton.getInstance().process(text);
+            final Annotation annotation = StanfordCoreNLPUtils.getPipelineInstance().process(text);
             for (CoreMap sentence : annotation
                     .get(CoreAnnotations.SentencesAnnotation.class)) {
                 final Tree tree = sentence

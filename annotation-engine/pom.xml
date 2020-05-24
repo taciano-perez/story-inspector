@@ -29,12 +29,6 @@
             <classifier>models</classifier>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.3.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.5</version>
@@ -43,6 +37,14 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.5</version>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -55,6 +57,9 @@
                 <configuration>
                     <source>14</source>
                     <target>14</target>
+                    <compilerArguments>
+                        --enable-preview
+                    </compilerArguments>
                 </configuration>
             </plugin>
         </plugins>

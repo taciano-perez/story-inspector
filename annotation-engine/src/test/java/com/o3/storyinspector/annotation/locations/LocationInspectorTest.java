@@ -3,9 +3,10 @@ package com.o3.storyinspector.annotation.locations;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,12 +18,18 @@ class LocationInspectorTest {
     void inspectNamedLocations() throws Exception {
         // given
         final String sampleChapter = Files.readString(Paths.get(SAMPLE_CHAPTER_PATH));
-        final Set<String> expectedLocations = Set.of("New", "Stamford", "Afghanistan", "Bombay", "Bradford", "London", "England", "Peshawar", "India");
+        final SortedSet<String> sortedExpectedLocations = new TreeSet<>(
+                Set.of("CITY: Frankfort", "COUNTRY: England",
+                        "COUNTRY: Afghanistan", "LOCATION: Candahar", "CITY: New Orleans", "CITY: Stamford",
+                        "LOCATION: Fusiliers", "LOCATION: Holborn", "LOCATION: Berkshires", "CITY: London",
+                        "LOCATION: Maiwand", "CITY: Bradford", "COUNTRY: India", "CITY: Baker", "CITY: Portsmouth",
+                        "CITY: Bombay", "LOCATION: Netley", "CITY: Peshawar")
+        );
 
         // when
-        final Set<String> namedLocations = LocationInspector.inspectNamedLocations(sampleChapter);
+        final SortedSet<String> sortedNamedLocations = new TreeSet<>(LocationInspector.inspectNamedLocations(sampleChapter));
 
         // then
-        assertEquals(expectedLocations, namedLocations);
+        assertEquals(sortedExpectedLocations, sortedNamedLocations);
     }
 }

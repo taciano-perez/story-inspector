@@ -2,21 +2,15 @@ package com.o3.storyinspector.annotation.characters;
 
 import com.o3.storyinspector.annotation.util.NamedEntityToken;
 import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.CoreMap;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.tokenize.SimpleTokenizer;
 import opennlp.tools.util.Span;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.xml.stream.events.Namespace;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static edu.stanford.nlp.ie.KBPRelationExtractor.NERTag.PERSON;

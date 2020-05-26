@@ -5,6 +5,7 @@
             <xs:sequence>
                 <xs:element maxOccurs="unbounded" ref="Chapter"/>
             </xs:sequence>
+            <xs:attribute name="title" use="required"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="Chapter">

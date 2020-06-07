@@ -1,5 +1,6 @@
 package com.o3.storyinspector.annotation.locations;
 
+import com.o3.storyinspector.storydom.Location;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -7,8 +8,9 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LocationInspectorTest {
 
@@ -27,7 +29,9 @@ class LocationInspectorTest {
         );
 
         // when
-        final SortedSet<String> sortedNamedLocations = new TreeSet<>(LocationInspector.inspectNamedLocations(sampleChapter));
+        Set<Location> locations = LocationInspector.inspectNamedLocations(sampleChapter);
+        final SortedSet<String> sortedNamedLocations = locations.stream()
+                .map(l -> l.getType() + ": " + l.getName()).collect(Collectors.toCollection(TreeSet::new));
 
         // then
         assertEquals(sortedExpectedLocations, sortedNamedLocations);

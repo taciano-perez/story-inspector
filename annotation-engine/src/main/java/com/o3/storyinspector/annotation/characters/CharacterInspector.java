@@ -7,6 +7,7 @@ import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.tokenize.SimpleTokenizer;
 import opennlp.tools.util.Span;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,7 @@ public class CharacterInspector {
 
     private static boolean USE_STANFORD_CORE = true;
 
-    public static Set<String> inspectNamedCharacters(String text) throws Exception {
+    public static Set<String> inspectNamedCharacters(String text) throws IOException {
         if (USE_STANFORD_CORE) {
             return inspectUsingStanfordCoreNLP(text);
         } else {
@@ -38,7 +39,7 @@ public class CharacterInspector {
                 .collect(Collectors.toSet());
     }
 
-    private static Set<String> inspectUsingOpenNLP(String text) throws Exception {
+    private static Set<String> inspectUsingOpenNLP(String text) throws IOException {
         // tokenize text
         final SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
         final String[] tokens = tokenizer.tokenize(text);

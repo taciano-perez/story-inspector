@@ -16,11 +16,16 @@ public class StanfordCoreNLPUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(StanfordCoreNLPUtils.class);
 
+    private static final String numberOfCores = "2";
+
     private static StanfordCoreNLP pipelineSingleton = null;
 
     private static void init() {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, parse, sentiment, pos, lemma, ner");
+        props.setProperty("depparse.nthreads", numberOfCores);
+        props.setProperty("ner.nthreads", numberOfCores);
+        props.setProperty("parse.nthreads", numberOfCores);
         pipelineSingleton = new StanfordCoreNLP(props);
     }
 

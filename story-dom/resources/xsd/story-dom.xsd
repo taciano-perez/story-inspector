@@ -12,7 +12,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="Metadata"/>
-                <xs:element ref="Body"/>
+                <xs:element maxOccurs="unbounded" ref="Block"/>
             </xs:sequence>
             <xs:attribute name="title" use="required"/>
         </xs:complexType>
@@ -50,6 +50,15 @@
     <xs:element name="Character">
         <xs:complexType>
             <xs:attribute name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Block">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Body"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="wordCount" use="optional"/>
+            <xs:attribute type="xs:string" name="sentimentScore" use="optional"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="Body" type="xs:string"/>

@@ -24,10 +24,11 @@ public class AnnotationEngine {
     public static void annotateBook(final String inputBookPath, final String outputAnnotatedBookPath) throws IOException, JAXBException {
         final Book book = XmlReader.readBookFromXmlFile(inputBookPath);
 
-        // TODO: refactor this so we don't mutate the DOM objects
-        book.getChapters().forEach(AnnotationEngine::annotateChapter);
-
-        XmlWriter.exportBookToXmlFile(book, new File(outputAnnotatedBookPath));
+        for (Chapter chapter : book.getChapters()) {
+            // TODO: refactor this so we don't mutate the DOM objects
+            AnnotationEngine.annotateChapter(chapter);
+            XmlWriter.exportBookToXmlFile(book, new File(outputAnnotatedBookPath)); // flush every chapter
+        }
     }
 
     private static void annotateChapter(final Chapter chapter) {
@@ -37,13 +38,25 @@ public class AnnotationEngine {
             chapter.getMetadata().setCharacters(new Characters());
         }
         LOG.info("Chapter: " + chapter.getTitle() + " . COUNTING WORDS...");
+        long start = System.currentTimeMillis();
         countWords(chapter);
+        long end = System.currentTimeMillis();
+        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
         LOG.info("Chapter: " + chapter.getTitle() + " . INSPECTING SENTIMENTS...");
+        start = System.currentTimeMillis();
         inspectSentiments(chapter);
+        end = System.currentTimeMillis();
+        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
         LOG.info("Chapter: " + chapter.getTitle() + " . INSPECTING CHARACTERS...");
+        start = System.currentTimeMillis();
         inspectCharacters(chapter);
+        end = System.currentTimeMillis();
+        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
         LOG.info("Chapter: " + chapter.getTitle() + " . INSPECTING LOCATIONS...");
+        start = System.currentTimeMillis();
         inspectLocations(chapter);
+        end = System.currentTimeMillis();
+        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
         LOG.info("Chapter: " + chapter.getTitle() + " INSPECTION COMPLETE.");
     }
 

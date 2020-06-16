@@ -16,7 +16,7 @@ public class StanfordCoreNLPUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(StanfordCoreNLPUtils.class);
 
-    private static final String numberOfCores = "2";
+    private static final String numberOfCores = "1";
 
     private static StanfordCoreNLP pipelineSingleton = null;
 
@@ -30,9 +30,8 @@ public class StanfordCoreNLPUtils {
     }
 
     public static synchronized StanfordCoreNLP getPipelineInstance() {
-        if (pipelineSingleton == null) {
-            init();
-        }
+        pipelineSingleton = null;   // ensure there are no references to the old pipeline
+        init();
         return pipelineSingleton;
     }
 
@@ -58,10 +57,9 @@ public class StanfordCoreNLPUtils {
             // traversing the words in the current sentence, "O" is a sensible default to initialise
             // tokens to since we're not interested in unclassified / unknown things..
             String prevNeToken = "O";
-            String currNeToken = "O";
             boolean newToken = true;
             for (final CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                currNeToken = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+                String currNeToken = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
                 final String word = token.get(CoreAnnotations.TextAnnotation.class);
                 // Strip out "O"s completely, makes code below easier to understand
                 if (currNeToken.equals("O")) {
@@ -81,7 +79,7 @@ public class StanfordCoreNLPUtils {
                 }
 
                 if (currNeToken.equals(prevNeToken)) {
-                    sb.append(" " + word);
+                    sb.append(" ").append(word);
                 } else {
                     // We're done with the current entity - handle it and reset
                     handleEntity(prevNeToken, sb, tokens);

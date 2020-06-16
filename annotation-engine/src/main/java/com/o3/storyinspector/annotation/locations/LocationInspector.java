@@ -20,7 +20,6 @@ public class LocationInspector {
 
     private static boolean USE_STANFORD_CORE = true;
 
-
     public static Set<Location> inspectNamedLocations(String text) throws IOException {
         if (USE_STANFORD_CORE) {
             return inspectUsingStanfordCoreNLP(text);
@@ -39,7 +38,7 @@ public class LocationInspector {
                 .collect(Collectors.toSet());
     }
 
-    public static Location buildLocation(final String name, final String type) {
+    private static Location buildLocation(final String name, final String type) {
         final Location location = new Location();
         location.setName(name);
         location.setType(type);

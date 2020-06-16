@@ -2,6 +2,7 @@ package com.o3.storyinspector.bookimporter.breakdown;
 
 import com.o3.storyinspector.storydom.Chapter;
 import edu.stanford.nlp.ling.HasWord;
+import edu.stanford.nlp.ling.SentenceUtils;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public class ChapterTokenizer {
         Chapter currentChapter = null;
         int chapterNum = 0;
         for (List<HasWord> sentence : dp) {
-            String sentenceString = sentence.toString();
-            sentenceString = sentenceString.substring(1, sentenceString.length() - 1); // remove trailing []s
+            String sentenceString = SentenceUtils.listToString(sentence);
+            //sentenceString = sentenceString.substring(1, sentenceString.length() - 1); // remove trailing []s
             if (onlyLetters(sentenceString).toLowerCase().startsWith("chapter")) {
                 currentChapter = new Chapter();
                 chapters.add(currentChapter);

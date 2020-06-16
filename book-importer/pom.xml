@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.o3.storyinspector</groupId>
         <artifactId>story-inspector</artifactId>
+        <groupId>com.o3.storyinspector</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>annotation-engine</artifactId>
+    <artifactId>book-importer</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -20,6 +20,11 @@
         </dependency>
 
         <!-- 3rd party dependencies -->
+        <dependency>
+            <groupId>com.positiondev.epublib</groupId>
+            <artifactId>epublib-core</artifactId>
+            <version>3.1</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.opennlp</groupId>
             <artifactId>opennlp-tools</artifactId>
@@ -36,22 +41,18 @@
             <version>4.0.0</version>
             <classifier>models</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
-        </dependency>
 
         <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.3.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit-addons</groupId>
+            <artifactId>junit-addons</artifactId>
+            <version>1.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -82,4 +83,3 @@
     </build>
 
 </project>
-

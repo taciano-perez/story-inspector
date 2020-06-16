@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Book>
+    <Chapter title="Chapter 1 - The first test">
+        <Body>This is the body of chapter 1.</Body>
+    </Chapter>
+    <Chapter title="Chapter 2 - The test continues">
+        <Body>This is the body of chapter 2.</Body>
+    </Chapter>
+</Book>

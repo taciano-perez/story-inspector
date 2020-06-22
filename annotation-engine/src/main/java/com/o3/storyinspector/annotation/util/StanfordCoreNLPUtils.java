@@ -30,8 +30,9 @@ public class StanfordCoreNLPUtils {
     }
 
     public static synchronized StanfordCoreNLP getPipelineInstance() {
-        pipelineSingleton = null;   // ensure there are no references to the old pipeline
-        init();
+        if (pipelineSingleton == null) {
+            init();
+        }
         return pipelineSingleton;
     }
 

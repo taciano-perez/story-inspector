@@ -14,12 +14,19 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Takes a StoryDOM as input and annotates it with metadata
+ * (locations, characters, sentiment score, word count).
+ */
 public class AnnotationEngine {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationEngine.class);
+
+    private static final int NR_WORDS_PER_BLOCK = 250;
 
     public static void annotateBook(final String inputBookPath, final String outputAnnotatedBookPath) throws IOException, JAXBException {
         final Book book = XmlReader.readBookFromXmlFile(inputBookPath);
@@ -37,32 +44,44 @@ public class AnnotationEngine {
             chapter.getMetadata().setLocations(new Locations());
             chapter.getMetadata().setCharacters(new Characters());
         }
-        LOG.info("Chapter: " + chapter.getTitle() + " . COUNTING WORDS...");
-        long start = System.currentTimeMillis();
+        long time;
+
+        time = logStart("Chapter: " + chapter.getTitle() + " . COUNTING WORDS...");
         countWords(chapter);
-        long end = System.currentTimeMillis();
-        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
-        LOG.info("Chapter: " + chapter.getTitle() + " . INSPECTING SENTIMENTS...");
-        start = System.currentTimeMillis();
+        logEnd(time);
+
+        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING SENTIMENTS...");
         inspectSentiments(chapter);
-        end = System.currentTimeMillis();
-        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
-        LOG.info("Chapter: " + chapter.getTitle() + " . INSPECTING CHARACTERS...");
-        start = System.currentTimeMillis();
+        logEnd(time);
+
+        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING CHARACTERS...");
         inspectCharacters(chapter);
-        end = System.currentTimeMillis();
-        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
-        LOG.info("Chapter: " + chapter.getTitle() + " . INSPECTING LOCATIONS...");
-        start = System.currentTimeMillis();
+        logEnd(time);
+
+        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING LOCATIONS...");
         inspectLocations(chapter);
-        end = System.currentTimeMillis();
-        LOG.debug("Time elapsed: " + (((end - start) / 1000) / 60) + " secs.");
+        logEnd(time);
+
         LOG.info("Chapter: " + chapter.getTitle() + " INSPECTION COMPLETE.");
+    }
+
+    private static long logStart() {
+        return System.currentTimeMillis();
+    }
+
+    private static long logStart(final String message) {
+        LOG.info(message);
+        return logStart();
+    }
+
+    private static void logEnd(final long start) {
+        final long end = System.currentTimeMillis();
+        LOG.debug("Time elapsed: " + ((end - start) / 1000) + " secs.");
     }
 
     private static void inspectCharacters(final Chapter chapter) {
         try {
-            final Set<String> characterNames = CharacterInspector.inspectNamedCharacters(chapter.getBody());
+            final Set<String> characterNames = CharacterInspector.inspectNamedCharacters(getChapterBody(chapter));
             final Set<Character> characters = characterNames.stream().map(AnnotationEngine::buildCharacter).collect(Collectors.toSet());
             chapter.getMetadata().getCharacters().getCharacters().addAll(characters);
         } catch (IOException ioe) {
@@ -79,7 +98,7 @@ public class AnnotationEngine {
 
     private static void inspectLocations(final Chapter chapter) {
         try {
-            Set<Location> locations = LocationInspector.inspectNamedLocations(chapter.getBody());
+            Set<Location> locations = LocationInspector.inspectNamedLocations(getChapterBody(chapter));
             chapter.getMetadata().getLocations().getLocations().addAll(locations);
         } catch (IOException ioe) {
             LOG.error("Error while inspecting locations on chapter " + chapter.getTitle() + " .");
@@ -88,13 +107,25 @@ public class AnnotationEngine {
     }
 
     private static void inspectSentiments(final Chapter chapter) {
-        final int sentimentScore = SentimentInspector.inspectSentimentScore(chapter.getBody());
-        chapter.getMetadata().setSentimentScore(Integer.toString(sentimentScore));
+        final List<Block> newBlocks = SentimentInspector.inspectSentimentScore(chapter, NR_WORDS_PER_BLOCK);
+        chapter.getBlocks().clear();
+        chapter.getBlocks().addAll(newBlocks);
     }
 
     private static void countWords(final Chapter chapter) {
-        final int wordCount = WordCountInspector.inspectWordCount(chapter.getBody());
+        final int wordCount = WordCountInspector.inspectWordCount(getChapterBody(chapter));
         chapter.getMetadata().setWordCount(Integer.toString(wordCount));
+    }
+
+    /**
+     * Reads all chapter body regardless of blocks.
+     *
+     * @return complete chapter body
+     */
+    private static String getChapterBody(final Chapter chapter) {
+        return chapter.getBlocks().stream()
+                .map(Block::getBody)
+                .collect(Collectors.joining());
     }
 
 }

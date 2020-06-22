@@ -35,7 +35,7 @@ public class EpubImporter {
             final String title = ref.getResource().getTitle();
             ch.setTitle(title == null ? "" : title);
             try {
-                ch.setBody(new String(res.getData(), Charset.forName(res.getInputEncoding())));
+                ch.getBlocks().get(0).setBody(new String(res.getData(), Charset.forName(res.getInputEncoding())));
             } catch (IOException e) {
                 e.printStackTrace();
             }

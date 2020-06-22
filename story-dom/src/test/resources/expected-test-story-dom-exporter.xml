@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Book>
     <Chapter title="Chapter 1 - The first test">
-        <Body>This is the body of chapter 1.</Body>
+        <Block wordCount="100">
+            <Body>This is the body of chapter 1.</Body>
+        </Block>
     </Chapter>
     <Chapter title="Chapter 2 - The test continues">
-        <Body>This is the body of chapter 2.</Body>
+        <Block sentimentScore="-1">
+            <Body>This is the body of chapter 2.</Body>
+        </Block>
     </Chapter>
 </Book>

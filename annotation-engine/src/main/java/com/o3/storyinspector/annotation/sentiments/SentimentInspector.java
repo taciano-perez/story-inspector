@@ -15,13 +15,10 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.io.StringReader;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SentimentInspector {
-
-    private final static DecimalFormat FORMATTER = new DecimalFormat("#.####");
 
     /**
      * Returns the sentiment score for a text

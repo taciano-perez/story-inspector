@@ -1,5 +1,6 @@
 package com.o3.storyinspector.bookimporter.breakdown;
 
+import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Chapter;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.SentenceUtils;
@@ -17,15 +18,15 @@ public class ChapterTokenizer {
         int chapterNum = 0;
         for (List<HasWord> sentence : dp) {
             String sentenceString = SentenceUtils.listToString(sentence);
-            //sentenceString = sentenceString.substring(1, sentenceString.length() - 1); // remove trailing []s
             if (onlyLetters(sentenceString).toLowerCase().startsWith("chapter")) {
                 currentChapter = new Chapter();
+                currentChapter.getBlocks().add(new Block());
                 chapters.add(currentChapter);
                 currentChapter.setTitle("Chapter " + ++chapterNum);
-                currentChapter.setBody("");
+                currentChapter.getBlocks().get(0).setBody("");
             } else {
-                if (currentChapter != null) {
-                    currentChapter.setBody(currentChapter.getBody().concat(sentenceString));
+                if (currentChapter != null && currentChapter.getBlocks().get(0) != null) {
+                    currentChapter.getBlocks().get(0).setBody(currentChapter.getBlocks().get(0).getBody().concat(sentenceString));
                 }
             }
         }

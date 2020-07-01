@@ -14,6 +14,7 @@
         <module>story-dom</module>
         <module>annotation-engine</module>
         <module>book-importer</module>
+        <module>viz-tool</module>
     </modules>
 
     <properties>

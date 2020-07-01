@@ -54,13 +54,13 @@ public class AnnotationEngine {
         inspectSentiments(chapter);
         logEnd(time);
 
-        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING CHARACTERS...");
-        inspectCharacters(chapter);
-        logEnd(time);
-
-        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING LOCATIONS...");
-        inspectLocations(chapter);
-        logEnd(time);
+//        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING CHARACTERS...");
+//        inspectCharacters(chapter);
+//        logEnd(time);
+//
+//        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING LOCATIONS...");
+//        inspectLocations(chapter);
+//        logEnd(time);
 
         LOG.info("Chapter: " + chapter.getTitle() + " INSPECTION COMPLETE.");
     }

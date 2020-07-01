@@ -71,7 +71,7 @@ public class SentimentInspector {
                 buffer.append(sentenceString);
                 if (blockWordCount >= wordsPerBlock) {
                     final double weight = blockWordCount / wordsPerBlock;
-                    final double sentimentScore = (accumulatedSentimentScore / sentenceCount) * weight;
+                    final double sentimentScore = ((accumulatedSentimentScore / sentenceCount) - 2) * weight;
                     newBlocks.add(newBlock(buffer.toString(), blockWordCount, sentimentScore));
                     buffer = new StringBuilder();
                     blockWordCount = 0;

@@ -52,9 +52,16 @@
             <xs:attribute name="name" use="required"/>
         </xs:complexType>
     </xs:element>
+    <xs:element name="Emotion">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="type" use="required"/>
+            <xs:attribute type="xs:decimal" name="score" use="required"/>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="Block">
         <xs:complexType>
             <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Emotion"/>
                 <xs:element ref="Body"/>
             </xs:sequence>
             <xs:attribute type="xs:string" name="wordCount" use="optional"/>

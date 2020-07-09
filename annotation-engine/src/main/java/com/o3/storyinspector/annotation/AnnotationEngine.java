@@ -1,11 +1,13 @@
 package com.o3.storyinspector.annotation;
 
 import com.o3.storyinspector.annotation.characters.CharacterInspector;
+import com.o3.storyinspector.annotation.emotions.EmotionInspector;
 import com.o3.storyinspector.annotation.locations.LocationInspector;
 import com.o3.storyinspector.annotation.sentiments.SentimentInspector;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.Character;
 import com.o3.storyinspector.storydom.*;
+import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.io.XmlReader;
 import com.o3.storyinspector.storydom.io.XmlWriter;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,6 +55,10 @@ public class AnnotationEngine {
 
         time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING SENTIMENTS...");
         inspectSentiments(chapter);
+        logEnd(time);
+
+        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING EMOTIONS...");
+        inspectEmotions(chapter);
         logEnd(time);
 
 //        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING CHARACTERS...");
@@ -112,6 +119,19 @@ public class AnnotationEngine {
         chapter.getBlocks().addAll(newBlocks);
     }
 
+    private static void inspectEmotions(final Chapter chapter) {
+        // assume blocks of NR_WORDS_PER_BLOCK
+        for (final Block block : chapter.getBlocks()) {
+            for (EmotionType emotion : EmotionType.values()) {
+                final double score = EmotionInspector.inspectEmotionScore(emotion, block.getBody());
+                final Emotion emotionBlock = new Emotion();
+                emotionBlock.setType(emotion.asString());
+                emotionBlock.setScore(BigDecimal.valueOf(score));
+                block.getEmotions().add(emotionBlock);
+            }
+        }
+    }
+
     private static void countWords(final Chapter chapter) {
         final int wordCount = WordCountInspector.inspectWordCount(getChapterBody(chapter));
         chapter.getMetadata().setWordCount(Integer.toString(wordCount));
@@ -127,5 +147,4 @@ public class AnnotationEngine {
                 .map(Block::getBody)
                 .collect(Collectors.joining());
     }
-
 }

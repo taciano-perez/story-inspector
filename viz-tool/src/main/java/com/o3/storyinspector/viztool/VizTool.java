@@ -4,6 +4,7 @@ import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.Chapter;
 import com.o3.storyinspector.storydom.io.XmlReader;
+import com.o3.storyinspector.viztool.sentiment.EmotionReport;
 import com.o3.storyinspector.viztool.sentiment.SentimentColor;
 import com.o3.storyinspector.viztool.sentiment.SentimentCurveChart;
 
@@ -36,7 +37,7 @@ public class VizTool {
     }
 
     public static String bookToHtml(final Book book) throws Exception {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
 
         builder.append(headerTags());
         builder.append(bookTitleTag(book));
@@ -48,6 +49,7 @@ public class VizTool {
                 builder.append(blockTags(block, blockCounter++));
             }
         }
+        builder.append((new EmotionReport(book)).asHtml());
         builder.append(footerTags());
 
         return builder.toString();

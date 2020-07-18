@@ -18,15 +18,14 @@ import static com.o3.storyinspector.viztool.sentiment.SentimentCurveChart.CHART_
 
 public class VizTool {
 
-    public static final String HTML_FILENAME = "output.html";
-
     private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
 
     public static void storyDomToHtml(final String inputBookPath, final String outputHtmlPath) throws Exception {
         final Book book = XmlReader.readBookFromXmlFile(inputBookPath);
-        final PrintWriter printWriter = new PrintWriter(new FileWriter(outputHtmlPath + HTML_FILENAME));
+        final PrintWriter printWriter = new PrintWriter(new FileWriter(outputHtmlPath));
         printWriter.write(bookToHtml(book));
-        storyDomToSentimentChart(inputBookPath, outputHtmlPath);
+        final String chartFilePath = new File(outputHtmlPath).getParentFile().getAbsolutePath();
+        storyDomToSentimentChart(inputBookPath, chartFilePath);
         printWriter.close();
     }
 
@@ -66,16 +65,14 @@ public class VizTool {
     private static String blockTags(final Block block, final int blockId) throws Exception {
         final double sentimentScore = FORMATTER.parse(block.getSentimentScore()).doubleValue();
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<span ");
-        builder.append("title=\"").append(sentimentScore * 100).append("%\"");
-        builder.append("style=\"background-color: ");
-        builder.append(SentimentColor.getSentimentColorCode(sentimentScore));
-        builder.append("\">");
-        builder.append(" [#").append(blockId).append("] ");
-        builder.append(block.getBody());
-        builder.append("</span>\n");
-        return builder.toString();
+        return "<span " +
+                "title=\"" + sentimentScore * 100 + "%\"" +
+                "style=\"background-color: " +
+                SentimentColor.getSentimentColorCode(sentimentScore) +
+                "\">" +
+                " [#" + blockId + "] " +
+                block.getBody() +
+                "</span>\n";
     }
 
     private static String chartLink() {

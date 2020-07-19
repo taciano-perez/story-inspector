@@ -15,19 +15,21 @@ import java.io.File;
  */
 public class EmotionReport {
 
-    private static final String CHART_FILE_PREFIX = "./target/test-classes/";
     private static final String CHART_FILE_SUFFIX = "-chart.jpg";
 
     private Book book;
 
-    private double maxEmotionScore = 0.0;
+    private String folderPath;
 
-    public EmotionReport(final Book book) {
+    private double maxEmotionScore;
+
+    public EmotionReport(final Book book, final String folderPath) {
         this.book = book;
+        this.folderPath = folderPath;
         this.maxEmotionScore = StoryDomUtils.getMaxEmotionScore(book);
     }
 
-    public String asHtml() throws Exception {
+    public String asHtml() {
         final StringBuilder builder = new StringBuilder();
 
         for (EmotionType emotionType : EmotionType.values()) {
@@ -49,37 +51,35 @@ public class EmotionReport {
     }
 
     private String chartLink(final EmotionType emotionType) {
-        final String filePath = emotionType.asString() + CHART_FILE_SUFFIX;
+        final String filename = emotionType.asString() + CHART_FILE_SUFFIX;
         final EmotionCurveChart chart = new EmotionCurveChart(emotionType, book);
         try {
-            chart.plotCurve(new File(CHART_FILE_PREFIX + filePath));
+            chart.plotCurve(new File(folderPath + File.pathSeparator + filename));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "<span style=\"text-align: center;\"><img src=\"" + filePath + "\" alt=\"" + emotionType.asString() + " Score Chart\"></span>";
+        return "<span style=\"text-align: center;\"><img src=\"" + filename + "\" alt=\"" + emotionType.asString() + " Score Chart\"></span>";
     }
 
     private static String chapterTag(final Chapter chapter) {
         return "<h2 style=\"color:black;\">" + chapter.getTitle() + "</h2><br>\n<p>";
     }
 
-    private String blockTags(final EmotionType emotionType, final Block block, final int blockId) throws Exception {
+    private String blockTags(final EmotionType emotionType, final Block block, final int blockId) {
         final Emotion emotion = StoryDomUtils.findEmotion(emotionType, block.getEmotions());
         if (emotion == null) return "";
 
         final double emotionScore = emotion.getScore().doubleValue();
         final double normalizedEmotionScore = emotionScore / maxEmotionScore;
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<span ");
-        builder.append("title=\"").append(normalizedEmotionScore * 100).append("%\"");
-        builder.append("style=\"background-color: ");
-        builder.append(SentimentColor.getSentimentColorCode(normalizedEmotionScore));
-        builder.append("\">");
-        builder.append(" [#").append(blockId).append("] ");
-        builder.append(block.getBody());
-        builder.append("</span>\n");
-        return builder.toString();
+        return "<span " +
+                "title=\"" + normalizedEmotionScore * 100 + "%\"" +
+                "style=\"background-color: " +
+                SentimentColor.getSentimentColorCode(normalizedEmotionScore) +
+                "\">" +
+                " [#" + blockId + "] " +
+                block.getBody() +
+                "</span>\n";
     }
 
 }

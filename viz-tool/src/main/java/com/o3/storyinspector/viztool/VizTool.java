@@ -21,10 +21,12 @@ public class VizTool {
     private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
 
     public static void storyDomToHtml(final String inputBookPath, final String outputHtmlPath) throws Exception {
-        final Book book = XmlReader.readBookFromXmlFile(inputBookPath);
+        final String fullInputBookPath = new File(inputBookPath).getCanonicalPath();
+        final String fullOutputHtmlFolder = new File(outputHtmlPath).getCanonicalPath();
+        final Book book = XmlReader.readBookFromXmlFile(fullInputBookPath);
         final PrintWriter printWriter = new PrintWriter(new FileWriter(outputHtmlPath));
-        printWriter.write(bookToHtml(book));
         final String chartFilePath = new File(outputHtmlPath).getParentFile().getAbsolutePath();
+        printWriter.write(bookToHtml(book, fullOutputHtmlFolder));
         storyDomToSentimentChart(inputBookPath, chartFilePath);
         printWriter.close();
     }
@@ -35,7 +37,7 @@ public class VizTool {
         SentimentCurveChart.plotSentimentCurve(book, chartFile);
     }
 
-    public static String bookToHtml(final Book book) throws Exception {
+    public static String bookToHtml(final Book book, final String chartPath) throws Exception {
         final StringBuilder builder = new StringBuilder();
 
         builder.append(headerTags());
@@ -48,7 +50,7 @@ public class VizTool {
                 builder.append(blockTags(block, blockCounter++));
             }
         }
-        builder.append((new EmotionReport(book)).asHtml());
+        builder.append((new EmotionReport(book, chartPath)).asHtml());
         builder.append(footerTags());
 
         return builder.toString();

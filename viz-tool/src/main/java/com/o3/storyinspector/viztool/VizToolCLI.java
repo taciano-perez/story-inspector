@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
+import java.io.File;
+
 @CommandLine.Command(
         name = "VizTool",
         description = "Reads an input annotated storydom file and produces an HTML report."
@@ -28,7 +30,10 @@ public class VizToolCLI implements Runnable {
     public void run() {
         LOG.info("Preparing to create report, input=[" + inputPath + "], output=[" + outputPath + "]");
         try {
-            VizTool.storyDomToHtml(inputPath, outputPath);
+            final String fullInputPath = new File(inputPath).getCanonicalPath();
+            final String fullOutputPath = new File(outputPath).getCanonicalPath();
+            VizTool.storyDomToHtml(fullInputPath, fullOutputPath);
+            LOG.info("Created report " + outputPath + ".");
         } catch (Exception e) {
             LOG.error("An error has occurred. Message: " + e.getLocalizedMessage());
             e.printStackTrace();

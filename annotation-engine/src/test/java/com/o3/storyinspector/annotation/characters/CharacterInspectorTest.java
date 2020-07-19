@@ -1,11 +1,10 @@
 package com.o3.storyinspector.annotation.characters;
 
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.CollectionUtils;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CharacterInspectorTest {
 

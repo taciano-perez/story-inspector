@@ -4,6 +4,7 @@ import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.Chapter;
 import com.o3.storyinspector.storydom.io.XmlReader;
+import com.o3.storyinspector.viztool.sentiment.EmotionReport;
 import com.o3.storyinspector.viztool.sentiment.SentimentColor;
 import com.o3.storyinspector.viztool.sentiment.SentimentCurveChart;
 
@@ -17,15 +18,16 @@ import static com.o3.storyinspector.viztool.sentiment.SentimentCurveChart.CHART_
 
 public class VizTool {
 
-    public static final String HTML_FILENAME = "output.html";
-
     private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
 
     public static void storyDomToHtml(final String inputBookPath, final String outputHtmlPath) throws Exception {
-        final Book book = XmlReader.readBookFromXmlFile(inputBookPath);
-        final PrintWriter printWriter = new PrintWriter(new FileWriter(outputHtmlPath + HTML_FILENAME));
-        printWriter.write(bookToHtml(book));
-        storyDomToSentimentChart(inputBookPath, outputHtmlPath);
+        final String fullInputBookPath = new File(inputBookPath).getCanonicalPath();
+        final String fullOutputHtmlFolder = new File(outputHtmlPath).getCanonicalPath();
+        final Book book = XmlReader.readBookFromXmlFile(fullInputBookPath);
+        final PrintWriter printWriter = new PrintWriter(new FileWriter(outputHtmlPath));
+        final String chartFilePath = new File(outputHtmlPath).getParentFile().getAbsolutePath();
+        printWriter.write(bookToHtml(book, fullOutputHtmlFolder));
+        storyDomToSentimentChart(inputBookPath, chartFilePath);
         printWriter.close();
     }
 
@@ -35,8 +37,8 @@ public class VizTool {
         SentimentCurveChart.plotSentimentCurve(book, chartFile);
     }
 
-    public static String bookToHtml(final Book book) throws Exception {
-        StringBuilder builder = new StringBuilder();
+    public static String bookToHtml(final Book book, final String chartPath) throws Exception {
+        final StringBuilder builder = new StringBuilder();
 
         builder.append(headerTags());
         builder.append(bookTitleTag(book));
@@ -48,6 +50,7 @@ public class VizTool {
                 builder.append(blockTags(block, blockCounter++));
             }
         }
+        builder.append((new EmotionReport(book, chartPath)).asHtml());
         builder.append(footerTags());
 
         return builder.toString();
@@ -64,16 +67,14 @@ public class VizTool {
     private static String blockTags(final Block block, final int blockId) throws Exception {
         final double sentimentScore = FORMATTER.parse(block.getSentimentScore()).doubleValue();
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<span ");
-        builder.append("title=\"").append(sentimentScore * 100).append("%\"");
-        builder.append("style=\"background-color: ");
-        builder.append(SentimentColor.getSentimentColorCode(sentimentScore));
-        builder.append("\">");
-        builder.append(" [#").append(blockId).append("] ");
-        builder.append(block.getBody());
-        builder.append("</span>\n");
-        return builder.toString();
+        return "<span " +
+                "title=\"" + sentimentScore * 100 + "%\"" +
+                "style=\"background-color: " +
+                SentimentColor.getSentimentColorCode(sentimentScore) +
+                "\">" +
+                " [#" + blockId + "] " +
+                block.getBody() +
+                "</span>\n";
     }
 
     private static String chartLink() {

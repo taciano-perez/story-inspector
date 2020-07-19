@@ -41,6 +41,11 @@
             <version>4.0.0</version>
             <classifier>models</classifier>
         </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>3.9.6</version>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>

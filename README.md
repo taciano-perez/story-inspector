@@ -1,4 +1,4 @@
-# Story Inspector
+#  ![Story Inspector](documentation/images/logo-small.png) Story Inspector
 A tool for analyzing book structure using NLP techniques. See the forest instead of the trees.
 
 Story Inspector consists of the following components:

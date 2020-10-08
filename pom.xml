@@ -15,6 +15,7 @@
         <module>annotation-engine</module>
         <module>book-importer</module>
         <module>viz-tool</module>
+        <module>api</module>
     </modules>
 
     <properties>

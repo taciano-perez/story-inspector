@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,14 @@ public class AnnotationEngine {
 
     private static final int NR_WORDS_PER_BLOCK = 250;
 
+    /**
+     * Annotates a book from a file in a local directory.
+     *
+     * @param inputBookPath           the path to the local directory.
+     * @param outputAnnotatedBookPath the path to the annotated book
+     * @throws IOException   when we cannot read/write from/to the file
+     * @throws JAXBException when we cannot read/write XML
+     */
     public static void annotateBook(final String inputBookPath, final String outputAnnotatedBookPath) throws IOException, JAXBException {
         final Book book = XmlReader.readBookFromXmlFile(inputBookPath);
 
@@ -39,6 +48,24 @@ public class AnnotationEngine {
             AnnotationEngine.annotateChapter(chapter);
             XmlWriter.exportBookToXmlFile(book, new File(outputAnnotatedBookPath)); // flush every chapter
         }
+    }
+
+    /**
+     * Annotates a book from an input stream reader.
+     *
+     * @param inputBookReader the input stream book reader
+     * @return the annotated book
+     * @throws JAXBException when we cannot read/write XML
+     */
+    public static Book annotateBook(final Reader inputBookReader) throws JAXBException {
+        final Book book = XmlReader.readBookFromXmlStream(inputBookReader);
+
+        for (Chapter chapter : book.getChapters()) {
+            // TODO: refactor this so we don't mutate the DOM objects
+            AnnotationEngine.annotateChapter(chapter);
+        }
+
+        return book;
     }
 
     private static void annotateChapter(final Chapter chapter) {

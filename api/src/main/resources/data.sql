@@ -4,5 +4,9 @@ CREATE TABLE books (
   book_id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(250) NOT NULL,
   author VARCHAR(250) NOT NULL,
-  raw_input CLOB DEFAULT NULL
+  raw_input CLOB DEFAULT NULL,
+  storydom CLOB DEFAULT NULL,
+  annotated_storydom CLOB DEFAULT NULL,
+  is_report_available BOOL DEFAULT FALSE,
+  message VARCHAR(1000) DEFAULT NULL
 );

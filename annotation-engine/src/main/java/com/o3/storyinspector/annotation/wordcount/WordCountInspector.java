@@ -4,7 +4,7 @@ import java.util.StringTokenizer;
 
 public class WordCountInspector {
 
-    public static int inspectWordCount(String text) {
+    public static int inspectWordCount(final String text) {
         final StringTokenizer tokenizer = new StringTokenizer(text);
         return tokenizer.countTokens();
     }

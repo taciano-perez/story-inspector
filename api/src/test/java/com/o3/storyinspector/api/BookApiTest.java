@@ -2,7 +2,6 @@ package com.o3.storyinspector.api;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +16,9 @@ class BookApiTest {
 
     private static final String API_ROOT = "http://localhost:8081/api/books";
 
-    @Disabled
     @Test
     public void whenGetAllBooks_thenOK() {
-        Response response = RestAssured.get(API_ROOT);
+        final Response response = RestAssured.get(API_ROOT);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }

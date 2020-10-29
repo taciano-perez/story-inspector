@@ -6,18 +6,27 @@ import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.SentenceUtils;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChapterTokenizer {
 
-    public static List<Chapter> tokenize(final String text) {
-        DocumentPreprocessor dp = new DocumentPreprocessor(text);
-        List<Chapter> chapters = new ArrayList<>();
+    public static List<Chapter> tokenizeFromFile(final String inputFilePath) {
+        return tokenize(new DocumentPreprocessor(inputFilePath));
+    }
+
+    public static List<Chapter> tokenizeFromReader(final Reader inputBookReader) {
+        return tokenize(new DocumentPreprocessor(inputBookReader));
+    }
+
+    private static List<Chapter> tokenize(final DocumentPreprocessor dp) {
+        final List<Chapter> chapters = new ArrayList<>();
         Chapter currentChapter = null;
         int chapterNum = 0;
         for (List<HasWord> sentence : dp) {
-            String sentenceString = SentenceUtils.listToString(sentence);
+            // TODO: documentpreprocessor does not separate chapter title from body if there's no end punctuation.
+            final String sentenceString = SentenceUtils.listToString(sentence);
             if (onlyLetters(sentenceString).toLowerCase().startsWith("chapter")) {
                 currentChapter = new Chapter();
                 currentChapter.getBlocks().add(new Block());

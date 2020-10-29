@@ -37,7 +37,7 @@ public class BookImporterCLI implements Runnable {
         LOG.info("Preparing to import book, type=[" + fileType + "], input=[" + inputPath + "], output=[" + outputPath + "]");
         if (TYPE_PLAINTEXT_FILE.equals(fileType.toLowerCase())) {
             try {
-                final Book importedBook = PlainTextImporter.importBook(inputPath);
+                final Book importedBook = PlainTextImporter.importBookFromFile(inputPath);
                 XmlWriter.exportBookToXmlFile(importedBook, new File(outputPath));
             } catch (Exception e) {
                 LOG.error("An error has occurred. Message: " + e.getLocalizedMessage());

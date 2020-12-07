@@ -3,6 +3,7 @@ package com.o3.storyinspector.api;
 import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,7 @@ class ProcessBookApiTest {
         assertEquals(EXPECTED_STORYDOM, book.getStoryDom());
     }
 
+    @Disabled
     @Test
     void whenProcessBook_AnnotateBook_thenOK() {
         // given

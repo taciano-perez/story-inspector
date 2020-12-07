@@ -1,11 +1,13 @@
 package com.o3.storyinspector.db;
 
+import com.o3.storyinspector.storydom.Book;
+import com.o3.storyinspector.storydom.io.XmlReader;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import java.io.Reader;
+import javax.xml.bind.JAXBException;
 import java.io.StringReader;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -107,16 +109,24 @@ public class BookDAO {
         this.message = message;
     }
 
-    public static long saveBook(final JdbcTemplate db, final String title, final String author, final String rawInput) {
-        final String sql = "INSERT INTO books (title, author, raw_input) VALUES (?, ?, ?)";
+    public Book asBook() throws JAXBException {
+        final Book book = XmlReader.readBookFromXmlStream(new StringReader(this.getAnnotatedStoryDom()));
+        book.setAuthor(this.getAuthor());
+        book.setTitle(this.getTitle());
+        return book;
+    }
+
+    public static long saveBook(final JdbcTemplate db, final String title, final String author, final String rawInput, final String storyDom, final String annotatedStoryDom) {
+        final String sql = "INSERT INTO books (title, author, raw_input, storydom, annotated_storydom) VALUES (?, ?, ?, ?, ?)";
         final KeyHolder holder = new GeneratedKeyHolder();
         db.update(connection -> {
             final PreparedStatement ps = connection.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, title);
             ps.setString(2, author);
-            final Reader reader = new StringReader(rawInput);
-            ps.setClob(3, reader);
+            ps.setClob(3, new StringReader(rawInput));
+            ps.setString(4, storyDom);
+            ps.setString(5, annotatedStoryDom);
             return ps;
         }, holder);
         final Number bookId = holder.getKey();

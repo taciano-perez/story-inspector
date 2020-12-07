@@ -34,8 +34,18 @@ public class BookApi {
         return Collections.singletonMap("books", books);
     }
 
+    @GetMapping("/{id}")
+    public BookDAO one(@PathVariable final Long id) {
+        logger.trace("QUERYING BOOK ID=[" + id + "]");
+        final BookDAO book = BookDAO.findByBookId(id, db);
+        // we don't need to send these over the wire
+        book.setRawInput("");
+        book.setStoryDom("");
+        return book;
+    }
+
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Long> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Long> deleteBook(@PathVariable final Long id) {
         logger.trace("DELETING BOOK: " + id);
         db.execute("DELETE FROM books WHERE book_id=" + id);
         return new ResponseEntity<>(id, HttpStatus.OK);

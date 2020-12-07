@@ -32,7 +32,7 @@ public class UploadFileApi {
         final String content = new String(file.getBytes());
         logger.trace(String.format("CONTENT - %s", content));
 
-        final Long bookId = BookDAO.saveBook(db, title, author, content);
+        final Long bookId = BookDAO.saveBook(db, title, author, content, null, null);
         logger.trace(String.format("BOOK ID - %s", bookId));
 
         ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());

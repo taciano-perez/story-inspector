@@ -24,6 +24,12 @@
             <groupId>com.positiondev.epublib</groupId>
             <artifactId>epublib-core</artifactId>
             <version>3.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.opennlp</groupId>

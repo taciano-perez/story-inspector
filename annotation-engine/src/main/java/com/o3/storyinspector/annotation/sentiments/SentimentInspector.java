@@ -63,14 +63,14 @@ public class SentimentInspector {
             int blockWordCount = 0;
             double accumulatedSentimentScore = 0;
             int sentenceCount = 0;
-            for (List<HasWord> sentence : dp) {
-                String sentenceString = SentenceUtils.listToString(sentence);
+            for (final List<HasWord> sentence : dp) {
+                final String sentenceString = SentenceUtils.listToString(sentence);
                 blockWordCount += WordCountInspector.inspectWordCount(sentenceString);
                 sentenceCount++;
                 accumulatedSentimentScore += inspectSentimentScore(sentenceString);
                 buffer.append(sentenceString);
                 if (blockWordCount >= wordsPerBlock) {
-                    final double weight = blockWordCount / wordsPerBlock;
+                    final double weight = (double) blockWordCount / wordsPerBlock;
                     final double sentimentScore = ((accumulatedSentimentScore / sentenceCount) - 2) * weight;
                     newBlocks.add(newBlock(buffer.toString(), blockWordCount, sentimentScore));
                     buffer = new StringBuilder();
@@ -78,6 +78,14 @@ public class SentimentInspector {
                     accumulatedSentimentScore = 0;
                     sentenceCount = 0;
                 }
+            }
+            if (buffer.length() > 0) {
+                // we still have words in the buffer
+                accumulatedSentimentScore = inspectSentimentScore(buffer.toString());
+                final double weight = (double) blockWordCount / wordsPerBlock;
+                // FIXME: create unit test for body < wordsPerBlock, verify sentimentScore numbers (why this -2?)
+                final double sentimentScore = ((accumulatedSentimentScore / sentenceCount) - 2) * weight;
+                newBlocks.add(newBlock(buffer.toString(), blockWordCount, sentimentScore));
             }
         }
         return newBlocks;

@@ -22,7 +22,7 @@ class PlainTextImporterTest {
         // given
 
         // when
-        final Book importedBook = PlainTextImporter.importBook(SAMPLE_BOOK_PATH);
+        final Book importedBook = PlainTextImporter.importBookFromFile(SAMPLE_BOOK_PATH);
 
         // then
         assertTrue(importedBook.getTitle().endsWith("a-study-in-scarlett-244-0.txt"));
@@ -34,7 +34,7 @@ class PlainTextImporterTest {
         // given
 
         // when
-        final Book importedBook = PlainTextImporter.importBook(SAMPLE_BOOK_PATH);
+        final Book importedBook = PlainTextImporter.importBookFromFile(SAMPLE_BOOK_PATH);
         XmlWriter.exportBookToXmlFile(importedBook, new File(OUTPUT_XML_PATH));
 
         // then

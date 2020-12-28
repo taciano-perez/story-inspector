@@ -116,17 +116,18 @@ public class BookDAO {
         return book;
     }
 
-    public static long saveBook(final JdbcTemplate db, final String title, final String author, final String rawInput, final String storyDom, final String annotatedStoryDom) {
-        final String sql = "INSERT INTO books (title, author, raw_input, storydom, annotated_storydom) VALUES (?, ?, ?, ?, ?)";
+    public static long saveBook(final JdbcTemplate db, final String userId, final String title, final String author, final String rawInput, final String storyDom, final String annotatedStoryDom) {
+        final String sql = "INSERT INTO books (user_id, title, author, raw_input, storydom, annotated_storydom) VALUES (?, ?, ?, ?, ?, ?)";
         final KeyHolder holder = new GeneratedKeyHolder();
         db.update(connection -> {
             final PreparedStatement ps = connection.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, title);
-            ps.setString(2, author);
-            ps.setClob(3, new StringReader(rawInput));
-            ps.setString(4, storyDom);
-            ps.setString(5, annotatedStoryDom);
+            ps.setString(1, userId);
+            ps.setString(2, title);
+            ps.setString(3, author);
+            ps.setClob(4, new StringReader(rawInput));
+            ps.setString(5, storyDom);
+            ps.setString(6, annotatedStoryDom);
             return ps;
         }, holder);
         final Number bookId = holder.getKey();
@@ -136,9 +137,9 @@ public class BookDAO {
         throw new RuntimeException("No generated book id returned.");
     }
 
-    public static List<BookDAO> findAll(final JdbcTemplate db) {
-        return db.query("SELECT book_id, title, author, is_report_available, message FROM books",
-                new Object[]{},
+    public static List<BookDAO> findAll(final JdbcTemplate db, final String userId) {
+        return db.query("SELECT book_id, title, author, is_report_available, message FROM books WHERE user_id = ?",
+                new Object[]{userId},
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),
                                 rs.getString("title"),

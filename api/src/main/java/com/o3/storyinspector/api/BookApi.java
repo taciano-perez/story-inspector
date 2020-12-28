@@ -26,10 +26,10 @@ public class BookApi {
     @Autowired
     private JdbcTemplate db;
 
-    @GetMapping
-    public Map<String, List<BookDAO>> findAll() {
-        logger.trace("QUERYING ALL BOOKS");
-        final List<BookDAO> books = BookDAO.findAll(db);
+    @GetMapping("/list")
+    public Map<String, List<BookDAO>> findAllById(@RequestParam("userId") final String userId) {
+        logger.trace("QUERYING ALL BOOKS userId=" + userId);
+        final List<BookDAO> books = BookDAO.findAll(db, userId);
         bookList.addAll(books);
         return Collections.singletonMap("books", books);
     }

@@ -14,11 +14,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class BookApiTest {
 
-    private static final String API_ROOT = "http://localhost:8081/api/books";
+    private static final String API_ROOT = "http://localhost:8081/api/books/list";
+
+    private static final String PARAMS = "userId=108700212624021084744";
+
+    private static final String API_ALL_BOOKS = API_ROOT + "?" + PARAMS;
 
     @Test
     public void whenGetAllBooks_thenOK() {
-        final Response response = RestAssured.get(API_ROOT);
+        final Response response = RestAssured.get(API_ALL_BOOKS);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }

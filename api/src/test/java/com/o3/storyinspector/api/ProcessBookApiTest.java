@@ -89,6 +89,8 @@ class ProcessBookApiTest {
             </Book>
             """;
 
+    private static final String USER_ID = "108700212624021084744";
+
     @Autowired
     private JdbcTemplate db;
 
@@ -108,7 +110,7 @@ class ProcessBookApiTest {
     @Test
     void whenProcessBook_CreateDom_thenOK() {
         // given
-        final long bookId = BookDAO.saveBook(db, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
 
         // when
         final Response response = RestAssured.given()
@@ -125,7 +127,7 @@ class ProcessBookApiTest {
     @Test
     void whenProcessBook_AnnotateBook_thenOK() {
         // given
-        final Long bookId = BookDAO.saveBook(db, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
+        final Long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
         final Response givenResponse =
                 RestAssured.given()
                         .param("ID", bookId.toString())
@@ -147,7 +149,7 @@ class ProcessBookApiTest {
     @Test
     void whenProcessBook_ProcessBook() {
         // given
-        final long bookId = BookDAO.saveBook(db, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
 
         // when
         RestAssured.given()

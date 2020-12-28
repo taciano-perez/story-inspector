@@ -76,13 +76,15 @@ class ChartApiTest {
                 [0.00, 0.00]}
             """;
 
+    private static final String USER_ID = "108700212624021084744";
+
     @Autowired
     private JdbcTemplate db;
 
     @Test
     void testSentiment() throws JSONException {
         // given
-        final long bookId = BookDAO.saveBook(db, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM);
 
         // when
         final Response response = RestAssured.given()
@@ -97,7 +99,7 @@ class ChartApiTest {
     @Test
     void testEmotionAnger() throws JSONException {
         // given
-        final long bookId = BookDAO.saveBook(db, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM);
 
         // when
         final Response response = RestAssured.given()

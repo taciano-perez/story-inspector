@@ -25,14 +25,16 @@ public class UploadFileApi {
     @RequestMapping(value = "/book", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<Object> submit(@RequestParam("file") MultipartFile file,
                                          @RequestParam("title") String title,
-                                         @RequestParam("author") String author) throws IOException {
+                                         @RequestParam("author") String author,
+                                         @RequestParam("id_token") String idToken) throws IOException {
         logger.trace(String.format("TITLE - %s", title));
         logger.trace(String.format("AUTHOR - %s", author));
         logger.trace(String.format("FILE - %s", file));
+        logger.trace(String.format("ID_TOKEN - %s", idToken));
         final String content = new String(file.getBytes());
         logger.trace(String.format("CONTENT - %s", content));
 
-        final Long bookId = BookDAO.saveBook(db, title, author, content, null, null);
+        final Long bookId = BookDAO.saveBook(db, idToken, title, author, content, null, null);
         logger.trace(String.format("BOOK ID - %s", bookId));
 
         ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());

@@ -23,19 +23,25 @@ public class ChapterTokenizer {
     private static List<Chapter> tokenize(final DocumentPreprocessor dp) {
         final List<Chapter> chapters = new ArrayList<>();
         Chapter currentChapter = null;
-        int chapterNum = 0;
-        for (List<HasWord> sentence : dp) {
-            // TODO: documentpreprocessor does not separate chapter title from body if there's no end punctuation.
-            final String sentenceString = SentenceUtils.listToString(sentence);
+        for (final List<HasWord> sentence : dp) {
+            final String sentenceString = SentenceUtils.listToOriginalTextString(sentence)
+                    .replaceAll("[\\n\\r]", " ")    // remove new lines
+                    .replaceAll("\\s+", " ")        // remove multiple spacing
+                    .trim();                                       // remove leading & trailing spaces
             if (onlyLetters(sentenceString).toLowerCase().startsWith("chapter")) {
                 currentChapter = new Chapter();
                 currentChapter.getBlocks().add(new Block());
                 chapters.add(currentChapter);
-                currentChapter.setTitle("Chapter " + ++chapterNum);
+                currentChapter.setTitle(sentenceString);
                 currentChapter.getBlocks().get(0).setBody("");
             } else {
                 if (currentChapter != null && currentChapter.getBlocks().get(0) != null) {
-                    currentChapter.getBlocks().get(0).setBody(currentChapter.getBlocks().get(0).getBody().concat(sentenceString));
+                    final Block bodyBlock = currentChapter.getBlocks().get(0);
+                    if (!bodyBlock.getBody().isBlank()) {
+                        // add a space between sentences
+                        bodyBlock.setBody(bodyBlock.getBody().concat(" "));
+                    }
+                    bodyBlock.setBody(bodyBlock.getBody().concat(sentenceString));
                 }
             }
         }

@@ -13,6 +13,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
@@ -29,6 +30,9 @@ public class ProcessBookApi {
     @Autowired
     private JdbcTemplate db;
 
+    @Autowired
+    private ThreadPoolTaskScheduler taskScheduler;
+
     @RequestMapping(value = "/process-book", method = RequestMethod.POST)
     public void processBook(@RequestParam("ID") Long bookId) {
         logger.trace(String.format("PROCESS BOOK ID - %s", bookId));
@@ -38,14 +42,10 @@ public class ProcessBookApi {
             logger.error("PROCESS BOOK ID - ERROR CREATING DOM " + res1.getBody());
             return;
         }
-        logger.trace("PROCESS BOOK ID - CREATED DOM");
+        logger.trace("PROCESS BOOK ID - DOM CREATED");
 
-        final ResponseEntity<String> res2 = ApiUtils.callApiWithParameter(ApiUtils.API_ANNOTATE_BOOK, "ID", bookId.toString());
-        if (res2.getStatusCode() != HttpStatus.OK) {
-            logger.error("PROCESS BOOK ID - ERROR ANNOTATING BOOK " + res2.getBody());
-            return;
-        }
-        logger.trace("PROCESS BOOK ID - ANNOTATED BOOK");
+        taskScheduler.execute(new AnnotateBookTask(bookId));
+        logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
     }
 
 
@@ -90,38 +90,42 @@ public class ProcessBookApi {
         }
     }
 
-    @RequestMapping(value = "/annotate-book", method = RequestMethod.POST)
-    public ResponseEntity<Object> annotateBook(@RequestParam("ID") Long bookId) {
-        logger.trace(String.format("ANNOTATE BOOK ID - %s", bookId));
+    class AnnotateBookTask implements Runnable {
+        private Long bookId;
 
-        try {
-            final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        AnnotateBookTask(Long bookId) {
+            this.bookId = bookId;
+        }
 
-            String annotatedBookAsString;
+        @Override
+        public void run() {
+            logger.trace(String.format("ANNOTATE BOOK ID - %s", bookId));
+
             try {
-                final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(bookDAO.getStoryDom()));
-                annotatedBookAsString = XmlWriter.exportBookToString(annotatedBook);
-            } catch (Exception e) {
-                logger.error(e.getLocalizedMessage());
-                e.printStackTrace();
-                return new ResponseEntity<>("Unexpected error when annotating storydom. Error: " + e.getLocalizedMessage(),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+                final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
 
-            final String sql = "UPDATE books SET annotated_storydom = ?, is_report_available=TRUE WHERE book_id = ?";
-            final Object[] params = {annotatedBookAsString, bookId.toString()};
-            final int[] types = {Types.CLOB, Types.INTEGER};
-            final int updatedRowCount = db.update(sql, params, types);
-            if (updatedRowCount != 1) {
-                final String errMsg = "Unexpected error when annotating book. Book id: " + bookId + ", updated row count: " + updatedRowCount;
-                logger.error(errMsg);
-                return new ResponseEntity<>(errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+                String annotatedBookAsString = "";
+                try {
+                    final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(bookDAO.getStoryDom()));
+                    annotatedBookAsString = XmlWriter.exportBookToString(annotatedBook);
+                } catch (Exception e) {
+                    logger.error(e.getLocalizedMessage());
+                    e.printStackTrace();
+                    logger.error("Unexpected error when annotating storydom. Error: " + e.getLocalizedMessage());
+                }
 
-            return ResponseEntity.ok().build();
-        } catch (EmptyResultDataAccessException erdae) {
-            erdae.printStackTrace();
-            return new ResponseEntity<>("Book ID does not exist.", HttpStatus.BAD_REQUEST);
+                final String sql = "UPDATE books SET annotated_storydom = ?, is_report_available=TRUE WHERE book_id = ?";
+                final Object[] params = {annotatedBookAsString, bookId.toString()};
+                final int[] types = {Types.CLOB, Types.INTEGER};
+                final int updatedRowCount = db.update(sql, params, types);
+                if (updatedRowCount != 1) {
+                    logger.error("Unexpected error when annotating book. Book id: " + bookId + ", updated row count: " + updatedRowCount);
+                }
+            } catch (EmptyResultDataAccessException erdae) {
+                erdae.printStackTrace();
+                logger.error("Book ID does not exist.");
+            }
+            logger.trace(String.format("ANNOTATE BOOK COMPLETE ID - %s", bookId));
         }
     }
 

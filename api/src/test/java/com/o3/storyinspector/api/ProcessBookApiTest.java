@@ -123,7 +123,7 @@ class ProcessBookApiTest {
         assertEquals(EXPECTED_STORYDOM, book.getStoryDom());
     }
 
-    @Disabled
+    @Disabled   // disabled to avoid dependency to emolex scores
     @Test
     void whenProcessBook_AnnotateBook_thenOK() {
         // given
@@ -146,17 +146,18 @@ class ProcessBookApiTest {
         assertTrue(book.isReportAvailable());
     }
 
+    @Disabled   // disabled to avoid dependency to emolex scores
     @Test
     void whenProcessBook_ProcessBook() {
         // given
         final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
 
         // when
-        RestAssured.given()
+        final Response response = RestAssured.given()
                 .param("ID", Long.toString(bookId))
                 .post(API_PROCESS_BOOK);
 
         // then
-
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 }

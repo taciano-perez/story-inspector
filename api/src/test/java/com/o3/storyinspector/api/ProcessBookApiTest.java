@@ -38,14 +38,14 @@ class ProcessBookApiTest {
     private static final String EXPECTED_STORYDOM = """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <Book title="Example Book">
-                <Chapter title="Chapter 1">
+                <Chapter title="Chapter 1: A Startling Start.">
                     <Block>
-                        <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>
+                        <Body>This is an example chapter wherein wondrous things would be expected by its eager author.</Body>
                     </Block>
                 </Chapter>
-                <Chapter title="Chapter 2">
+                <Chapter title="Chapter 2: The Unexciting Aftermath.">
                     <Block>
-                        <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>
+                        <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>
                     </Block>
                 </Chapter>
             </Book>
@@ -123,7 +123,7 @@ class ProcessBookApiTest {
         assertEquals(EXPECTED_STORYDOM, book.getStoryDom());
     }
 
-    @Disabled
+    @Disabled   // disabled to avoid dependency to emolex scores
     @Test
     void whenProcessBook_AnnotateBook_thenOK() {
         // given
@@ -146,17 +146,18 @@ class ProcessBookApiTest {
         assertTrue(book.isReportAvailable());
     }
 
+    @Disabled   // disabled to avoid dependency to emolex scores
     @Test
     void whenProcessBook_ProcessBook() {
         // given
         final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
 
         // when
-        RestAssured.given()
+        final Response response = RestAssured.given()
                 .param("ID", Long.toString(bookId))
                 .post(API_PROCESS_BOOK);
 
         // then
-
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 }

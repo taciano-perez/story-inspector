@@ -38,14 +38,14 @@ class ProcessBookApiTest {
     private static final String EXPECTED_STORYDOM = """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <Book title="Example Book">
-                <Chapter title="Chapter 1">
+                <Chapter title="Chapter 1: A Startling Start.">
                     <Block>
-                        <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>
+                        <Body>This is an example chapter wherein wondrous things would be expected by its eager author.</Body>
                     </Block>
                 </Chapter>
-                <Chapter title="Chapter 2">
+                <Chapter title="Chapter 2: The Unexciting Aftermath.">
                     <Block>
-                        <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>
+                        <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>
                     </Block>
                 </Chapter>
             </Book>

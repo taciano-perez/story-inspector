@@ -17,3 +17,5 @@ Story Inspector consists of the following components:
 * A **Web Visualization Tool** is hosted at https://github.com/taciano-perez/story-inspector-web.
   
 Note: Story Inspector is a work in progress, and not fully functional yet.
+
+\* [Logo image designed by macrovector / Freepik](http://www.freepik.com)

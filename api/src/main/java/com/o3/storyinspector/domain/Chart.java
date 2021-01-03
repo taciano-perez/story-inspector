@@ -7,10 +7,8 @@ import com.o3.storyinspector.storydom.Emotion;
 import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.util.StoryDomUtils;
 
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -18,16 +16,26 @@ import java.util.Map;
  */
 public class Chart {
 
-    private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
-
+    private String bookTitle;
+    private String bookAuthor;
     private List<String> labels;
     private List<String> blocks;
     private List<Double> scores;
 
-    public Chart(final List<String> labels, final List<String> blocks, final List<Double> scores) {
+    public Chart(final String bookTitle, final String bookAuthor, final List<String> labels, final List<String> blocks, final List<Double> scores) {
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
         this.labels = labels;
         this.blocks = blocks;
         this.scores = scores;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public String getBookAuthor() {
+        return bookAuthor;
     }
 
     public List<String> getLabels() {

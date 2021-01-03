@@ -1,6 +1,6 @@
 package com.o3.storyinspector.api;
 
-import com.o3.storyinspector.annotation.AnnotationEngine;
+import com.o3.storyinspector.api.task.AnnotateBookTask;
 import com.o3.storyinspector.api.util.ApiUtils;
 import com.o3.storyinspector.bookimporter.plaintext.PlainTextImporter;
 import com.o3.storyinspector.db.BookDAO;
@@ -25,7 +25,9 @@ import java.sql.Types;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProcessBookApi {
 
-    final Logger logger = LoggerFactory.getLogger(ProcessBookApi.class);
+    final static Logger logger = LoggerFactory.getLogger(ProcessBookApi.class);
+
+    public static final int ENGINE_VERSION = 1;
 
     @Autowired
     private JdbcTemplate db;
@@ -44,7 +46,7 @@ public class ProcessBookApi {
         }
         logger.trace("PROCESS BOOK ID - DOM CREATED");
 
-        taskScheduler.execute(new AnnotateBookTask(bookId));
+        taskScheduler.execute(new AnnotateBookTask(db, bookId));
         logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
     }
 
@@ -90,43 +92,5 @@ public class ProcessBookApi {
         }
     }
 
-    class AnnotateBookTask implements Runnable {
-        private Long bookId;
-
-        AnnotateBookTask(Long bookId) {
-            this.bookId = bookId;
-        }
-
-        @Override
-        public void run() {
-            logger.trace(String.format("ANNOTATE BOOK ID - %s", bookId));
-
-            try {
-                final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
-
-                String annotatedBookAsString = "";
-                try {
-                    final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(bookDAO.getStoryDom()));
-                    annotatedBookAsString = XmlWriter.exportBookToString(annotatedBook);
-                } catch (Exception e) {
-                    logger.error(e.getLocalizedMessage());
-                    e.printStackTrace();
-                    logger.error("Unexpected error when annotating storydom. Error: " + e.getLocalizedMessage());
-                }
-
-                final String sql = "UPDATE books SET annotated_storydom = ?, is_report_available=TRUE WHERE book_id = ?";
-                final Object[] params = {annotatedBookAsString, bookId.toString()};
-                final int[] types = {Types.CLOB, Types.INTEGER};
-                final int updatedRowCount = db.update(sql, params, types);
-                if (updatedRowCount != 1) {
-                    logger.error("Unexpected error when annotating book. Book id: " + bookId + ", updated row count: " + updatedRowCount);
-                }
-            } catch (EmptyResultDataAccessException erdae) {
-                erdae.printStackTrace();
-                logger.error("Book ID does not exist.");
-            }
-            logger.trace(String.format("ANNOTATE BOOK COMPLETE ID - %s", bookId));
-        }
-    }
 
 }

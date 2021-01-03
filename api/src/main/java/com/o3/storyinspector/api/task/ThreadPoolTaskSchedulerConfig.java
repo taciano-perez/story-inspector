@@ -1,4 +1,4 @@
-package com.o3.storyinspector.api;
+package com.o3.storyinspector.api.task;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

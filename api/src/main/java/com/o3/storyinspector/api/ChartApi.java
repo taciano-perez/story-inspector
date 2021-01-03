@@ -86,7 +86,7 @@ public class ChartApi {
                 scores.add(sentimentScore);
             }
         }
-        return new Chart(labels, blocks, scores);
+        return new Chart(bookDAO.getTitle(), bookDAO.getAuthor(), labels, blocks, scores);
     }
 
     private static Chart buildEmotionChartFromBook(final BookDAO bookDAO, final EmotionType emotionType) throws JAXBException {
@@ -108,7 +108,7 @@ public class ChartApi {
                 scores.add(normalizedEmotionScore);
             }
         }
-        return new Chart(labels, blocks, scores);
+        return new Chart(bookDAO.getTitle(), bookDAO.getAuthor(), labels, blocks, scores);
     }
 
 }

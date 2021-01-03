@@ -1,5 +1,6 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.api.task.AnnotateBookTask;
 import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -54,8 +55,8 @@ class ProcessBookApiTest {
     private static final String EXPECTED_ANNOTATED_STORYDOM = """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <Book title="Example Book">
-                <Chapter title="Chapter 1">
-                    <Metadata wordCount="16">
+                <Chapter title="Chapter 1: A Startling Start.">
+                    <Metadata wordCount="15">
                         <Locations/>
                         <Characters/>
                     </Metadata>
@@ -70,8 +71,8 @@ class ProcessBookApiTest {
                         <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>
                     </Block>
                 </Chapter>
-                <Chapter title="Chapter 2">
-                    <Metadata wordCount="16">
+                <Chapter title="Chapter 2: The Unexciting Aftermath.">
+                    <Metadata wordCount="14">
                         <Locations/>
                         <Characters/>
                     </Metadata>
@@ -110,7 +111,7 @@ class ProcessBookApiTest {
     @Test
     void whenProcessBook_CreateDom_thenOK() {
         // given
-        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null, null);
 
         // when
         final Response response = RestAssured.given()
@@ -127,7 +128,7 @@ class ProcessBookApiTest {
     @Test
     void whenProcessBook_AnnotateBook_thenOK() {
         // given
-        final Long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
+        final Long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null, null);
         final Response givenResponse =
                 RestAssured.given()
                         .param("ID", bookId.toString())
@@ -135,12 +136,10 @@ class ProcessBookApiTest {
         assertEquals(HttpStatus.OK.value(), givenResponse.getStatusCode());
 
         // when
-        final Response response = RestAssured.given()
-                .param("ID", bookId.toString())
-                .post(API_ANNOTATE_BOOK);
+        final AnnotateBookTask annotateBookTask = new AnnotateBookTask(db, bookId);
+        annotateBookTask.run();
 
         // then
-        assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         final BookDAO book = BookDAO.findByBookId(bookId, db);
         assertEquals(EXPECTED_ANNOTATED_STORYDOM, book.getAnnotatedStoryDom());
         assertTrue(book.isReportAvailable());
@@ -150,7 +149,7 @@ class ProcessBookApiTest {
     @Test
     void whenProcessBook_ProcessBook() {
         // given
-        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null, null);
 
         // when
         final Response response = RestAssured.given()

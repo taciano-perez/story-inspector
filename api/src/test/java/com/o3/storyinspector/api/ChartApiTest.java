@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.sql.Timestamp;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ChartApiTest {
@@ -84,7 +86,7 @@ class ChartApiTest {
     @Test
     void testSentiment() throws JSONException {
         // given
-        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
 
         // when
         final Response response = RestAssured.given()
@@ -99,7 +101,7 @@ class ChartApiTest {
     @Test
     void testEmotionAnger() throws JSONException {
         // given
-        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM);
+        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
 
         // when
         final Response response = RestAssured.given()

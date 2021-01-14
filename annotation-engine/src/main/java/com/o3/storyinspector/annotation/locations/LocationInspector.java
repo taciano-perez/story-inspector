@@ -31,10 +31,10 @@ public class LocationInspector {
     private static Set<Location> inspectUsingStanfordCoreNLP(String text) {
         // TODO: this pass identifies other NEs, refactor to take that into account
         return StanfordCoreNLPUtils.extractNamedEntities(text).stream()
-                .filter(token -> token.type().equals(LOCATION.name) ||
-                        token.type().equals(COUNTRY.name) ||
-                        token.type().equals(CITY.name))
-                .map(token -> buildLocation(token.name(), token.type()))
+                .filter(token -> token.getType().equals(LOCATION.name) ||
+                        token.getType().equals(COUNTRY.name) ||
+                        token.getType().equals(CITY.name))
+                .map(token -> buildLocation(token.getName(), token.getType()))
                 .collect(Collectors.toSet());
     }
 

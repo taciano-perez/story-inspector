@@ -20,63 +20,57 @@ class ChartApiTest {
 
     private static final String API_ROOT = "http://localhost:8081/api/charts";
 
-    private static final String ANNOTATED_STORYDOM = """
-            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-            <Book title="Example Book">
-                <Chapter title="Chapter 1">
-                    <Metadata wordCount="16">
-                        <Locations/>
-                        <Characters/>
-                    </Metadata>
-                    <Block wordCount="16" sentimentScore="-0,0640">
-                        <Emotion type="anger" score="0.00"/>
-                        <Emotion type="anticipation" score="0.08693333333333333"/>
-                        <Emotion type="disgust" score="0.0"/>
-                        <Emotion type="fear" score="0.0"/>
-                        <Emotion type="sadness" score="0.0"/>
-                        <Emotion type="surprise" score="0.0"/>
-                        <Emotion type="trust" score="0.0672"/>
-                        <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>
-                    </Block>
-                </Chapter>
-                <Chapter title="Chapter 2">
-                    <Metadata wordCount="16">
-                        <Locations/>
-                        <Characters/>
-                    </Metadata>
-                    <Block wordCount="16" sentimentScore="-0,0640">
-                        <Emotion type="anger" score="0.00"/>
-                        <Emotion type="anticipation" score="0.07978571428571428"/>
-                        <Emotion type="disgust" score="0.0"/>
-                        <Emotion type="fear" score="0.0"/>
-                        <Emotion type="sadness" score="0.0"/>
-                        <Emotion type="surprise" score="0.0"/>
-                        <Emotion type="trust" score="0.0"/>
-                        <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>
-                    </Block>
-                </Chapter>
-            </Book>
-            """;
+    private static final String ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<Book title=\"Example Book\">\n" +
+            "    <Chapter title=\"Chapter 1\">\n" +
+            "        <Metadata wordCount=\"16\">\n" +
+            "            <Locations/>\n" +
+            "            <Characters/>\n" +
+            "        </Metadata>\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
+            "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
+            "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"fear\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"sadness\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"surprise\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"trust\" score=\"0.0672\"/>\n" +
+            "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>\n" +
+            "        </Block>\n" +
+            "    </Chapter>\n" +
+            "    <Chapter title=\"Chapter 2\">\n" +
+            "        <Metadata wordCount=\"16\">\n" +
+            "            <Locations/>\n" +
+            "            <Characters/>\n" +
+            "        </Metadata>\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
+            "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
+            "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"fear\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"sadness\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"surprise\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"trust\" score=\"0.0\"/>\n" +
+            "            <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>\n" +
+            "        </Block>\n" +
+            "    </Chapter>\n" +
+            "</Book>\n";
 
-    private final static String EXPECTED_JSON_SENTIMENT = """
-            {"labels":
-                ["#1","#2"],
-            "blocks":
-                ["This is an example chapter wherein wondrous things would be expected by its eager author .",
-                "This is another example chapter , but the action seems to unfold slower than expected ."],
-            "scores":
-                [-0.064,-0.064]}
-            """;
+    private final static String EXPECTED_JSON_SENTIMENT = "{\"labels\":\n" +
+            "    [\"#1\",\"#2\"],\n" +
+            "\"blocks\":\n" +
+            "    [\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\n" +
+            "    \"This is another example chapter , but the action seems to unfold slower than expected .\"],\n" +
+            "\"scores\":\n" +
+            "    [-0.064,-0.064]}\n";
 
-    private final static String EXPECTED_JSON_EMOTION_ANGER = """
-            {"labels":
-                ["#1","#2"],
-            "blocks":
-                ["This is an example chapter wherein wondrous things would be expected by its eager author .",
-                "This is another example chapter , but the action seems to unfold slower than expected ."],
-            "scores":
-                [0.00, 0.00]}
-            """;
+    private final static String EXPECTED_JSON_EMOTION_ANGER = "{\"labels\":\n" +
+            "    [\"#1\",\"#2\"],\n" +
+            "\"blocks\":\n" +
+            "    [\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\n" +
+            "    \"This is another example chapter , but the action seems to unfold slower than expected .\"],\n" +
+            "\"scores\":\n" +
+            "    [0.00, 0.00]}\n";
 
     private static final String USER_ID = "108700212624021084744";
 

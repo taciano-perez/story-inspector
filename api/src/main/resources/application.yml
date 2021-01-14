@@ -1,0 +1,64 @@
+spring:
+  profiles:
+    active: "dev"
+
+---
+spring:
+  profiles: dev
+  #  config:
+  #    activate:
+  #      on-profile: dev
+  application:
+    name: Story Inspector
+    title: Story Inspector
+  settings:
+    trace: true
+    web-allow-others: true
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+server:
+  port: 8081
+logging:
+  level.root: WARN
+  level.com.o3.storyinspector: TRACE
+
+---
+spring:
+  profiles: production
+  #  config:
+  #    activate:
+  #      on-profile: production
+  application.name: Story Inspector
+  settings:
+    trace: true
+    web-allow-others: true
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+  cloud:
+    appId: storyinspector
+    gcp:
+      sql:
+        database-name: <DB_NAME>
+        instance-connection-name: <INSTANCE_CONNECTION_NAME>
+  datasource:
+    username: <DB_USERNAME>
+    password: <DB_PASSWORD>
+
+server:
+  port: 8080
+logging:
+  level.root: WARN
+  level.com.o3.storyinspector: TRACE
+database: mysql

@@ -1,0 +1,6 @@
+# mvn package appengine:deploy -Dapp.deploy.projectId=storyinspector -P production -DskipTests
+runtime: java11
+env_variables:
+  SPRING_PROFILES_ACTIVE: "dev,gcp,mysql"
+manual_scaling:
+  instances: 1

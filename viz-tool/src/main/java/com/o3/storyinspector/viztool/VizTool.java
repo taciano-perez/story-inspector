@@ -82,17 +82,13 @@ public class VizTool {
     }
 
     private static String headerTags() {
-        return """
-                <html>
-                <body style="background-color:white;">
-                """;
+        return "<html>\n" +
+                "<body style=\"background-color:white;\">\n";
     }
 
     private static String footerTags() {
-        return """
-                </body>
-                </html>
-                """;
+        return "</body>\n" +
+                "</html>\n";
     }
 
 }

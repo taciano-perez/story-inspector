@@ -95,7 +95,7 @@ public class StanfordCoreNLPUtils {
 
     private static void handleEntity(String inKey, StringBuilder inSb, List<NamedEntityToken> inTokens) {
         final NamedEntityToken token = new NamedEntityToken(inKey, inSb.toString());
-        LOG.debug("'{}' is a {}", token.name(), token.type());
+        LOG.debug("'{}' is a {}", token.getName(), token.getType());
         inTokens.add(token);
         inSb.setLength(0);
     }

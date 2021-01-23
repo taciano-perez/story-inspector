@@ -5,9 +5,6 @@ spring:
 ---
 spring:
   profiles: dev
-  #  config:
-  #    activate:
-  #      on-profile: dev
   application:
     name: Story Inspector
     title: Story Inspector
@@ -34,11 +31,10 @@ logging:
 
 ---
 spring:
-  profiles: production
-  #  config:
-  #    activate:
-  #      on-profile: production
-  application.name: Story Inspector
+  profiles: gcp
+  application:
+    name: Story Inspector
+    title: Story Inspector
   settings:
     trace: true
     web-allow-others: true
@@ -47,7 +43,7 @@ spring:
       hibernate:
         show_sql: true
   cloud:
-    appId: storyinspector
+    appId: story-inspector
     gcp:
       sql:
         database-name: <DB_NAME>

@@ -2,6 +2,8 @@ package com.o3.storyinspector.annotation.characters;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,7 +65,7 @@ class CharacterInspectorTest {
     @Test
     void inspectNamedCharacters() throws Exception {
         // given
-        final Set<String> expectedCharacters = Set.of("Teufel", "Emma Rauschenbach - Jung", "Zürich", "Jung", "Küsnacht", "Carl Gustav Jung", "Franz");
+        final Set<String> expectedCharacters = new HashSet<>(Arrays.asList("Teufel", "Emma Rauschenbach - Jung", "Zürich", "Jung", "Küsnacht", "Carl Gustav Jung", "Franz"));
 
         // when
         final Set<String> namedCharacters = CharacterInspector.inspectNamedCharacters(sampleChapter);

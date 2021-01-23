@@ -1,11 +1,11 @@
 package com.o3.storyinspector.annotation.sentiments;
 
+import com.o3.storyinspector.annotation.util.FileUtils;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SentimentInspectorTest {
 
@@ -14,7 +14,7 @@ class SentimentInspectorTest {
     @Test
     void inspectSentimentScore() throws Exception {
         // given
-        final String sampleChapter = Files.readString(Paths.get(SAMPLE_CHAPTER_PATH));
+        final String sampleChapter = FileUtils.readString(Paths.get(SAMPLE_CHAPTER_PATH));
         final int expectedSentiment = 1;
 
         // when

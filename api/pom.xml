@@ -14,6 +14,12 @@
     <artifactId>api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <java.version>8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.o3.storyinspector</groupId>
@@ -41,6 +47,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>2.3.4.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -108,6 +120,9 @@
                 <version>3.0.0-M3</version>
                 <configuration>
                     <argLine>--enable-preview</argLine>
+                    <forkCount>3</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -125,6 +140,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.springframework.boot.experimental</groupId>-->
+            <!--                <artifactId>spring-boot-thin-maven-plugin</artifactId>-->
+            <!--                <version>1.0.26.RELEASE</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        &lt;!&ndash; Download the dependencies at build time &ndash;&gt;-->
+            <!--                        <id>resolve</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>resolve</goal>-->
+            <!--                        </goals>-->
+            <!--                        <inherited>false</inherited>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 
@@ -133,7 +163,7 @@
             <id>dev</id>
             <activation>
                 <property>
-                    <name>!gcp</name>
+                    <name>!gcp,!aws</name>
                 </property>
             </activation>
             <dependencies>
@@ -145,24 +175,30 @@
             </dependencies>
         </profile>
         <profile>
-            <id>gcp</id>
+            <id>aws</id>
             <activation>
                 <property>
-                    <name>gcp</name>
+                    <name>aws</name>
                 </property>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <!--            <dependencyManagement>-->
-            <!--                <dependencies>-->
-            <!--                    <dependency>-->
-            <!--                        <groupId>com.google.cloud</groupId>-->
-            <!--                        <artifactId>spring-cloud-gcp-dependencies</artifactId>-->
-            <!--                        <version>2.0.0</version>-->
-            <!--                        <type>pom</type>-->
-            <!--                        <scope>import</scope>-->
-            <!--                    </dependency>-->
-            <!--                </dependencies>-->
-            <!--            </dependencyManagement>-->
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>8.0.22</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>gcp-compengine</id>
+            <activation>
+                <property>
+                    <name>gcp-compengine</name>
+                </property>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.springframework.cloud</groupId>
@@ -171,15 +207,48 @@
                 </dependency>
                 <!--                <dependency>-->
                 <!--                    <groupId>com.google.cloud.tools</groupId>-->
-                <!--                    <artifactId>jib-maven-plugin</artifactId>-->
-                <!--                    <version>2.7.1</version>-->
+                <!--                    <artifactId>appengine-maven-plugin</artifactId>-->
+                <!--                    <version>2.3.0</version>-->
                 <!--                </dependency>-->
-                <!-- explicit dependency to work around bug https://github.com/GoogleCloudPlatform/appengine-plugins-core/issues/825 -->
-                <!--                <dependency>-->
-                <!--                    <groupId>com.google.cloud.tools</groupId>-->
-                <!--                    <artifactId>appengine-plugins-core</artifactId>-->
-                <!--                    <version>0.9.2</version>-->
-                <!--                </dependency>-->
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
+                    <version>1.2.6.RELEASE</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.google.cloud.sql</groupId>
+                    <artifactId>mysql-socket-factory-connector-j-8</artifactId>
+                    <version>1.2.0</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>com.google.cloud.tools</groupId>-->
+                    <!--                        <artifactId>appengine-maven-plugin</artifactId>-->
+                    <!--                        <version>2.4.0</version>-->
+                    <!--                        <configuration>-->
+                    <!--                            <deploy.projectId>story-inspector</deploy.projectId>-->
+                    <!--                            <deploy.version>GCLOUD_CONFIG</deploy.version>-->
+                    <!--                        </configuration>-->
+                    <!--                    </plugin>-->
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>gcp-appengine</id>
+            <activation>
+                <property>
+                    <name>gcp-appengine</name>
+                </property>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-gcp-starter</artifactId>
+                    <version>1.2.6.RELEASE</version>
+                </dependency>
                 <dependency>
                     <groupId>com.google.cloud.tools</groupId>
                     <artifactId>appengine-maven-plugin</artifactId>

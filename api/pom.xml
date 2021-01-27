@@ -47,12 +47,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>2.3.4.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -140,21 +134,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.springframework.boot.experimental</groupId>-->
-            <!--                <artifactId>spring-boot-thin-maven-plugin</artifactId>-->
-            <!--                <version>1.0.26.RELEASE</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        &lt;!&ndash; Download the dependencies at build time &ndash;&gt;-->
-            <!--                        <id>resolve</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>resolve</goal>-->
-            <!--                        </goals>-->
-            <!--                        <inherited>false</inherited>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
         </plugins>
     </build>
 
@@ -163,7 +142,7 @@
             <id>dev</id>
             <activation>
                 <property>
-                    <name>!gcp,!aws</name>
+                    <name>!gcp-compengine</name>
                 </property>
             </activation>
             <dependencies>
@@ -205,11 +184,6 @@
                     <artifactId>spring-cloud-gcp-starter</artifactId>
                     <version>1.2.6.RELEASE</version>
                 </dependency>
-                <!--                <dependency>-->
-                <!--                    <groupId>com.google.cloud.tools</groupId>-->
-                <!--                    <artifactId>appengine-maven-plugin</artifactId>-->
-                <!--                    <version>2.3.0</version>-->
-                <!--                </dependency>-->
                 <dependency>
                     <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
@@ -221,19 +195,6 @@
                     <version>1.2.0</version>
                 </dependency>
             </dependencies>
-            <build>
-                <plugins>
-                    <!--                    <plugin>-->
-                    <!--                        <groupId>com.google.cloud.tools</groupId>-->
-                    <!--                        <artifactId>appengine-maven-plugin</artifactId>-->
-                    <!--                        <version>2.4.0</version>-->
-                    <!--                        <configuration>-->
-                    <!--                            <deploy.projectId>story-inspector</deploy.projectId>-->
-                    <!--                            <deploy.version>GCLOUD_CONFIG</deploy.version>-->
-                    <!--                        </configuration>-->
-                    <!--                    </plugin>-->
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>gcp-appengine</id>

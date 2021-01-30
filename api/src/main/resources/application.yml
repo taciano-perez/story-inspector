@@ -33,58 +33,7 @@ logging:
 
 ---
 spring:
-  profiles: aws
-  application:
-    name: Story Inspector
-    title: Story Inspector
-  settings:
-    trace: true
-    web-allow-others: true
-  datasource:
-    url: jdbc:mysql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DB_NAME}
-    username: ${RDS_USERNAME}
-    password: ${RDS_PASSWORD}
-
-server:
-  port: 5000
-logging:
-  level.root: WARN
-  level.com.o3.storyinspector: TRACE
-database: mysql
-
----
-spring:
   profiles: gcp-compengine
-  application:
-    name: Story Inspector
-    title: Story Inspector
-  settings:
-    trace: true
-    web-allow-others: true
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-  cloud:
-    appId: story-inspector
-    gcp:
-      sql:
-        database-name: ${GCP_DB_NAME}
-        instance-connection-name: ${GCP_ICN}
-  datasource:
-    username: ${GCP_DB_USERNAME}
-    password: ${GCP_DB_PASSWORD}
-
-server:
-  port: 8080
-logging:
-  level.root: WARN
-  level.com.o3.storyinspector: TRACE
-database: mysql
-
----
-spring:
-  profiles: gcp
   application:
     name: Story Inspector
     title: Story Inspector

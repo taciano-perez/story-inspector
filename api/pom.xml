@@ -154,23 +154,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>aws</id>
-            <activation>
-                <property>
-                    <name>aws</name>
-                </property>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
-                    <version>8.0.22</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>gcp-compengine</id>
             <activation>
                 <property>
@@ -196,50 +179,5 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>gcp-appengine</id>
-            <activation>
-                <property>
-                    <name>gcp-appengine</name>
-                </property>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-gcp-starter</artifactId>
-                    <version>1.2.6.RELEASE</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.google.cloud.tools</groupId>
-                    <artifactId>appengine-maven-plugin</artifactId>
-                    <version>2.3.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
-                    <version>1.2.6.RELEASE</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.google.cloud.sql</groupId>
-                    <artifactId>mysql-socket-factory-connector-j-8</artifactId>
-                    <version>1.2.0</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.google.cloud.tools</groupId>
-                        <artifactId>appengine-maven-plugin</artifactId>
-                        <version>2.4.0</version>
-                        <configuration>
-                            <deploy.projectId>story-inspector</deploy.projectId>
-                            <deploy.version>GCLOUD_CONFIG</deploy.version>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
-
 </project>

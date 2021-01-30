@@ -37,7 +37,7 @@ public class ChapterTokenizer {
             } else {
                 if (currentChapter != null && currentChapter.getBlocks().get(0) != null) {
                     final Block bodyBlock = currentChapter.getBlocks().get(0);
-                    if (!bodyBlock.getBody().isBlank()) {
+                    if (!isBlankString(bodyBlock.getBody())) {
                         // add a space between sentences
                         bodyBlock.setBody(bodyBlock.getBody().concat(" "));
                     }
@@ -46,6 +46,10 @@ public class ChapterTokenizer {
             }
         }
         return chapters;
+    }
+
+    private static boolean isBlankString(final String string) {
+        return string == null || string.trim().isEmpty();
     }
 
     private static String onlyLetters(final String input) {

@@ -24,71 +24,63 @@ class ProcessBookApiTest {
 
     private static final String API_CREATE_DOM = API_ROOT + "/create-dom";
 
-    private static final String API_ANNOTATE_BOOK = API_ROOT + "/annotate-book";
-
     private static final String API_PROCESS_BOOK = API_ROOT + "/process-book";
 
-    private static final String INPUT_PLAINTEXT_BOOK = """
-            Chapter 1: A Startling Start.
-            This is an example chapter wherein wondrous things would be expected by its eager author.
-                        
-            Chapter 2: The Unexciting Aftermath.
-            This is another example chapter, but the action seems to unfold slower than expected. 
-            """;
+    private static final String INPUT_PLAINTEXT_BOOK = "Chapter 1: A Startling Start.\n" +
+            "This is an example chapter wherein wondrous things would be expected by its eager author.\n" +
+            "            \n" +
+            "Chapter 2: The Unexciting Aftermath.\n" +
+            "This is another example chapter, but the action seems to unfold slower than expected. \n";
 
-    private static final String EXPECTED_STORYDOM = """
-            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-            <Book title="Example Book">
-                <Chapter title="Chapter 1: A Startling Start.">
-                    <Block>
-                        <Body>This is an example chapter wherein wondrous things would be expected by its eager author.</Body>
-                    </Block>
-                </Chapter>
-                <Chapter title="Chapter 2: The Unexciting Aftermath.">
-                    <Block>
-                        <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>
-                    </Block>
-                </Chapter>
-            </Book>
-            """;
+    private static final String EXPECTED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<Book title=\"Example Book\">\n" +
+            "    <Chapter title=\"Chapter 1: A Startling Start.\">\n" +
+            "        <Block>\n" +
+            "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author.</Body>\n" +
+            "        </Block>\n" +
+            "    </Chapter>\n" +
+            "    <Chapter title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
+            "        <Block>\n" +
+            "            <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>\n" +
+            "        </Block>\n" +
+            "    </Chapter>\n" +
+            "</Book>\n";
 
-    private static final String EXPECTED_ANNOTATED_STORYDOM = """
-            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-            <Book title="Example Book">
-                <Chapter title="Chapter 1: A Startling Start.">
-                    <Metadata wordCount="15">
-                        <Locations/>
-                        <Characters/>
-                    </Metadata>
-                    <Block wordCount="16" sentimentScore="-0,0640">
-                        <Emotion type="anger" score="0.0"/>
-                        <Emotion type="anticipation" score="0.08693333333333333"/>
-                        <Emotion type="disgust" score="0.0"/>
-                        <Emotion type="fear" score="0.0"/>
-                        <Emotion type="sadness" score="0.0"/>
-                        <Emotion type="surprise" score="0.0"/>
-                        <Emotion type="trust" score="0.0672"/>
-                        <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>
-                    </Block>
-                </Chapter>
-                <Chapter title="Chapter 2: The Unexciting Aftermath.">
-                    <Metadata wordCount="14">
-                        <Locations/>
-                        <Characters/>
-                    </Metadata>
-                    <Block wordCount="16" sentimentScore="-0,0640">
-                        <Emotion type="anger" score="0.0"/>
-                        <Emotion type="anticipation" score="0.07978571428571428"/>
-                        <Emotion type="disgust" score="0.0"/>
-                        <Emotion type="fear" score="0.0"/>
-                        <Emotion type="sadness" score="0.0"/>
-                        <Emotion type="surprise" score="0.0"/>
-                        <Emotion type="trust" score="0.0"/>
-                        <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>
-                    </Block>
-                </Chapter>
-            </Book>
-            """;
+    private static final String EXPECTED_ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<Book title=\"Example Book\">\n" +
+            "    <Chapter title=\"Chapter 1: A Startling Start.\">\n" +
+            "        <Metadata wordCount=\"15\">\n" +
+            "            <Locations/>\n" +
+            "            <Characters/>\n" +
+            "        </Metadata>\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
+            "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"fear\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"sadness\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"surprise\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"trust\" score=\"0.0672\"/>\n" +
+            "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>\n" +
+            "        </Block>\n" +
+            "    </Chapter>\n" +
+            "    <Chapter title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
+            "        <Metadata wordCount=\"14\">\n" +
+            "            <Locations/>\n" +
+            "            <Characters/>\n" +
+            "        </Metadata>\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
+            "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"fear\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"sadness\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"surprise\" score=\"0.0\"/>\n" +
+            "            <Emotion type=\"trust\" score=\"0.0\"/>\n" +
+            "            <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>\n" +
+            "        </Block>\n" +
+            "    </Chapter>\n" +
+            "</Book>\n";
 
     private static final String USER_ID = "108700212624021084744";
 

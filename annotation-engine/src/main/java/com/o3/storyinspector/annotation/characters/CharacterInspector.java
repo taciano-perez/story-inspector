@@ -34,8 +34,8 @@ public class CharacterInspector {
     private static Set<String> inspectUsingStanfordCoreNLP(String text) {
         // TODO: this pass identifies other NEs, refactor to take that into account
         return StanfordCoreNLPUtils.extractNamedEntities(text).stream()
-                .filter(token -> token.type().equals(PERSON.name))
-                .map(NamedEntityToken::name)
+                .filter(token -> token.getType().equals(PERSON.name))
+                .map(NamedEntityToken::getName)
                 .collect(Collectors.toSet());
     }
 

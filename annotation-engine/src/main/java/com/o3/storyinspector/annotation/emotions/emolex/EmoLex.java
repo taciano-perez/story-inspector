@@ -22,24 +22,22 @@ public class EmoLex {
         return singleton;
     }
 
-    private final Map<EmotionType, String> SCORES_FILENAME_PER_EMOTION =
-            Map.of(EmotionType.ANGER, "emolex/anger-scores.txt",
-                    EmotionType.ANTICIPATION, "emolex/anticipation-scores.txt",
-                    EmotionType.DISGUST, "emolex/disgust-scores.txt",
-                    EmotionType.FEAR, "emolex/fear-scores.txt",
-                    EmotionType.SADNESS, "emolex/sadness-scores.txt",
-                    EmotionType.SURPRISE, "emolex/surprise-scores.txt",
-                    EmotionType.TRUST, "emolex/trust-scores.txt");
+    private static final Map<EmotionType, String> SCORES_FILENAME_PER_EMOTION = new HashMap<>();
 
-    private final Map<EmotionType, Map<String, Double>> lexiconsPerEmotion = new HashMap<>(6);
+    static {
+        SCORES_FILENAME_PER_EMOTION.put(EmotionType.ANGER, "emolex/anger-scores.txt");
+        SCORES_FILENAME_PER_EMOTION.put(EmotionType.ANTICIPATION, "emolex/anticipation-scores.txt");
+        SCORES_FILENAME_PER_EMOTION.put(EmotionType.DISGUST, "emolex/disgust-scores.txt");
+        SCORES_FILENAME_PER_EMOTION.put(EmotionType.FEAR, "emolex/fear-scores.txt");
+        SCORES_FILENAME_PER_EMOTION.put(EmotionType.SADNESS, "emolex/sadness-scores.txt");
+        SCORES_FILENAME_PER_EMOTION.put(EmotionType.SURPRISE, "emolex/surprise-scores.txt");
+        SCORES_FILENAME_PER_EMOTION.put(EmotionType.TRUST, "emolex/trust-scores.txt");
+    }
 
-    private final Map<String, Double> getLexiconFor(final EmotionType emotionType) {
-        Map<String, Double> lexicon = lexiconsPerEmotion.get(emotionType);
-        if (lexicon == null) {
-            lexicon = new HashMap<>();
-            lexiconsPerEmotion.put(emotionType, lexicon);
-        }
-        return lexicon;
+    private Map<EmotionType, Map<String, Double>> lexiconsPerEmotion = new HashMap<>(6);
+
+    private Map<String, Double> getLexiconFor(final EmotionType emotionType) {
+        return lexiconsPerEmotion.computeIfAbsent(emotionType, k -> new HashMap<>());
     }
 
     private EmoLex() {
@@ -70,7 +68,7 @@ public class EmoLex {
     public double getEmotionScore(final EmotionType emotionType, final String word) {
         final Double lexiconScore = getLexiconFor(emotionType).get(word.toLowerCase());
         if (lexiconScore != null) {
-            return lexiconScore.doubleValue();
+            return lexiconScore;
         }
         return 0.0;
     }

@@ -10,9 +10,9 @@ CREATE TABLE books (
   author VARCHAR(250) NOT NULL,
   engine_version INT NOT NULL,
   create_time TIMESTAMP NOT NULL,
-  raw_input CLOB DEFAULT NULL,
-  storydom CLOB DEFAULT NULL,
-  annotated_storydom CLOB DEFAULT NULL,
+  raw_input CLOB DEFAULT NULL, -- MySQL replace CLOB by LONGTEXT
+  storydom CLOB DEFAULT NULL, -- MySQL replace CLOB by LONGTEXT
+  annotated_storydom CLOB DEFAULT NULL, -- MySQL replace CLOB by LONGTEXT
   annotation_complete_time TIMESTAMP DEFAULT NULL,
   is_report_available BOOL DEFAULT FALSE,
   message VARCHAR(1000) DEFAULT NULL

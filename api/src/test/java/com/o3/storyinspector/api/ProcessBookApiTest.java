@@ -34,12 +34,12 @@ class ProcessBookApiTest {
 
     private static final String EXPECTED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
-            "    <Chapter title=\"Chapter 1: A Startling Start.\">\n" +
+            "    <Chapter id=\"1\" title=\"Chapter 1: A Startling Start.\">\n" +
             "        <Block>\n" +
             "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author.</Body>\n" +
             "        </Block>\n" +
             "    </Chapter>\n" +
-            "    <Chapter title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
+            "    <Chapter id=\"2\" title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
             "        <Block>\n" +
             "            <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>\n" +
             "        </Block>\n" +
@@ -48,7 +48,7 @@ class ProcessBookApiTest {
 
     private static final String EXPECTED_ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
-            "    <Chapter title=\"Chapter 1: A Startling Start.\">\n" +
+            "    <Chapter id=\"1\" title=\"Chapter 1: A Startling Start.\">\n" +
             "        <Metadata wordCount=\"15\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +
@@ -64,7 +64,7 @@ class ProcessBookApiTest {
             "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>\n" +
             "        </Block>\n" +
             "    </Chapter>\n" +
-            "    <Chapter title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
+            "    <Chapter id=\"2\" title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
             "        <Metadata wordCount=\"14\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +

@@ -88,6 +88,12 @@
             <artifactId>rest-assured</artifactId>
             <version>3.3.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-osgi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.skyscreamer</groupId>

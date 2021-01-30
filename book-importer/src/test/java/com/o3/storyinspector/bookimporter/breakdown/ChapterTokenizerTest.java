@@ -32,6 +32,7 @@ class ChapterTokenizerTest {
         final List<Chapter> chapters = ChapterTokenizer.tokenizeFromFile(SAMPLE_BOOK_PATH);
         assertEquals(14, chapters.size());
         assertEquals("_) [2] CHAPTER I.", chapters.get(0).getTitle());
+        assertEquals("1", chapters.get(0).getId());
         assertEquals(EXPECTED_CHAPTER_I_BODY_SAMPLE_BOOK, chapters.get(0).getBlocks().get(0).getBody());
         assertEquals("CHAPTER III.", chapters.get(2).getTitle());
         assertEquals(EXPECTED_CHAPTER_III_BODY_SAMPLE_BOOK, chapters.get(2).getBlocks().get(0).getBody());
@@ -40,6 +41,7 @@ class ChapterTokenizerTest {
     @Test
     void tokenizeFromReader() {
         final List<Chapter> chapters = ChapterTokenizer.tokenizeFromReader(new StringReader(INPUT_PLAINTEXT_BOOK));
+        assertEquals("1", chapters.get(0).getId());
         assertEquals("Chapter 1 - A Startling Start.", chapters.get(0).getTitle());
         assertEquals("This is an example chapter wherein wondrous things would be expected by its eager author.", chapters.get(0).getBlocks().get(0).getBody());
         assertEquals("Chapter 2 Slow Development A new chapter ensue, but action seems to unfold slower than expected.", chapters.get(1).getTitle());

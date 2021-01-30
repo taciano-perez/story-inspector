@@ -23,6 +23,7 @@ public class ChapterTokenizer {
     private static List<Chapter> tokenize(final DocumentPreprocessor dp) {
         final List<Chapter> chapters = new ArrayList<>();
         Chapter currentChapter = null;
+        int uniqueChapterId = 1;
         for (final List<HasWord> sentence : dp) {
             final String sentenceString = SentenceUtils.listToOriginalTextString(sentence)
                     .replaceAll("[\\n\\r]", " ")    // remove new lines
@@ -30,6 +31,7 @@ public class ChapterTokenizer {
                     .trim();                                       // remove leading & trailing spaces
             if (onlyLetters(sentenceString).toLowerCase().startsWith("chapter")) {
                 currentChapter = new Chapter();
+                currentChapter.setId(Integer.toString(uniqueChapterId++));
                 currentChapter.getBlocks().add(new Block());
                 chapters.add(currentChapter);
                 currentChapter.setTitle(sentenceString);

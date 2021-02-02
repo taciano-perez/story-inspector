@@ -1,6 +1,7 @@
 package com.o3.storyinspector.annotation.blocks;
 
 import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
+import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Chapter;
 import org.slf4j.Logger;
@@ -31,6 +32,11 @@ public class BlockSplitter {
             int blockCounter = 1;
             BlockBuilder blockBuilder = new BlockBuilder(chapter, blockCounter++);
             for (final String sentence : sentences) {
+                if (blockBuilder.getWordCount() + WordCountInspector.inspectWordCount(sentence) > wordsPerBlock * 1.5) {
+                    // create blocks smaller than N if the next sentence is too long
+                    newBlocks.add(blockBuilder.build());
+                    blockBuilder = new BlockBuilder(chapter, blockCounter++);
+                }
                 blockBuilder.appendSentence(sentence);
                 if (blockBuilder.getWordCount() >= wordsPerBlock) {
                     newBlocks.add(blockBuilder.build());

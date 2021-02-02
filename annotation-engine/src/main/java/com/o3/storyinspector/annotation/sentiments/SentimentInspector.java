@@ -1,6 +1,7 @@
 package com.o3.storyinspector.annotation.sentiments;
 
 import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
+import com.o3.storyinspector.storydom.Block;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -10,9 +11,33 @@ import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class SentimentInspector {
 
     private static final Logger LOG = LoggerFactory.getLogger(SentimentInspector.class);
+
+    /**
+     * Returns the sentiment score for a block.
+     *
+     * @param block the block
+     * @return the sentiment score
+     */
+    public static double inspectSentimentScore(final Block block, final int wordsPerBlock) {
+        LOG.debug("Inspecting sentiment on block: [" + block.getBody() + "]");
+        final List<String> sentences = StanfordCoreNLPUtils.splitSentences(block.getBody());
+        double accumulatedSentimentScore = 0;
+        int numOfSentences = 0;
+        for (final String sentence : sentences) {
+            accumulatedSentimentScore += SentimentInspector.inspectSentimentScore(sentence);
+            numOfSentences++;
+        }
+        final double blockWeight = Double.parseDouble(block.getWordCount()) / wordsPerBlock;
+        LOG.debug("weight: [" + blockWeight + "]");
+        final double weightedSentimentScore = (accumulatedSentimentScore / numOfSentences) * blockWeight;
+        LOG.debug("weightedScore: [" + weightedSentimentScore + "]");
+        return weightedSentimentScore;
+    }
 
     /**
      * Returns the sentiment score for a text
@@ -20,8 +45,9 @@ public class SentimentInspector {
      * @param text the text
      * @return the sentiment score
      */
-    public static int inspectSentimentScore(final String text) {
+    static int inspectSentimentScore(final String text) {
         try {
+            // from https://stackoverflow.com/questions/28014779/stanford-sentiment-analysis-score-java
             int mainSentiment = 0;
             if (text != null && text.length() > 0) {
                 int longest = 0;
@@ -38,11 +64,11 @@ public class SentimentInspector {
                     }
                 }
             }
-            return mainSentiment;
-        } catch (final Throwable t) {
-            LOG.error("Error while computing sentiment score, will skip scoring this block. Error: " + t.getLocalizedMessage());
-            LOG.debug("Block that resulted in error: [" + text + "]");
-            t.printStackTrace();
+            return mainSentiment - 2; // -2 for range -1...1
+        } catch (final Exception e) {
+            LOG.error("Error while computing sentiment score, will skip scoring this block. Error: " + e.getLocalizedMessage());
+            LOG.error("Block that resulted in error: [" + text + "]");
+            e.printStackTrace();
             return 0;
         }
     }

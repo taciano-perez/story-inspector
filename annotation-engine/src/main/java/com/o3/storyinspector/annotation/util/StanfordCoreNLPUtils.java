@@ -20,16 +20,21 @@ public class StanfordCoreNLPUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(StanfordCoreNLPUtils.class);
 
-    private static final String numberOfCores = "1";
+    private static final String numberOfCores = "2";
 
     private static StanfordCoreNLP pipelineSingleton = null;
 
     private static void init() {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, parse, sentiment, pos, lemma, ner");
         props.setProperty("depparse.nthreads", numberOfCores);
-        props.setProperty("ner.nthreads", numberOfCores);
         props.setProperty("parse.nthreads", numberOfCores);
+        // ner (named entity recognition) properties (see https://stanfordnlp.github.io/CoreNLP/ner.html)
+        // apply to both locations and characters
+        props.setProperty("ner.nthreads", numberOfCores);
+        props.setProperty("ner.applyNumericClassifiers", "false");  // omit money, percent, numbers, time
+        props.setProperty("ner.applyFineGrained", "false");  // don't apply fine-grained tags (e.g. LOCATION –> CITY)
+        props.setProperty("ner.useSUTime", "false");  // omit SUTime
         pipelineSingleton = new StanfordCoreNLP(props);
     }
 

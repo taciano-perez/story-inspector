@@ -1,5 +1,6 @@
 package com.o3.storyinspector.bookimporter.epub;
 
+import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Chapter;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
@@ -34,8 +35,10 @@ public class EpubImporter {
             final Resource res = ref.getResource();
             final String title = ref.getResource().getTitle();
             ch.setTitle(title == null ? "" : title);
+            final Block block = new Block();
+            ch.getBlocks().add(block);
             try {
-                ch.getBlocks().get(0).setBody(new String(res.getData(), Charset.forName(res.getInputEncoding())));
+                block.setBody(new String(res.getData(), Charset.forName(res.getInputEncoding())));
             } catch (IOException e) {
                 e.printStackTrace();
             }

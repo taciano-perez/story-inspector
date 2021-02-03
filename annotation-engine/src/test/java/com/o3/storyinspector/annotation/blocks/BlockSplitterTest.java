@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BlockSplitterTest {
 
-    private static final String SAMPLE_CHAPTER_PATH = BlockSplitterTest.class.getResource("/siddhartha-chapter1.txt").getPath().replaceFirst("/", "");
+    private static final String SAMPLE_CHAPTER_PATH = BlockSplitterTest.class.getResource("/siddhartha-chapter1.txt").getPath();
 
     private static final String EXPECTED_FIRST_BLOCK_BODY = BlockSplitterTest.class.getResource("/siddhartha-block1.txt").getPath().replaceFirst("/", "");
 

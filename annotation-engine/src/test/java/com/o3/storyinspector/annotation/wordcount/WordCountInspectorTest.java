@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WordCountInspectorTest {
 
-    private static final String SAMPLE_CHAPTER_PATH = WordCountInspectorTest.class.getResource("/study-in-scarlet-chapter1.txt").getPath().replaceFirst("/", "");
+    private static final String SAMPLE_CHAPTER_PATH = WordCountInspectorTest.class.getResource("/study-in-scarlet-chapter1.txt").getPath();
 
     @Test
     void inspectWordCount() throws IOException {

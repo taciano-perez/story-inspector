@@ -3,6 +3,7 @@ package com.o3.storyinspector.viztool.sentiment;
 import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.Chapter;
+import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import com.o3.storyinspector.viztool.chart.CustomSymbolAxis;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -16,18 +17,14 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import java.awt.*;
 import java.io.File;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class SentimentCurveChart {
 
     public static final String CHART_FILE_NAME = "SentimentScoreChart.jpg";
-
-    private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
 
     private static final int IMG_WIDTH = 1280;
     private static final int IMG_HEIGHT = 480;
@@ -50,8 +47,11 @@ public class SentimentCurveChart {
         // series 0: story score
         final XYSeries series = new XYSeries("Story");
         final Map<Integer, Double> sentimentScore = getSentimentScore(book);
-        sentimentScore
-                .forEach((blockId, sentiment) -> series.add(blockId, sentiment));
+        for (Map.Entry<Integer, Double> entry : sentimentScore.entrySet()) {
+            Integer blockId = entry.getKey();
+            Double sentiment = entry.getValue();
+            series.add(blockId, sentiment);
+        }
         xAxis.setRange(1, sentimentScore.keySet().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new));
         final XYDataset sentimentDataset = new XYSeriesCollection(series);
         final XYSplineRenderer renderer = createRenderer(Color.BLUE, new BasicStroke(3.0f));
@@ -86,7 +86,7 @@ public class SentimentCurveChart {
         int counter = 1;
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
-                final double sentimentScore = FORMATTER.parse(block.getSentimentScore()).doubleValue();
+                final double sentimentScore = StoryDomUtils.FORMATTER.parse(block.getSentimentScore()).doubleValue();
                 scoresByBlock.put(counter++, sentimentScore);
             }
         }

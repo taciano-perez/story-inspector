@@ -4,6 +4,7 @@ import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.Chapter;
 import com.o3.storyinspector.storydom.io.XmlReader;
+import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import com.o3.storyinspector.viztool.sentiment.EmotionReport;
 import com.o3.storyinspector.viztool.sentiment.SentimentColor;
 import com.o3.storyinspector.viztool.sentiment.SentimentCurveChart;
@@ -11,14 +12,10 @@ import com.o3.storyinspector.viztool.sentiment.SentimentCurveChart;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 import static com.o3.storyinspector.viztool.sentiment.SentimentCurveChart.CHART_FILE_NAME;
 
 public class VizTool {
-
-    private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
 
     public static void storyDomToHtml(final String inputBookPath, final String outputHtmlPath) throws Exception {
         final String fullInputBookPath = new File(inputBookPath).getCanonicalPath();
@@ -65,7 +62,7 @@ public class VizTool {
     }
 
     private static String blockTags(final Block block, final int blockId) throws Exception {
-        final double sentimentScore = FORMATTER.parse(block.getSentimentScore()).doubleValue();
+        final double sentimentScore = StoryDomUtils.FORMATTER.parse(block.getSentimentScore()).doubleValue();
 
         return "<span " +
                 "title=\"" + sentimentScore * 100 + "%\"" +

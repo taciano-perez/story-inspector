@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
 import java.io.StringReader;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/charts")
@@ -29,8 +27,6 @@ import java.util.Locale;
 public class ChartApi {
 
     final Logger logger = LoggerFactory.getLogger(ChartApi.class);
-
-    private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
 
     @Autowired
     private JdbcTemplate db;
@@ -80,7 +76,7 @@ public class ChartApi {
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
                 counter++;
-                final double sentimentScore = FORMATTER.parse(block.getSentimentScore()).doubleValue();
+                final double sentimentScore = StoryDomUtils.FORMATTER.parse(block.getSentimentScore()).doubleValue();
                 labels.add("#" + counter);
                 blocks.add(block.getBody());
                 scores.add(sentimentScore);

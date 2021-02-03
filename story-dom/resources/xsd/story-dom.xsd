@@ -15,7 +15,8 @@
                 <xs:element ref="Metadata"/>
                 <xs:element maxOccurs="unbounded" ref="Block"/>
             </xs:sequence>
-            <xs:attribute name="title" use="required"/>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="title" type="xs:string" use="required"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="Metadata">
@@ -65,6 +66,7 @@
                 <xs:element maxOccurs="unbounded" ref="Emotion"/>
                 <xs:element ref="Body"/>
             </xs:sequence>
+            <xs:attribute type="xs:string" name="id" use="required"/>
             <xs:attribute type="xs:string" name="wordCount" use="optional"/>
             <xs:attribute type="xs:string" name="sentimentScore" use="optional"/>
         </xs:complexType>

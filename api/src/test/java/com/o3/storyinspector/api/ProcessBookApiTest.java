@@ -4,7 +4,6 @@ import com.o3.storyinspector.api.task.AnnotateBookTask;
 import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +33,12 @@ class ProcessBookApiTest {
 
     private static final String EXPECTED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
-            "    <Chapter title=\"Chapter 1: A Startling Start.\">\n" +
+            "    <Chapter id=\"1\" title=\"Chapter 1: A Startling Start.\">\n" +
             "        <Block>\n" +
             "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author.</Body>\n" +
             "        </Block>\n" +
             "    </Chapter>\n" +
-            "    <Chapter title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
+            "    <Chapter id=\"2\" title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
             "        <Block>\n" +
             "            <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>\n" +
             "        </Block>\n" +
@@ -48,12 +47,12 @@ class ProcessBookApiTest {
 
     private static final String EXPECTED_ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
-            "    <Chapter title=\"Chapter 1: A Startling Start.\">\n" +
+            "    <Chapter id=\"1\" title=\"Chapter 1: A Startling Start.\">\n" +
             "        <Metadata wordCount=\"15\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0,06\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -61,15 +60,15 @@ class ProcessBookApiTest {
             "            <Emotion type=\"sadness\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"surprise\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"trust\" score=\"0.0672\"/>\n" +
-            "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author .</Body>\n" +
+            "            <Body>This is an example chapter wherein wondrous things would be expected by its eager author.</Body>\n" +
             "        </Block>\n" +
             "    </Chapter>\n" +
-            "    <Chapter title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
+            "    <Chapter id=\"2\" title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
             "        <Metadata wordCount=\"14\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0,056\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -77,7 +76,7 @@ class ProcessBookApiTest {
             "            <Emotion type=\"sadness\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"surprise\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"trust\" score=\"0.0\"/>\n" +
-            "            <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>\n" +
+            "            <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>\n" +
             "        </Block>\n" +
             "    </Chapter>\n" +
             "</Book>\n";
@@ -116,7 +115,6 @@ class ProcessBookApiTest {
         assertEquals(EXPECTED_STORYDOM, book.getStoryDom());
     }
 
-    @Disabled   // disabled to avoid dependency to emolex scores
     @Test
     void whenProcessBook_AnnotateBook_thenOK() {
         // given
@@ -137,7 +135,6 @@ class ProcessBookApiTest {
         assertTrue(book.isReportAvailable());
     }
 
-    @Disabled   // disabled to avoid dependency to emolex scores
     @Test
     void whenProcessBook_ProcessBook() {
         // given

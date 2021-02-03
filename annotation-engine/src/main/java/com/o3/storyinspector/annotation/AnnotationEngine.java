@@ -1,15 +1,16 @@
 package com.o3.storyinspector.annotation;
 
-import com.o3.storyinspector.annotation.characters.CharacterInspector;
+import com.o3.storyinspector.annotation.blocks.BlockSplitter;
 import com.o3.storyinspector.annotation.emotions.EmotionInspector;
-import com.o3.storyinspector.annotation.locations.LocationInspector;
+import com.o3.storyinspector.annotation.locations.NamedEntities;
+import com.o3.storyinspector.annotation.locations.NamedEntitiesInspector;
 import com.o3.storyinspector.annotation.sentiments.SentimentInspector;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
-import com.o3.storyinspector.storydom.Character;
 import com.o3.storyinspector.storydom.*;
 import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.io.XmlReader;
 import com.o3.storyinspector.storydom.io.XmlWriter;
+import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +30,7 @@ public class AnnotationEngine {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationEngine.class);
 
-    private static final int NR_WORDS_PER_BLOCK = 250;
+    public static final int NR_WORDS_PER_BLOCK = 250;
 
     /**
      * Annotates a book from a file in a local directory.
@@ -76,27 +76,27 @@ public class AnnotationEngine {
         }
         long time;
 
-        time = logStart("Chapter: " + chapter.getTitle() + " . COUNTING WORDS...");
+        time = logStart("Chapter: [" + chapter.getTitle() + "]. COUNTING WORDS...");
         countWords(chapter);
         logEnd(time);
 
-        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING SENTIMENTS...");
+        time = logStart("Chapter: [" + chapter.getTitle() + "]. BREAKING DOWN BLOCKS...");
+        breakDownBlocks(chapter);
+        logEnd(time);
+
+        time = logStart("Chapter: [" + chapter.getTitle() + "]. INSPECTING SENTIMENTS...");
         inspectSentiments(chapter);
         logEnd(time);
 
-        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING EMOTIONS...");
+        time = logStart("Chapter: [" + chapter.getTitle() + "]. INSPECTING EMOTIONS...");
         inspectEmotions(chapter);
         logEnd(time);
 
-        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING CHARACTERS...");
-        inspectCharacters(chapter);
+        time = logStart("Chapter: [" + chapter.getTitle() + "]. INSPECTING NAMED ENTITIES...");
+        inspectNamedEntities(chapter);
         logEnd(time);
 
-        time = logStart("Chapter: " + chapter.getTitle() + " . INSPECTING LOCATIONS...");
-        inspectLocations(chapter);
-        logEnd(time);
-
-        LOG.info("Chapter: " + chapter.getTitle() + " INSPECTION COMPLETE.");
+        LOG.info("Chapter: [" + chapter.getTitle() + "] INSPECTION COMPLETE.");
     }
 
     private static long logStart() {
@@ -113,47 +113,45 @@ public class AnnotationEngine {
         LOG.debug("Time elapsed: " + ((end - start) / 1000) + " secs.");
     }
 
-    private static void inspectCharacters(final Chapter chapter) {
-        try {
-            final Set<String> characterNames = CharacterInspector.inspectNamedCharacters(getChapterBody(chapter));
-            final Set<Character> characters = characterNames.stream().map(AnnotationEngine::buildCharacter).collect(Collectors.toSet());
-            chapter.getMetadata().getCharacters().getCharacters().addAll(characters);
-        } catch (IOException ioe) {
-            LOG.error("Error while inspecting characters on chapter " + chapter.getTitle() + " .");
-            ioe.printStackTrace(System.err);
-        }
-    }
-
-    private static Character buildCharacter(final String name) {
-        final Character character = new Character();
-        character.setName(name);
-        return character;
-    }
-
-    private static void inspectLocations(final Chapter chapter) {
-        try {
-            Set<Location> locations = LocationInspector.inspectNamedLocations(getChapterBody(chapter));
-            chapter.getMetadata().getLocations().getLocations().addAll(locations);
-        } catch (IOException ioe) {
-            LOG.error("Error while inspecting locations on chapter " + chapter.getTitle() + " .");
-            ioe.printStackTrace(System.err);
-        }
-    }
-
-    private static void inspectSentiments(final Chapter chapter) {
-        final List<Block> newBlocks = SentimentInspector.inspectSentimentScore(chapter, NR_WORDS_PER_BLOCK);
+    private static void breakDownBlocks(final Chapter chapter) {
+        final List<Block> newBlocks = BlockSplitter.splitChapter(chapter, NR_WORDS_PER_BLOCK);
         chapter.getBlocks().clear();
         chapter.getBlocks().addAll(newBlocks);
+    }
+
+    private static void inspectNamedEntities(final Chapter chapter) {
+        try {
+            final NamedEntities namedEntities = NamedEntitiesInspector.inspectNamedEntities(getChapterBody(chapter));
+            chapter.getMetadata().getLocations().getLocations().addAll(namedEntities.getLocations());
+            chapter.getMetadata().getCharacters().getCharacters().addAll(namedEntities.getCharacters());
+        } catch (IOException ioe) {
+            LOG.error("Error while inspecting named entities on chapter " + chapter.getTitle() + " .");
+            ioe.printStackTrace(System.err);
+        }
+    }
+
+    static void inspectSentiments(final Chapter chapter) {
+        for (final Block block : chapter.getBlocks()) {
+            block.setSentimentScore(StoryDomUtils.FORMATTER.format(SentimentInspector.inspectSentimentScore(block, NR_WORDS_PER_BLOCK)));
+        }
     }
 
     private static void inspectEmotions(final Chapter chapter) {
         // assume blocks of NR_WORDS_PER_BLOCK
         for (final Block block : chapter.getBlocks()) {
+            LOG.debug("Inspecting emotion of block [" + block.getBody() + "]");
             for (EmotionType emotion : EmotionType.values()) {
-                final double score = EmotionInspector.inspectEmotionScore(emotion, block.getBody());
+                LOG.debug("Emotion: " + emotion.asString());
                 final Emotion emotionBlock = new Emotion();
                 emotionBlock.setType(emotion.asString());
-                emotionBlock.setScore(BigDecimal.valueOf(score));
+                try {
+                    final double score = EmotionInspector.inspectEmotionScore(emotion, block.getBody());
+                    emotionBlock.setScore(BigDecimal.valueOf(score));
+                } catch (final Throwable t) {
+                    LOG.error("Ignoring error: " + t.getLocalizedMessage());
+                    t.printStackTrace();
+                    emotionBlock.setScore(BigDecimal.ZERO);
+                }
                 block.getEmotions().add(emotionBlock);
             }
         }

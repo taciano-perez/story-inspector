@@ -4,10 +4,14 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.process.WordToSentenceProcessor;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -16,16 +20,21 @@ public class StanfordCoreNLPUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(StanfordCoreNLPUtils.class);
 
-    private static final String numberOfCores = "1";
+    private static final String numberOfCores = "2";
 
     private static StanfordCoreNLP pipelineSingleton = null;
 
     private static void init() {
-        Properties props = new Properties();
+        final Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, parse, sentiment, pos, lemma, ner");
         props.setProperty("depparse.nthreads", numberOfCores);
-        props.setProperty("ner.nthreads", numberOfCores);
         props.setProperty("parse.nthreads", numberOfCores);
+        // ner (named entity recognition) properties (see https://stanfordnlp.github.io/CoreNLP/ner.html)
+        // apply to both locations and characters
+        props.setProperty("ner.nthreads", numberOfCores);
+        props.setProperty("ner.applyNumericClassifiers", "false");  // omit money, percent, numbers, time
+        props.setProperty("ner.applyFineGrained", "false");  // don't apply fine-grained tags (e.g. LOCATION –> CITY)
+        props.setProperty("ner.useSUTime", "false");  // omit SUTime
         pipelineSingleton = new StanfordCoreNLP(props);
     }
 
@@ -36,12 +45,34 @@ public class StanfordCoreNLPUtils {
         return pipelineSingleton;
     }
 
+    public static List<String> splitSentences(final String inputText) {
+        // Tokenize
+        final List<CoreLabel> tokens = new ArrayList<>();
+        final PTBTokenizer<CoreLabel> tokenizer = new PTBTokenizer<>(new StringReader(inputText),
+                new CoreLabelTokenFactory(), "invertible=true,tokenizeNLs=true");
+        while (tokenizer.hasNext()) {
+            tokens.add(tokenizer.next());
+        }
+        // Split sentences from tokens
+        final List<List<CoreLabel>> sentences = new WordToSentenceProcessor<CoreLabel>().process(tokens);
+        // Join back together
+        int end;
+        int start = 0;
+        final List<String> sentenceList = new ArrayList<>();
+        for (List<CoreLabel> sentence : sentences) {
+            end = sentence.get(sentence.size() - 1).endPosition();
+            sentenceList.add(inputText.substring(start, end).trim());
+            start = end;
+        }
+        return sentenceList;
+    }
+
     public static List<NamedEntityToken> extractNamedEntities(String text) {
         final StanfordCoreNLP pipeline = StanfordCoreNLPUtils.getPipelineInstance();
 
         final List<NamedEntityToken> tokens = new ArrayList<>();
 
-        // code below copied from https://www.informit.com/articles/article.aspx?p=2265404
+        // code below from https://www.informit.com/articles/article.aspx?p=2265404
         // run all Annotators on the passed-in text
         final Annotation document = new Annotation(text);
         pipeline.annotate(document);

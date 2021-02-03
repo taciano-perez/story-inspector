@@ -1,4 +1,4 @@
-package com.o3.storyinspector.annotation.util;
+package com.o3.storyinspector.bookimporter.util;
 
 import java.io.File;
 import java.io.IOException;

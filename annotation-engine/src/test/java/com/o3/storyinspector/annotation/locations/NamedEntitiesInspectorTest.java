@@ -1,16 +1,23 @@
-package com.o3.storyinspector.annotation.characters;
+package com.o3.storyinspector.annotation.locations;
 
+import com.o3.storyinspector.annotation.util.FileUtils;
+import com.o3.storyinspector.storydom.Character;
+import com.o3.storyinspector.storydom.Location;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CharacterInspectorTest {
+class NamedEntitiesInspectorTest {
 
-    private static final String sampleChapter = "\n" +
+    private static final String SAMPLE_CHAPTER_PATH = NamedEntitiesInspectorTest.class.getResource("/study-in-scarlet-chapter1.txt").getPath();
+
+    private static final String LARGE_SENTENCE = "He saw the face of a fish, a carp, with an infinitely painfully opened mouth, the face of a dying fish, with fading eyes--he saw the face of a new-born child, red and full of wrinkles, distorted from crying--he saw the face of a murderer, he saw him plunging a knife into the body of another person--he saw, in the same second, this criminal in bondage, kneeling and his head being chopped off by the executioner with one blow of his sword--he saw the bodies of men and women, naked in positions and cramps of frenzied love--he saw corpses stretched out, motionless, cold, void-- he saw the heads of animals, of boars, of crocodiles, of elephants, of bulls, of birds--he saw gods, saw Krishna, saw Agni--he saw all of these figures and faces in a thousand relationships with one another, each one helping the other, loving it, hating it, destroying it, giving re-birth to it, each one was a will to die, a passionately painful confession of transitoriness, and yet none of them died, each one only transformed, was always re-born, received evermore a new face, without any time having passed between the one and the other face--and all of these figures and faces rested, flowed, generated themselves, floated along and merged with each other, and they were all constantly covered by something thin, without individuality of its own, but yet existing, like a thin glass or ice, like a transparent skin, a shell or mold or mask of water, and this mask was smiling, and this mask was Siddhartha's smiling face, which he, Govinda, in this very same moment touched with his lips.";
+
+    private static final String SAMPLE_CHAPTER_CHARACTERS = "\n" +
             "The address at Seestrasse 228 was a mansion, indeed; the sunny landscape wasn't the only reason Küsnacht was called Zürich's 'Goldcoast.'A wooden gate separated the street from the front garden, where a straight path led to the main door, surrounded by an orderly row of dark-green box trees. I opened the fence, and a tall man in gardener's attire emerged from the bushes, with a thick leather apron and matching gloves.\n" +
             "\"Good morning. I'm inspector Hektor Teufel, from the Cantonal Police. Someone called the station informing a body was found in the property.\"\n" +
             "\"Teufel--devil, huh? That's an interesting surname. Quite a coincidence, indeed. Perhaps it takes a devil to catch a devil.\"\n" +
@@ -63,14 +70,54 @@ class CharacterInspectorTest {
             "Then he turned away and disappeared into the house. I stood there, expecting the forensic officers to take the body away.\n";
 
     @Test
-    void inspectNamedCharacters() throws Exception {
+    void inspectNamedLocations() throws Exception {
         // given
-        final Set<String> expectedCharacters = new HashSet<>(Arrays.asList("Teufel", "Emma Rauschenbach - Jung", "Zürich", "Jung", "Küsnacht", "Carl Gustav Jung", "Franz"));
+        final String sampleChapter = FileUtils.readStringFromUri(SAMPLE_CHAPTER_PATH);
+        final SortedSet<String> sortedExpectedLocations = new TreeSet<>(
+                Arrays.asList("LOCATION: Afghanistan", "LOCATION: Baker Street", "LOCATION: Berkshires", "LOCATION: Bombay",
+                        "LOCATION: Bradford", "LOCATION: Candahar", "LOCATION: England", "LOCATION: Frankfort",
+                        "LOCATION: Holborn", "LOCATION: India", "LOCATION: London", "LOCATION: Maiwand", "LOCATION: Netley",
+                        "LOCATION: New Orleans", "LOCATION: Northumberland Fusiliers", "LOCATION: Peshawar",
+                        "LOCATION: Portsmouth", "LOCATION: Stamford")
+        );
 
         // when
-        final Set<String> namedCharacters = CharacterInspector.inspectNamedCharacters(sampleChapter);
+        final NamedEntities namedEntities = NamedEntitiesInspector.inspectNamedEntities(sampleChapter);
+        final Set<Location> locations = namedEntities.getLocations();
+        final SortedSet<String> sortedNamedLocations = locations.stream()
+                .map(l -> l.getType() + ": " + l.getName()).collect(Collectors.toCollection(TreeSet::new));
 
         // then
-        assertEquals(expectedCharacters, namedCharacters);
+        assertEquals(sortedExpectedLocations, sortedNamedLocations);
+    }
+
+    @Test
+    @Disabled
+        // takes a long time to execute and requires 8GB mem heap
+    void inspectNamedLocations_withLargeSentence() throws Exception {
+        // given
+        final HashSet<Location> emptySet = new HashSet<>();
+
+        // when
+        final NamedEntities namedEntities = NamedEntitiesInspector.inspectNamedEntities(LARGE_SENTENCE);
+        final Set<Location> locations = namedEntities.getLocations();
+
+        // then
+        assertEquals(emptySet, locations);
+    }
+
+    @Test
+    void inspectNamedCharacters() throws Exception {
+        // given
+        final Set<String> expectedCharacters = new HashSet<>(Arrays.asList("Carl Gustav Jung", "Emma Rauschenbach - Jung", "Franz", "Hektor Teufel", "Jung", "Küsnacht", "Teufel", "Zürich"));
+
+        // when
+        final NamedEntities namedEntities = NamedEntitiesInspector.inspectNamedEntities(SAMPLE_CHAPTER_CHARACTERS);
+        final Set<Character> namedCharacters = namedEntities.getCharacters();
+        final SortedSet<String> sortedOutputCharacters = namedCharacters.stream()
+                .map(Character::getName).collect(Collectors.toCollection(TreeSet::new));
+
+        // then
+        assertEquals(expectedCharacters, sortedOutputCharacters);
     }
 }

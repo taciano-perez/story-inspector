@@ -6,7 +6,6 @@ import com.o3.storyinspector.storydom.Location;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,7 +72,7 @@ class NamedEntitiesInspectorTest {
     @Test
     void inspectNamedLocations() throws Exception {
         // given
-        final String sampleChapter = FileUtils.readString(Paths.get(SAMPLE_CHAPTER_PATH));
+        final String sampleChapter = FileUtils.readStringFromUri(SAMPLE_CHAPTER_PATH);
         final SortedSet<String> sortedExpectedLocations = new TreeSet<>(
                 Arrays.asList("LOCATION: Afghanistan", "LOCATION: Baker Street", "LOCATION: Berkshires", "LOCATION: Bombay",
                         "LOCATION: Bradford", "LOCATION: Candahar", "LOCATION: England", "LOCATION: Frankfort",

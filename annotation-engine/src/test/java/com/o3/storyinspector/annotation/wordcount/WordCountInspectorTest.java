@@ -4,7 +4,6 @@ import com.o3.storyinspector.annotation.util.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +14,7 @@ class WordCountInspectorTest {
     @Test
     void inspectWordCount() throws IOException {
         // given
-        final String sampleChapter = FileUtils.readString(Paths.get(SAMPLE_CHAPTER_PATH));
+        final String sampleChapter = FileUtils.readStringFromUri(SAMPLE_CHAPTER_PATH);
         final int expectedWordCount = 2766;
 
         // when

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -66,7 +65,7 @@ class AnnotationEngineTest {
             "    </Chapter>\n" +
             "</Book>\n";
 
-    private static final String SAMPLE_CHAPTER_PATH = AnnotationEngineTest.class.getResource("/study-in-scarlet-chapter1.txt").getPath().replaceFirst("/", "");
+    private static final String SAMPLE_CHAPTER_PATH = AnnotationEngineTest.class.getResource("/study-in-scarlet-chapter1.txt").getPath();
 
     @Test
     public void testAnnotateBook() throws JAXBException {
@@ -78,7 +77,7 @@ class AnnotationEngineTest {
     @Test
     void inspectChapterSentimentScore() throws IOException {
         // given
-        final Chapter sampleChapter = createSampleChapter(FileUtils.readString(Paths.get(SAMPLE_CHAPTER_PATH)), "2776");
+        final Chapter sampleChapter = createSampleChapter(FileUtils.readStringFromUri(SAMPLE_CHAPTER_PATH), "2776");
         final String expectedSentiment = "-0,395"; //-0.3945583756345178
 
         // when
@@ -98,6 +97,5 @@ class AnnotationEngineTest {
         sampleChapter.getBlocks().get(0).setWordCount(wordCount);
         return sampleChapter;
     }
-
 
 }

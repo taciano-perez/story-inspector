@@ -7,7 +7,6 @@ import com.o3.storyinspector.storydom.Chapter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +23,7 @@ class BlockSplitterTest {
     void splitChapter() throws IOException {
         // given
         final Block inputBlock = new Block();
-        inputBlock.setBody(FileUtils.readString(Paths.get(SAMPLE_CHAPTER_PATH)));
+        inputBlock.setBody(FileUtils.readStringFromUri(SAMPLE_CHAPTER_PATH));
         final Chapter inputChapter = new Chapter();
         inputChapter.setId("1");
         inputChapter.getBlocks().add(inputBlock);
@@ -36,7 +35,7 @@ class BlockSplitterTest {
         assertEquals(11, outputBlocks.size());
         assertEquals("277", outputBlocks.get(0).getWordCount());
         assertEquals("1#1", outputBlocks.get(0).getId());
-        assertEquals(FileUtils.readString(Paths.get(EXPECTED_FIRST_BLOCK_BODY)).trim(), outputBlocks.get(0).getBody());
+        assertEquals(FileUtils.readStringFromUri(EXPECTED_FIRST_BLOCK_BODY).trim(), outputBlocks.get(0).getBody());
     }
 
     @Test

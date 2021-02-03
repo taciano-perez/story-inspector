@@ -37,6 +37,7 @@ class PlainTextImporterTest {
 
         // when
         final Book importedBook = PlainTextImporter.importBookFromFile(FileUtils.getPathFromUri(SAMPLE_BOOK_PATH));
+        importedBook.setTitle("Book Title");
         XmlWriter.exportBookToXmlFile(importedBook, new File(OUTPUT_XML_PATH));
 
         // then

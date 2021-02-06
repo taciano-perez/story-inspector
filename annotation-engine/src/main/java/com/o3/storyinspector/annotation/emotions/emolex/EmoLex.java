@@ -1,12 +1,10 @@
 package com.o3.storyinspector.annotation.emotions.emolex;
 
-import com.o3.storyinspector.annotation.util.FileUtils;
 import com.o3.storyinspector.storydom.constants.EmotionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,9 +50,7 @@ public class EmoLex {
     private void initializeLexiconsPerEmotion() {
         SCORES_FILENAME_PER_EMOTION.forEach((emotionType, filename) -> {
             try {
-                final String filePath = FileUtils.getPathFromUri(EmoLex.class.getResource("/" + filename).getPath());
-                final FileInputStream fstream = new FileInputStream(filePath);
-                final BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+                final BufferedReader br = new BufferedReader(new InputStreamReader(EmoLex.class.getResourceAsStream("/" + filename)));
                 String lineJustFetched;
                 while ((lineJustFetched = br.readLine()) != null) {
                     final String[] tokens = lineJustFetched.split("\t");
@@ -64,7 +60,7 @@ public class EmoLex {
                 }
             } catch (Exception e) {
                 // handle exception
-                LOG.error("Exception while reading EmoLex file: " + e.getLocalizedMessage());
+                LOG.error("Exception while reading EmoLex lexicon: " + e.getLocalizedMessage());
                 e.printStackTrace(System.err);
             }
         });

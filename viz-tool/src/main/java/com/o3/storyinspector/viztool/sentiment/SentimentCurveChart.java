@@ -86,7 +86,7 @@ public class SentimentCurveChart {
         int counter = 1;
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
-                final double sentimentScore = StoryDomUtils.FORMATTER.parse(block.getSentimentScore()).doubleValue();
+                final double sentimentScore = StoryDomUtils.getFormatter().parse(block.getSentimentScore()).doubleValue();
                 scoresByBlock.put(counter++, sentimentScore);
             }
         }

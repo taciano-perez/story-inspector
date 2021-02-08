@@ -6,13 +6,18 @@ import com.o3.storyinspector.storydom.Chapter;
 import com.o3.storyinspector.storydom.Emotion;
 import com.o3.storyinspector.storydom.constants.EmotionType;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
 public final class StoryDomUtils {
 
-    public static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.FRANCE);
+    public static NumberFormat getFormatter() {
+        final DecimalFormat numberFormat = (DecimalFormat) DecimalFormat.getInstance(Locale.FRANCE);
+        numberFormat.applyLocalizedPattern("0,0000");
+        return numberFormat;
+    }
 
     /**
      * Returns the max emotion score of a book (among all emotions).

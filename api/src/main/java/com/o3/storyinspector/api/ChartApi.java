@@ -76,7 +76,7 @@ public class ChartApi {
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
                 counter++;
-                final double sentimentScore = StoryDomUtils.FORMATTER.parse(block.getSentimentScore()).doubleValue();
+                final double sentimentScore = StoryDomUtils.getFormatter().parse(block.getSentimentScore()).doubleValue();
                 labels.add("#" + counter);
                 blocks.add(block.getBody());
                 scores.add(sentimentScore);

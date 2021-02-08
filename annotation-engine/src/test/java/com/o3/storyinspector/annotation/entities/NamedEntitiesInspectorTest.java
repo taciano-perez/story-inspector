@@ -1,4 +1,4 @@
-package com.o3.storyinspector.annotation.locations;
+package com.o3.storyinspector.annotation.entities;
 
 import com.o3.storyinspector.annotation.util.FileUtils;
 import com.o3.storyinspector.storydom.Character;

@@ -2,8 +2,8 @@ package com.o3.storyinspector.annotation;
 
 import com.o3.storyinspector.annotation.blocks.BlockSplitter;
 import com.o3.storyinspector.annotation.emotions.EmotionInspector;
-import com.o3.storyinspector.annotation.locations.NamedEntities;
-import com.o3.storyinspector.annotation.locations.NamedEntitiesInspector;
+import com.o3.storyinspector.annotation.entities.NamedEntities;
+import com.o3.storyinspector.annotation.entities.NamedEntitiesInspector;
 import com.o3.storyinspector.annotation.sentiments.SentimentInspector;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.*;
@@ -31,6 +31,8 @@ public class AnnotationEngine {
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationEngine.class);
 
     public static final int NR_WORDS_PER_BLOCK = 250;
+
+    public static final int MAX_SENTENCE_LENGTH = 250;  // in number of words
 
     /**
      * Annotates a book from a file in a local directory.
@@ -121,7 +123,7 @@ public class AnnotationEngine {
 
     private static void inspectNamedEntities(final Chapter chapter) {
         try {
-            final NamedEntities namedEntities = NamedEntitiesInspector.inspectNamedEntities(getChapterBody(chapter));
+            final NamedEntities namedEntities = NamedEntitiesInspector.inspectNamedEntities(chapter);
             chapter.getMetadata().getLocations().getLocations().addAll(namedEntities.getLocations());
             chapter.getMetadata().getCharacters().getCharacters().addAll(namedEntities.getCharacters());
         } catch (IOException ioe) {
@@ -132,7 +134,7 @@ public class AnnotationEngine {
 
     static void inspectSentiments(final Chapter chapter) {
         for (final Block block : chapter.getBlocks()) {
-            block.setSentimentScore(StoryDomUtils.FORMATTER.format(SentimentInspector.inspectSentimentScore(block, NR_WORDS_PER_BLOCK)));
+            block.setSentimentScore(StoryDomUtils.getFormatter().format(SentimentInspector.inspectSentimentScore(block, NR_WORDS_PER_BLOCK)));
         }
     }
 

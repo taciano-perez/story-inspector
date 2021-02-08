@@ -1,6 +1,7 @@
 package com.o3.storyinspector.annotation.sentiments;
 
 import com.o3.storyinspector.storydom.Block;
+import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,12 +59,15 @@ class SentimentInspectorTest {
         // given
         final Block block = createBlock(BLOCK1, "252");
         final double expectedSentiment = -0.3024;
+        final String expectedFormatttedSentimentScore = "-0,3024";
 
         // when
         final double sentimentScore = SentimentInspector.inspectSentimentScore(block, 250);
+        final String formattedSentimentScore = StoryDomUtils.getFormatter().format(sentimentScore);
 
         // then
         assertEquals(expectedSentiment, sentimentScore);
+        assertEquals(expectedFormatttedSentimentScore, formattedSentimentScore);
     }
 
     @Test

@@ -1,6 +1,8 @@
 package com.o3.storyinspector.annotation.sentiments;
 
+import com.o3.storyinspector.annotation.AnnotationEngine;
 import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
+import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.Block;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
@@ -29,7 +31,13 @@ public class SentimentInspector {
         double accumulatedSentimentScore = 0;
         int numOfSentences = 0;
         for (final String sentence : sentences) {
-            accumulatedSentimentScore += SentimentInspector.inspectSentimentScore(sentence);
+            final int wordCount = WordCountInspector.inspectWordCount(sentence);
+            if (wordCount <= AnnotationEngine.MAX_SENTENCE_LENGTH) {
+                accumulatedSentimentScore += SentimentInspector.inspectSentimentScore(sentence);
+            } else {
+                // score = 0
+                LOG.warn("Sentence too long (" + wordCount + " words), skipping sentiment analysis.");
+            }
             numOfSentences++;
         }
         final double blockWeight = Double.parseDouble(block.getWordCount()) / wordsPerBlock;

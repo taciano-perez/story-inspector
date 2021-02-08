@@ -1,17 +1,24 @@
-package com.o3.storyinspector.annotation.locations;
+package com.o3.storyinspector.annotation.entities;
 
+import com.o3.storyinspector.annotation.AnnotationEngine;
 import com.o3.storyinspector.annotation.util.NamedEntityToken;
 import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
+import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
+import com.o3.storyinspector.storydom.Block;
+import com.o3.storyinspector.storydom.Chapter;
 import com.o3.storyinspector.storydom.Character;
 import com.o3.storyinspector.storydom.Location;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.tokenize.SimpleTokenizer;
 import opennlp.tools.util.Span;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +28,33 @@ import static edu.stanford.nlp.ie.KBPRelationExtractor.NERTag.*;
 public class NamedEntitiesInspector {
 
     private static boolean USE_STANFORD_CORE = true;
+
+    private static final Logger LOG = LoggerFactory.getLogger(NamedEntitiesInspector.class);
+
+    /**
+     * Returns the entities in a chapter.
+     *
+     * @param chapter the chapter
+     * @return the named entities
+     */
+    public static NamedEntities inspectNamedEntities(final Chapter chapter) throws IOException {
+        final NamedEntities namedEntities = new NamedEntities(new HashSet<>(), new HashSet<>());
+        for (final Block block : chapter.getBlocks()) {
+            LOG.debug("Inspecting NER on block: [" + block.getBody() + "]");
+            final List<String> sentences = StanfordCoreNLPUtils.splitSentences(block.getBody());
+            for (final String sentence : sentences) {
+                final int wordCount = WordCountInspector.inspectWordCount(sentence);
+                if (wordCount > AnnotationEngine.MAX_SENTENCE_LENGTH) {
+                    LOG.warn("Sentence too long (" + wordCount + " words), skipping NER extraction.");
+                } else {
+                    final NamedEntities blockNamedEntities = inspectNamedEntities(sentence);
+                    namedEntities.addAll(blockNamedEntities);
+                }
+            }
+        }
+        return namedEntities;
+    }
+
 
     public static NamedEntities inspectNamedEntities(String text) throws IOException {
         if (USE_STANFORD_CORE) {

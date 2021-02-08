@@ -36,7 +36,7 @@ class AnnotationEngineTest {
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0,06\">\n" +
+            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0,0600\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -52,7 +52,7 @@ class AnnotationEngineTest {
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0,056\">\n" +
+            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0,0560\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -78,7 +78,7 @@ class AnnotationEngineTest {
     void inspectChapterSentimentScore() throws IOException {
         // given
         final Chapter sampleChapter = createSampleChapter(FileUtils.readStringFromUri(SAMPLE_CHAPTER_PATH), "2776");
-        final String expectedSentiment = "-0,395"; //-0.3945583756345178
+        final String expectedSentiment = "-0,3946"; //-0.3945583756345178
 
         // when
         AnnotationEngine.inspectSentiments(sampleChapter);

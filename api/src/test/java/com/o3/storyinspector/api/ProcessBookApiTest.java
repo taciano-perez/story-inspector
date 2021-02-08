@@ -52,7 +52,7 @@ class ProcessBookApiTest {
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0,06\">\n" +
+            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0,0600\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -68,7 +68,7 @@ class ProcessBookApiTest {
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0,056\">\n" +
+            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0,0560\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -131,7 +131,7 @@ class ProcessBookApiTest {
 
         // then
         final BookDAO book = BookDAO.findByBookId(bookId, db);
-        assertEquals(EXPECTED_ANNOTATED_STORYDOM, book.getAnnotatedStoryDom());
+        assertEquals(EXPECTED_ANNOTATED_STORYDOM.strip(), book.getAnnotatedStoryDom().strip());
         assertTrue(book.isReportAvailable());
     }
 

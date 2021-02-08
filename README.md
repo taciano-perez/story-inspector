@@ -18,4 +18,7 @@ Story Inspector consists of the following components:
   
 Note: Story Inspector is a work in progress, and not fully functional yet.
 
+Limitations
+- Story Inspector cannot analyze sentiment nor extract named entities (locations, characters) from sentences larges than 250 words.
+
 \* [Logo image designed by macrovector / Freepik](http://www.freepik.com)

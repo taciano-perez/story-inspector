@@ -62,7 +62,7 @@ public class VizTool {
     }
 
     private static String blockTags(final Block block, final int blockId) throws Exception {
-        final double sentimentScore = StoryDomUtils.FORMATTER.parse(block.getSentimentScore()).doubleValue();
+        final double sentimentScore = StoryDomUtils.getFormatter().parse(block.getSentimentScore()).doubleValue();
 
         return "<span " +
                 "title=\"" + sentimentScore * 100 + "%\"" +

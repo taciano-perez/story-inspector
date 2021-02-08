@@ -41,6 +41,7 @@ spring:
     trace: true
     web-allow-others: true
   jpa:
+    generate-ddl: false
     properties:
       hibernate:
         show_sql: true

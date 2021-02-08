@@ -1,4 +1,4 @@
-package com.o3.storyinspector.annotation.locations;
+package com.o3.storyinspector.annotation.entities;
 
 import com.o3.storyinspector.storydom.Character;
 import com.o3.storyinspector.storydom.Location;
@@ -23,5 +23,10 @@ public class NamedEntities {
 
     public Set<Character> getCharacters() {
         return characters;
+    }
+
+    public void addAll(final NamedEntities other) {
+        this.getCharacters().addAll(other.getCharacters());
+        this.getLocations().addAll(other.getLocations());
     }
 }

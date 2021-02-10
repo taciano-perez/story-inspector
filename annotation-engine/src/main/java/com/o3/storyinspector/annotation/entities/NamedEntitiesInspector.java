@@ -6,8 +6,6 @@ import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Chapter;
-import com.o3.storyinspector.storydom.Character;
-import com.o3.storyinspector.storydom.Location;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
 import opennlp.tools.tokenize.SimpleTokenizer;
@@ -55,8 +53,7 @@ public class NamedEntitiesInspector {
         return namedEntities;
     }
 
-
-    public static NamedEntities inspectNamedEntities(String text) throws IOException {
+    static NamedEntities inspectNamedEntities(String text) throws IOException {
         if (USE_STANFORD_CORE) {
             return inspectNamedEntitiesUsingStanfordCoreNLP(text);
         } else {
@@ -67,7 +64,7 @@ public class NamedEntitiesInspector {
     private static NamedEntities inspectNamedEntitiesUsingStanfordCoreNLP(String text) {
         final List<NamedEntityToken> namedEntityTokens = StanfordCoreNLPUtils.extractNamedEntities(text);
 
-        final Set<Location> locations = namedEntityTokens.stream()
+        final Set<NELocation> locations = namedEntityTokens.stream()
                 .filter(token -> token.getType().equals(LOCATION.name) ||
                         token.getType().equals(COUNTRY.name) ||
                         token.getType().equals(CITY.name))
@@ -75,21 +72,19 @@ public class NamedEntitiesInspector {
                 .collect(Collectors.toSet());
 
         final Set<String> characterNames = namedEntityTokens.stream()
-                .filter(token -> token.getType().equals(PERSON.name))
+                .filter(token -> token.getType().equals(PERSON.name) ||
+                        token.getType().equals(ORGANIZATION.name))
                 .map(NamedEntityToken::getName)
                 .collect(Collectors.toSet());
 
         return new NamedEntities(locations, buildCharacters(characterNames));
     }
 
-    private static Location buildLocation(final String name, final String type) {
-        final Location location = new Location();
-        location.setName(name);
-        location.setType(type);
-        return location;
+    private static NELocation buildLocation(final String name, final String type) {
+        return new NELocation(name, type);
     }
 
-    private static Set<Location> inspectLocationsUsingOpenNLP(String text) throws IOException {
+    private static Set<NELocation> inspectLocationsUsingOpenNLP(String text) throws IOException {
         // tokenize text
         final SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
         final String[] tokens = tokenizer.tokenize(text);
@@ -106,7 +101,7 @@ public class NamedEntitiesInspector {
                 .collect(Collectors.toSet());
     }
 
-    private static Set<Character> inspectCharactersUsingOpenNLP(String text) throws IOException {
+    private static Set<NECharacter> inspectCharactersUsingOpenNLP(String text) throws IOException {
         // tokenize text
         final SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
         final String[] tokens = tokenizer.tokenize(text);
@@ -123,14 +118,14 @@ public class NamedEntitiesInspector {
                 .collect(Collectors.toSet()));
     }
 
-    private static Set<Character> buildCharacters(final Set<String> characterNames) {
-        return characterNames.stream().map(NamedEntitiesInspector::buildCharacter).collect(Collectors.toSet());
+    private static Set<NECharacter> buildCharacters(final Set<String> characterNames) {
+        return characterNames.stream()
+                .map(NamedEntitiesInspector::buildCharacter)
+                .collect(Collectors.toSet());
     }
 
-    private static Character buildCharacter(final String name) {
-        final Character character = new Character();
-        character.setName(name);
-        return character;
+    private static NECharacter buildCharacter(final String name) {
+        return new NECharacter(name);
     }
 
 }

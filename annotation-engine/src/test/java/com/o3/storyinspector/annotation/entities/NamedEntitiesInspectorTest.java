@@ -109,7 +109,7 @@ class NamedEntitiesInspectorTest {
     @Test
     void inspectNamedCharacters() throws Exception {
         // given
-        final Set<String> expectedCharacters = new HashSet<>(Arrays.asList("Carl Gustav Jung", "Emma Rauschenbach - Jung", "Franz", "Hektor Teufel", "Jung", "Küsnacht", "Teufel", "Zürich"));
+        final Set<String> expectedCharacters = new HashSet<>(Arrays.asList("Cantonal Police", "Carl Gustav Jung", "Emma Rauschenbach - Jung", "Franz", "Hektor Teufel", "Jung", "Küsnacht", "Teufel", "Zürich"));
 
         // when
         final NamedEntities namedEntities = NamedEntitiesInspector.inspectNamedEntities(SAMPLE_CHAPTER_CHARACTERS);

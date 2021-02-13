@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -22,7 +21,6 @@ import java.util.Optional;
 /**
  * Class with utility functions to handle API endpoints.
  */
-@Component("apiUtils")
 public class ApiUtils {
 
     final static Logger logger = LoggerFactory.getLogger(ApiUtils.class);
@@ -34,7 +32,7 @@ public class ApiUtils {
     public static final String API_PROCESS_BOOK_ENDPOINT = API_ROOT + "/process-book";
 
     @Async
-    public void callAsyncApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
+    public static void callAsyncApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
         final String endpoint = getBaseUrl() + endpointPath;
         logger.trace("Calling async endpoint " + endpoint + " with parameter " + paramName + "=" + paramValue);
         final HttpHeaders headers = new HttpHeaders();

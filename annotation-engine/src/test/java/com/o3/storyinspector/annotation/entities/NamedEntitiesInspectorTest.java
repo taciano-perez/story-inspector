@@ -40,9 +40,9 @@ class NamedEntitiesInspectorTest {
             "\"Do you know who is the deceased?\"\n" +
             "\"I don't think so. But even if it were someone I knew, it would be impossible to tell, in this disfigured state.\"\n" +
             "\"Have you noticed anything unusual during the night? Seen something, heard something?\"\n" +
-            "\"Not at all.\"\n" +
+            "\"Not at all,\" said Jung.\n" +
             "\"Who else lives in the house?\"\n" +
-            "\"My wife and our five children.\"\n" +
+            "\"My wife and our five children,\" retorted Jung.\n" +
             "\"Did any of them notice anything strange? During the night?\"\n" +
             "\"Franz, my boy, woke in the middle of the night claiming he heard monsters lurking outside. It seems he was right in a certain way, wouldn't you say?\"\n" +
             "\"Can I talk to them?\"\n" +

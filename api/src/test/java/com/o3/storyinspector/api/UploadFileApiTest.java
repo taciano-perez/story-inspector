@@ -1,11 +1,15 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
+import com.o3.storyinspector.api.util.ApiUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -14,6 +18,11 @@ import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequ
 
 import java.util.Random;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,6 +50,12 @@ class UploadFileApiTest {
     @Autowired
     MockMvc mockMvc;
 
+    @MockBean
+    private GoogleId idValidator;
+
+    @MockBean
+    private ApiUtils apiUtils;
+
     @Test
     void testUploadSmallFile() throws Exception {
         // given
@@ -49,6 +64,7 @@ class UploadFileApiTest {
         builder.param("title", "Mock Title")
                 .param("author", "Mock Author")
                 .param("id_token", USER_ID);
+        given(idValidator.retrieveUserInfo(any())).willReturn(new UserInfo(USER_ID, "Test User", "contact@storyinspector.com"));
 
         // when
         mockMvc.perform(builder
@@ -56,7 +72,7 @@ class UploadFileApiTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE + "; boundary=" + BOUNDARY))
                 // then
                 .andExpect(status().isOk());
-
+        verify(apiUtils, times(1)).callAsyncApiWithParameter(eq(ApiUtils.API_PROCESS_BOOK_ENDPOINT), eq("ID"), any());
     }
 
     @Test
@@ -68,6 +84,7 @@ class UploadFileApiTest {
         builder.param("title", "Mock Title")
                 .param("author", "Mock Author")
                 .param("id_token", USER_ID);
+        given(idValidator.retrieveUserInfo(any())).willReturn(new UserInfo("1", "Test User", "contact@storyinspector.com"));
 
         // when
         mockMvc.perform(builder
@@ -75,7 +92,7 @@ class UploadFileApiTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE + "; boundary=" + BOUNDARY))
                 // then
                 .andExpect(status().isOk());
-
+        verify(apiUtils, times(1)).callAsyncApiWithParameter(eq(ApiUtils.API_PROCESS_BOOK_ENDPOINT), eq("ID"), any());
     }
 
     private static byte[] createFileContent(final byte[] data, final String boundary, final String contentType, final String fileName) {

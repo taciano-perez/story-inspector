@@ -127,21 +127,22 @@ public class BookDAO {
         return book;
     }
 
-    public static long saveBook(final JdbcTemplate db, final String userId, final String title, final String author, final String rawInput, final String storyDom, final String annotatedStoryDom, final Timestamp annotationCompleteTime) {
-        final String sql = "INSERT INTO books (user_id, title, author, engine_version, create_time, raw_input, storydom, annotated_storydom, annotation_complete_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static long saveBook(final JdbcTemplate db, final String userId, final String userEmail, final String title, final String author, final String rawInput, final String storyDom, final String annotatedStoryDom, final Timestamp annotationCompleteTime) {
+        final String sql = "INSERT INTO books (user_id, user_email, title, author, engine_version, create_time, raw_input, storydom, annotated_storydom, annotation_complete_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         final KeyHolder holder = new GeneratedKeyHolder();
         db.update(connection -> {
             final PreparedStatement ps = connection.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, userId);
-            ps.setString(2, title);
-            ps.setString(3, author);
-            ps.setInt(4, ProcessBookApi.ENGINE_VERSION);
-            ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-            ps.setClob(6, new StringReader(rawInput));
-            ps.setString(7, storyDom);
-            ps.setString(8, annotatedStoryDom);
-            ps.setTimestamp(9, annotationCompleteTime);
+            ps.setString(2, userEmail);
+            ps.setString(3, title);
+            ps.setString(4, author);
+            ps.setInt(5, ProcessBookApi.ENGINE_VERSION);
+            ps.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            ps.setClob(7, new StringReader(rawInput));
+            ps.setString(8, storyDom);
+            ps.setString(9, annotatedStoryDom);
+            ps.setTimestamp(10, annotationCompleteTime);
             return ps;
         }, holder);
         final Number bookId = holder.getKey();

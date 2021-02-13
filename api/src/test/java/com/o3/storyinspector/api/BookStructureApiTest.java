@@ -79,13 +79,15 @@ class BookStructureApiTest {
 
     private static final String USER_ID = "108700212624021084744";
 
+    private static final String USER_EMAIL = "contact@storyinspector.com";
+
     @Autowired
     private JdbcTemplate db;
 
     @Test
     void testBookStructure() throws JSONException {
         // given
-        final long bookId = BookDAO.saveBook(db, USER_ID, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
+        final long bookId = BookDAO.saveBook(db, USER_ID, USER_EMAIL, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
 
         // when
         final Response response = RestAssured.given()

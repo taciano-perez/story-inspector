@@ -1,5 +1,7 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.api.util.ApiUtils;
 import com.o3.storyinspector.db.BookDAO;
 import org.slf4j.Logger;
@@ -22,6 +24,12 @@ public class UploadFileApi {
     @Autowired
     private JdbcTemplate db;
 
+    @Autowired
+    private GoogleId idValidator;
+
+    @Autowired
+    private ApiUtils apiUtils;
+
     @RequestMapping(value = "/book", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<Object> submit(@RequestParam("file") MultipartFile file,
                                          @RequestParam("title") String title,
@@ -34,12 +42,18 @@ public class UploadFileApi {
         final String content = new String(file.getBytes());
         logger.trace(String.format("CONTENT - %s", content));
 
-        final Long bookId = BookDAO.saveBook(db, idToken, title, author, content, null, null, null);
-        logger.trace(String.format("BOOK ID - %s", bookId));
+        final UserInfo userInfo = idValidator.retrieveUserInfo(idToken);
+        if (userInfo != null) {
+            logger.trace("User name: " + userInfo.getName() + ", email: " + userInfo.getEmail());
+            final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
+            logger.trace(String.format("BOOK ID - %s", bookId));
 
-        ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());
-
-        return ResponseEntity.ok().build();
+            apiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());
+            return ResponseEntity.ok().build();
+        } else {
+            logger.error("Could not upload book, error authenticating user. Title: " + title + ", author:" + author + ", token: " + idToken);
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 
 }

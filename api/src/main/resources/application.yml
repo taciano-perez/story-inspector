@@ -44,6 +44,7 @@ spring:
     generate-ddl: false
     properties:
       hibernate:
+        ddl-auto: none
         show_sql: true
   cloud:
     appId: story-inspector

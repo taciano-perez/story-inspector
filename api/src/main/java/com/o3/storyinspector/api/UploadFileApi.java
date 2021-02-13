@@ -27,9 +27,6 @@ public class UploadFileApi {
     @Autowired
     private GoogleId idValidator;
 
-    @Autowired
-    private ApiUtils apiUtils;
-
     @RequestMapping(value = "/book", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<Object> submit(@RequestParam("file") MultipartFile file,
                                          @RequestParam("title") String title,
@@ -48,7 +45,7 @@ public class UploadFileApi {
             final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
             logger.trace(String.format("BOOK ID - %s", bookId));
 
-            apiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());
+            ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());
             return ResponseEntity.ok().build();
         } else {
             logger.error("Could not upload book, error authenticating user. Title: " + title + ", author:" + author + ", token: " + idToken);

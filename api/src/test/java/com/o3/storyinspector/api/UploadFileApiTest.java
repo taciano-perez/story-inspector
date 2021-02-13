@@ -2,7 +2,6 @@ package com.o3.storyinspector.api;
 
 import com.o3.storyinspector.api.user.GoogleId;
 import com.o3.storyinspector.api.user.UserInfo;
-import com.o3.storyinspector.api.util.ApiUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +18,7 @@ import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequ
 import java.util.Random;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,9 +49,6 @@ class UploadFileApiTest {
     @MockBean
     private GoogleId idValidator;
 
-    @MockBean
-    private ApiUtils apiUtils;
-
     @Test
     void testUploadSmallFile() throws Exception {
         // given
@@ -72,7 +65,6 @@ class UploadFileApiTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE + "; boundary=" + BOUNDARY))
                 // then
                 .andExpect(status().isOk());
-        verify(apiUtils, times(1)).callAsyncApiWithParameter(eq(ApiUtils.API_PROCESS_BOOK_ENDPOINT), eq("ID"), any());
     }
 
     @Test
@@ -92,7 +84,6 @@ class UploadFileApiTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE + "; boundary=" + BOUNDARY))
                 // then
                 .andExpect(status().isOk());
-        verify(apiUtils, times(1)).callAsyncApiWithParameter(eq(ApiUtils.API_PROCESS_BOOK_ENDPOINT), eq("ID"), any());
     }
 
     private static byte[] createFileContent(final byte[] data, final String boundary, final String contentType, final String fileName) {

@@ -10,7 +10,6 @@ import com.o3.storyinspector.storydom.*;
 import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.io.XmlReader;
 import com.o3.storyinspector.storydom.io.XmlWriter;
-import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +133,7 @@ public class AnnotationEngine {
 
     static void inspectSentiments(final Chapter chapter) {
         for (final Block block : chapter.getBlocks()) {
-            block.setSentimentScore(StoryDomUtils.getFormatter().format(SentimentInspector.inspectSentimentScore(block, NR_WORDS_PER_BLOCK)));
+            block.setSentimentScore(BigDecimal.valueOf(SentimentInspector.inspectSentimentScore(block, NR_WORDS_PER_BLOCK)));
         }
     }
 

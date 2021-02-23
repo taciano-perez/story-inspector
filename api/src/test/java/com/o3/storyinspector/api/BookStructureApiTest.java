@@ -30,7 +30,7 @@ class BookStructureApiTest {
             "                <Character name=\"Holmes\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -50,7 +50,7 @@ class BookStructureApiTest {
             "                <Character name=\"Watson\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +

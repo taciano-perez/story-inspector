@@ -2,6 +2,7 @@ package com.o3.storyinspector.api;
 
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.BookStructure;
+import com.o3.storyinspector.domain.Characters;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.io.XmlReader;
 import org.slf4j.Logger;
@@ -13,25 +14,23 @@ import org.springframework.web.bind.annotation.*;
 import java.io.StringReader;
 
 @RestController
-@RequestMapping("/api/bookstructure")
+@RequestMapping("/api/character")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class BookStructureApi {
-
-    final Logger logger = LoggerFactory.getLogger(BookStructureApi.class);
+public class CharacterApi {
+    final Logger logger = LoggerFactory.getLogger(CharacterApi.class);
 
     @Autowired
     private JdbcTemplate db;
 
     @GetMapping("/{bookId}")
-    public BookStructure one(@PathVariable final Long bookId) {
-        logger.trace("BOOK STRUCTURE BOOK ID=[" + bookId + "]");
+    public Characters one(@PathVariable final Long bookId) {
+        logger.trace("CHARACTERS BOOK ID=[" + bookId + "]");
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
-        BookStructure bookStructure;
+        Characters characters;
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
-            book.setAuthor(bookDAO.getAuthor());    // FIXME: parse this at the appropriate spot
-            bookStructure = BookStructure.buildFromBook(book);
+            characters = Characters.buildFromBook(book);
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when building book structure report. Book bookId: " +
                     bookId + "Exception: " + e.getLocalizedMessage();
@@ -39,7 +38,8 @@ public class BookStructureApi {
             return null;
         }
 
-        return bookStructure;
+        return characters;
     }
+
 
 }

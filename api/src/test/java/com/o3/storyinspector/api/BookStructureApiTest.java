@@ -63,19 +63,12 @@ class BookStructureApiTest {
             "    </Chapter>\n" +
             "</Book>\n";
 
-    private final static String EXPECTED_JSON_STRUCTURE = "{\"title\": \"Example Book\",\n" +
-            "\"author\": \"Example Author\",\n" +
-            "\"wordcount\": 32,\n" +
-            "\"chapters\":\n" +
-            "    [{\n" +
-            "             id:\n" +
-            "             1, title:'Chapter 1', wordcount:16, characters: ['Holmes'],locations: ['London']},\n" +
-            "         {\n" +
-            "             id:\n" +
-            "             2, title:'Chapter 2', wordcount:16, characters: ['Watson'],locations: ['Paris']}\n" +
-            "             ]\n" +
-            "         }\n" +
-            "     ]}\n";
+    private final static String EXPECTED_JSON_STRUCTURE =
+            "{\"title\":\"Example Book\",\"author\":\"Example Author\",\"wordcount\":32,\"chapters\":[" +
+            "{\"id\":1,\"title\":\"Chapter 1\",\"wordcount\":16," +
+            "\"dominantEmotions\":[\"ANTICIPATION\",\"TRUST\"],\"characters\":[\"Holmes\"],\"locations\":[\"London\"]}," +
+            "{\"id\":2,\"title\":\"Chapter 2\",\"wordcount\":16," +
+            "\"dominantEmotions\":[\"ANTICIPATION\"],\"characters\":[\"Watson\"],\"locations\":[\"Paris\"]}]}";
 
     private static final String USER_ID = "108700212624021084744";
 
@@ -96,6 +89,7 @@ class BookStructureApiTest {
 
         // then
         final String jsonOutput = response.getBody().print();
-        JSONAssert.assertEquals(EXPECTED_JSON_STRUCTURE, jsonOutput, false);
+        JSONAssert.assertEquals(EXPECTED_JSON_STRUCTURE, jsonOutput, true);
     }
+
 }

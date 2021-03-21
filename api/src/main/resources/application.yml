@@ -24,7 +24,20 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: EMAIL_USERNAME
+    password: EMAIL_PASSWORD
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true
 server:
   port: 8081
 logging:
@@ -55,7 +68,20 @@ spring:
   datasource:
     username: ${GCP_DB_USERNAME}
     password: ${GCP_DB_PASSWORD}
-
+mail:
+  host: smtp.gmail.com
+  port: 587
+  username: ${GCP_EMAIL_USERNAME}
+  password: ${GCP_EMAIL_PASSWORD}
+  properties:
+    mail:
+      smtp:
+        auth: true
+        connectiontimeout: 5000
+        timeout: 5000
+        writetimeout: 5000
+        starttls:
+          enable: true
 server:
   port: 8080
 logging:

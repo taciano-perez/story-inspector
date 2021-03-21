@@ -13,6 +13,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 class AnnotationEngineTest {
 
@@ -70,9 +71,12 @@ class AnnotationEngineTest {
 
     @Test
     public void testAnnotateBook() throws JAXBException {
-        final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(INPUT_STORYDOM));
+        final BookProcessingStatusListener mockListener = mock(BookProcessingStatusListener.class);
+        final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(INPUT_STORYDOM),
+                mockListener);
         final String outputStorydom = XmlWriter.exportBookToString(annotatedBook);
         assertEquals(EXPECTED_ANNOTATED_STORYDOM, outputStorydom);
+        verify(mockListener, times(3)).updateProcessingStatus(anyDouble(), anyInt());
     }
 
     @Test

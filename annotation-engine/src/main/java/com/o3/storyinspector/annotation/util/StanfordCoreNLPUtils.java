@@ -20,7 +20,7 @@ public class StanfordCoreNLPUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(StanfordCoreNLPUtils.class);
 
-    private static final String numberOfCores = "2";
+    private static final String numberOfCores = "8";
 
     private static StanfordCoreNLP pipelineSingleton = null;
 

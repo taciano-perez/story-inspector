@@ -1,5 +1,6 @@
 package com.o3.storyinspector.api;
 
+import com.dumbster.smtp.SimpleSmtpServer;
 import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +35,7 @@ class CharacterApiTest {
             "                <Character name=\"Holmes\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.0640\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -53,7 +55,7 @@ class CharacterApiTest {
             "                <Character name=\"Watson\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0,0640\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.0640\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -79,9 +81,10 @@ class CharacterApiTest {
     private JdbcTemplate db;
 
     @Test
-    void testOne() throws JSONException {
+    void testOne() throws JSONException, IOException {
         // given
         final long bookId = BookDAO.saveBook(db, USER_ID, USER_EMAIL, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
+        SimpleSmtpServer.start(587);    // mock e-mail server at port 587
 
         // when
         final Response response = RestAssured.given()
@@ -90,5 +93,7 @@ class CharacterApiTest {
 
         // then
         final String jsonOutput = response.getBody().print();
+        System.out.println("jsonOutput=[" +jsonOutput +"], expected=["+EXPECTED_JSON_STRUCTURE+"]");
         JSONAssert.assertEquals(EXPECTED_JSON_STRUCTURE, jsonOutput, false);
-    }}
+    }
+}

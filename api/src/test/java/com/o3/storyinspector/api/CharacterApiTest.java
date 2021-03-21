@@ -84,7 +84,7 @@ class CharacterApiTest {
     void testOne() throws JSONException, IOException {
         // given
         final long bookId = BookDAO.saveBook(db, USER_ID, USER_EMAIL, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
-        SimpleSmtpServer.start(587);    // mock e-mail server at port 587
+        SimpleSmtpServer.start(8142);    // mock e-mail server at port 8142
 
         // when
         final Response response = RestAssured.given()

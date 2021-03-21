@@ -25,8 +25,8 @@ spring:
     hibernate:
       ddl-auto: create
   mail:
-    host: localhost
-    port: 587
+    host: localhost # production: smtp.gmail.com:587
+    port: 8142
     username: EMAIL_USERNAME
     password: EMAIL_PASSWORD
     properties:

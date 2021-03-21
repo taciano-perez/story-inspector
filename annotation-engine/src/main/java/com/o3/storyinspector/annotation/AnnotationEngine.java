@@ -27,11 +27,12 @@ import java.util.stream.Collectors;
  */
 public class AnnotationEngine {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnnotationEngine.class);
-
     public static final int NR_WORDS_PER_BLOCK = 250;
-
     public static final int MAX_SENTENCE_LENGTH = 250;  // in number of words
+
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotationEngine.class);
+    private static final double MILLIS_TO_MINS = 1000 * 60;
+    private static final double CONSERVATIVE_MINS_PER_WORD_ESTIMATE = 0.0008;
 
     /**
      * Annotates a book from a file in a local directory.
@@ -58,12 +59,26 @@ public class AnnotationEngine {
      * @return the annotated book
      * @throws JAXBException when we cannot read/write XML
      */
-    public static Book annotateBook(final Reader inputBookReader) throws JAXBException {
+    public static Book annotateBook(final Reader inputBookReader, final BookProcessingStatusListener statusListener) throws JAXBException {
         final Book book = XmlReader.readBookFromXmlStream(inputBookReader);
+
+        // initialize estimation of time left to complete
+        final long annotationStartMillis = System.currentTimeMillis();
+        final double bookWordCount = countBookWords(book);
+        statusListener.updateProcessingStatus(0.01, (int)Math.ceil(bookWordCount * CONSERVATIVE_MINS_PER_WORD_ESTIMATE));
+        double processedWordCount = 0.0 ;
 
         for (Chapter chapter : book.getChapters()) {
             // TODO: refactor this so we don't mutate the DOM objects
             AnnotationEngine.annotateChapter(chapter);
+            // update progress
+            processedWordCount += Double.parseDouble(chapter.getMetadata().getWordCount());
+            final double avgMinutesPerWord = (((System.currentTimeMillis() - annotationStartMillis) / MILLIS_TO_MINS) / processedWordCount);
+            LOG.debug("avgMinutesPerWord=" + avgMinutesPerWord);
+            final int minutesLeft = (int)Math.ceil(avgMinutesPerWord * (bookWordCount - processedWordCount));
+            final double processedPercentage = processedWordCount / bookWordCount;
+            LOG.debug("processedWords=" + processedWordCount + " book word count =" + bookWordCount + " processed %=" + processedPercentage);
+            statusListener.updateProcessingStatus(processedPercentage, minutesLeft);
         }
 
         return book;
@@ -161,6 +176,13 @@ public class AnnotationEngine {
     private static void countWords(final Chapter chapter) {
         final int wordCount = WordCountInspector.inspectWordCount(getChapterBody(chapter));
         chapter.getMetadata().setWordCount(Integer.toString(wordCount));
+    }
+
+    private static int countBookWords(final Book book) {
+        return book.getChapters().stream()
+                .map(c -> WordCountInspector.inspectWordCount(getChapterBody(c)))
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 
     /**

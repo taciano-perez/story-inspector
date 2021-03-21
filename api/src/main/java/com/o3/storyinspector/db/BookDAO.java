@@ -25,25 +25,31 @@ public class BookDAO {
     private long id;
     private String title;
     private String author;
+    private String userEmail;
     private int engineVersion;
     private String rawInput;
     private String storyDom;
     private String annotatedStoryDom;
     private boolean isReportAvailable;
     private String message;
+    private int percentageComplete;
+    private int remainingMinutes;
 
-    public BookDAO(final long id, final String title, final String author, final boolean isReportAvailable, final String message) {
+    public BookDAO(final long id, final String title, final String author, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.isReportAvailable = isReportAvailable;
         this.message = message;
+        this.percentageComplete = percentageComplete;
+        this.remainingMinutes = remainingMinutes;
     }
 
-    public BookDAO(final long id, final String title, final String author, final int engineVersion, final String rawInput, final String storyDom, final String annotatedStoryDom, final boolean isReportAvailable, final String message) {
+    public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final String rawInput, final String storyDom, final String annotatedStoryDom, final boolean isReportAvailable, final String message) {
         this.id = id;
         this.title = title;
         this.author = author;
+        this.userEmail = userEmail;
         this.engineVersion = engineVersion;
         this.rawInput = rawInput;
         this.storyDom = storyDom;
@@ -74,6 +80,14 @@ public class BookDAO {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public String getRawInput() {
@@ -120,6 +134,22 @@ public class BookDAO {
         return engineVersion;
     }
 
+    public int getPercentageComplete() {
+        return percentageComplete;
+    }
+
+    public int getRemainingMinutes() {
+        return remainingMinutes;
+    }
+
+    public void setPercentageComplete(int percentageComplete) {
+        this.percentageComplete = percentageComplete;
+    }
+
+    public void setRemainingMinutes(int remainingMinutes) {
+        this.remainingMinutes = remainingMinutes;
+    }
+
     public Book asBook() throws JAXBException {
         final Book book = XmlReader.readBookFromXmlStream(new StringReader(this.getAnnotatedStoryDom()));
         book.setAuthor(this.getAuthor());
@@ -152,6 +182,16 @@ public class BookDAO {
         throw new RuntimeException("No generated book id returned.");
     }
 
+    public static void updateBookProgress(final JdbcTemplate db, final int percentageComplete, final int remainingMinutes, final long bookId) {
+        final String sql = "UPDATE books SET percent_complete = ?, remain_mins = ? WHERE book_id = ?";
+        final Object[] params = {percentageComplete, remainingMinutes, bookId};
+        final int[] types = {Types.INTEGER, Types.INTEGER, Types.INTEGER};
+        final int updatedRowCount = db.update(sql, params, types);
+        if (updatedRowCount != 1) {
+            logger.error("Unexpected error when annotating book. Book id: " + bookId + ", updated row count: " + updatedRowCount);
+        }
+    }
+
     public static void updateBook(final JdbcTemplate db, final String annotatedBookAsString, final Date annotationCompleteTime, final String bookId) {
         final String sql = "UPDATE books SET annotated_storydom = ?, annotation_complete_time = ?, is_report_available=TRUE WHERE book_id = ?";
         final Object[] params = {annotatedBookAsString, annotationCompleteTime, bookId};
@@ -163,24 +203,27 @@ public class BookDAO {
     }
 
     public static List<BookDAO> findAll(final JdbcTemplate db, final String userId) {
-        return db.query("SELECT book_id, title, author, is_report_available, message FROM books WHERE user_id = ?",
+        return db.query("SELECT book_id, title, author, is_report_available, percent_complete, remain_mins message FROM books WHERE user_id = ?",
                 new Object[]{userId},
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),
                                 rs.getString("title"),
                                 rs.getString("author"),
                                 rs.getBoolean("is_report_available"),
-                                rs.getString("message")));
+                                rs.getString("message"),
+                                rs.getInt("percent_complete"),
+                                rs.getInt("remain_mins")));
     }
 
 
     public static BookDAO findByBookId(final Long bookId, final JdbcTemplate db) throws EmptyResultDataAccessException {
-        return db.queryForObject("SELECT book_id, title, author, engine_version, raw_input, storydom, annotated_storydom, is_report_available, message FROM books WHERE book_id = ?",
+        return db.queryForObject("SELECT book_id, title, author, user_email, engine_version, raw_input, storydom, annotated_storydom, is_report_available, message FROM books WHERE book_id = ?",
                 new Object[]{bookId},
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),
                                 rs.getString("title"),
                                 rs.getString("author"),
+                                rs.getString("user_email"),
                                 rs.getInt("engine_version"),
                                 rs.getString("raw_input"),
                                 rs.getString("storydom"),

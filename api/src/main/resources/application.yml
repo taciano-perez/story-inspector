@@ -25,7 +25,7 @@ spring:
     hibernate:
       ddl-auto: create
   mail:
-    host: smtp.gmail.com
+    host: localhost
     port: 587
     username: EMAIL_USERNAME
     password: EMAIL_PASSWORD
@@ -69,7 +69,7 @@ spring:
     username: ${GCP_DB_USERNAME}
     password: ${GCP_DB_PASSWORD}
 mail:
-  host: smtp.gmail.com
+  host: ${GCP_EMAIL_HOST}
   port: 587
   username: ${GCP_EMAIL_USERNAME}
   password: ${GCP_EMAIL_PASSWORD}

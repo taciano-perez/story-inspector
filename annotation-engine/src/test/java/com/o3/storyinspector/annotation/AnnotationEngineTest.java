@@ -71,10 +71,15 @@ class AnnotationEngineTest {
 
     @Test
     public void testAnnotateBook() throws JAXBException {
+        // given
         final BookProcessingStatusListener mockListener = mock(BookProcessingStatusListener.class);
         final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(INPUT_STORYDOM),
                 mockListener);
+
+        // when
         final String outputStorydom = XmlWriter.exportBookToString(annotatedBook);
+
+        // then
         assertEquals(EXPECTED_ANNOTATED_STORYDOM, outputStorydom);
         verify(mockListener, times(3)).updateProcessingStatus(anyDouble(), anyInt());
     }

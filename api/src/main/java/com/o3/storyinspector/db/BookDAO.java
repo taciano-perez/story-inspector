@@ -203,7 +203,7 @@ public class BookDAO {
     }
 
     public static List<BookDAO> findAll(final JdbcTemplate db, final String userId) {
-        return db.query("SELECT book_id, title, author, is_report_available, percent_complete, remain_mins message FROM books WHERE user_id = ?",
+        return db.query("SELECT book_id, title, author, is_report_available, percent_complete, remain_mins, message FROM books WHERE user_id = ?",
                 new Object[]{userId},
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),

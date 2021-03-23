@@ -7,6 +7,7 @@ import junitx.framework.FileAssert;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
+import java.math.BigDecimal;
 
 class XmlWriterTest {
 
@@ -27,7 +28,7 @@ class XmlWriterTest {
         final Chapter chapter2 = new Chapter();
         chapter2.setTitle("Chapter 2 - The test continues");
         final Block block2 = new Block();
-        block2.setSentimentScore("-1");
+        block2.setSentimentScore(BigDecimal.valueOf(-1.0));
         block2.setBody("This is the body of chapter 2.");
         chapter2.getBlocks().add(block2);
         book.getChapters().add(chapter2);

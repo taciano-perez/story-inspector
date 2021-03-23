@@ -1,5 +1,6 @@
 package com.o3.storyinspector.api;
 
+import com.dumbster.smtp.SimpleSmtpServer;
 import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -12,12 +13,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class BookStructureApiTest {
-    private static final String API_ROOT = "http://localhost:8081/api/bookstructure";
+class CharacterApiTest {
+
+    private static final String API_ROOT = "http://localhost:8081/api/character";
 
     private static final String ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
@@ -30,7 +35,7 @@ class BookStructureApiTest {
             "                <Character name=\"Holmes\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.0640\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -50,7 +55,7 @@ class BookStructureApiTest {
             "                <Character name=\"Watson\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.0640\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -63,12 +68,10 @@ class BookStructureApiTest {
             "    </Chapter>\n" +
             "</Book>\n";
 
-    private final static String EXPECTED_JSON_STRUCTURE =
-            "{\"title\":\"Example Book\",\"author\":\"Example Author\",\"wordcount\":32,\"chapters\":[" +
-            "{\"id\":1,\"title\":\"Chapter 1\",\"wordcount\":16," +
-            "\"dominantEmotions\":[\"ANTICIPATION\",\"TRUST\"],\"characters\":[\"Holmes\"],\"locations\":[\"London\"]}," +
-            "{\"id\":2,\"title\":\"Chapter 2\",\"wordcount\":16," +
-            "\"dominantEmotions\":[\"ANTICIPATION\"],\"characters\":[\"Watson\"],\"locations\":[\"Paris\"]}]}";
+    private final static String EXPECTED_JSON_STRUCTURE = "{\"characters\":[" +
+            "{\"name\":\"Holmes\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
+            "{\"name\":\"Watson\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
+            "],\"totalNumOfChapters\":2}";
 
     private static final String USER_ID = "108700212624021084744";
 
@@ -78,9 +81,10 @@ class BookStructureApiTest {
     private JdbcTemplate db;
 
     @Test
-    void testBookStructure() throws JSONException {
+    void testOne() throws JSONException, IOException {
         // given
         final long bookId = BookDAO.saveBook(db, USER_ID, USER_EMAIL, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
+        SimpleSmtpServer.start(8142);    // mock e-mail server at port 8142
 
         // when
         final Response response = RestAssured.given()
@@ -89,7 +93,7 @@ class BookStructureApiTest {
 
         // then
         final String jsonOutput = response.getBody().print();
-        JSONAssert.assertEquals(EXPECTED_JSON_STRUCTURE, jsonOutput, true);
+        System.out.println("jsonOutput=[" +jsonOutput +"], expected=["+EXPECTED_JSON_STRUCTURE+"]");
+        JSONAssert.assertEquals(EXPECTED_JSON_STRUCTURE, jsonOutput, false);
     }
-
 }

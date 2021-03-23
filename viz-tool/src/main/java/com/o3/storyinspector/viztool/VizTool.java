@@ -4,7 +4,6 @@ import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.Chapter;
 import com.o3.storyinspector.storydom.io.XmlReader;
-import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import com.o3.storyinspector.viztool.sentiment.EmotionReport;
 import com.o3.storyinspector.viztool.sentiment.SentimentColor;
 import com.o3.storyinspector.viztool.sentiment.SentimentCurveChart;
@@ -61,8 +60,8 @@ public class VizTool {
         return "<h2 style=\"color:black;\">" + chapter.getTitle() + "</h2><br>\n<p>";
     }
 
-    private static String blockTags(final Block block, final int blockId) throws Exception {
-        final double sentimentScore = StoryDomUtils.getFormatter().parse(block.getSentimentScore()).doubleValue();
+    private static String blockTags(final Block block, final int blockId) {
+        final double sentimentScore = block.getSentimentScore().doubleValue();
 
         return "<span " +
                 "title=\"" + sentimentScore * 100 + "%\"" +

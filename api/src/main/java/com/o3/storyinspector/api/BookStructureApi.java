@@ -3,11 +3,11 @@ package com.o3.storyinspector.api;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.BookStructure;
 import com.o3.storyinspector.domain.Chapter;
-import com.o3.storyinspector.storydom.Book;
+import com.o3.storyinspector.storydom.*;
 import com.o3.storyinspector.storydom.Character;
-import com.o3.storyinspector.storydom.Location;
-import com.o3.storyinspector.storydom.Metadata;
+import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.io.XmlReader;
+import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BookStructureApi {
 
-    final Logger logger = LoggerFactory.getLogger(BookStructureApi.class);
+    final static Logger logger = LoggerFactory.getLogger(BookStructureApi.class);
 
     @Autowired
     private JdbcTemplate db;
@@ -38,7 +37,7 @@ public class BookStructureApi {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
             book.setAuthor(bookDAO.getAuthor());    // FIXME: parse this at the appropriate spot
-            bookStructure = buildBookStructureFromBook(book);
+            bookStructure = buildFromBook(book);
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when building book structure report. Book bookId: " +
                     bookId + "Exception: " + e.getLocalizedMessage();
@@ -49,7 +48,7 @@ public class BookStructureApi {
         return bookStructure;
     }
 
-    private static BookStructure buildBookStructureFromBook(final Book book) {
+    private static BookStructure buildFromBook(final Book book) {
         final List<Chapter> chapterList = new ArrayList<>();
         long bookWordcount = 0;
         long id = 1;
@@ -61,7 +60,8 @@ public class BookStructureApi {
                     chapter.getTitle(),
                     chapterWordcount,
                     chapterMetadata.getCharacters().getCharacters().stream().map(Character::getName).collect(Collectors.toList()),
-                    chapterMetadata.getLocations().getLocations().stream().map(Location::getName).collect(Collectors.toList())));
+                    chapterMetadata.getLocations().getLocations().stream().map(Location::getName).collect(Collectors.toList()),
+                    identifyDominantEmotions(chapter)));
         }
         return new BookStructure(
                 book.getTitle(),
@@ -69,6 +69,37 @@ public class BookStructureApi {
                 bookWordcount,
                 chapterList
         );
+    }
+
+    public static List<EmotionType> identifyDominantEmotions(final com.o3.storyinspector.storydom.Chapter chapter) {
+        final Map<EmotionType, Double> avgScoresByEmotion = new HashMap<>();
+        double totalAccumulatedScore = 0;
+        for (final EmotionType emotionType: EmotionType.values()) {
+            double avgScore = calculateAvgChapterEmotionScore(chapter, emotionType);
+            avgScoresByEmotion.put(emotionType, avgScore);
+            totalAccumulatedScore += avgScore;
+        }
+        final List<EmotionType> dominantEmotions = new ArrayList<>();
+        for (final EmotionType emotionType: EmotionType.values()) {
+            final double emotionWeight = avgScoresByEmotion.get(emotionType) / totalAccumulatedScore;
+            if (emotionWeight >= 0.2) { // dominant emotion has >= 20% weight
+                dominantEmotions.add(emotionType);
+            }
+        }
+        logger.debug("dominant emotions: " + dominantEmotions);
+        return dominantEmotions;
+    }
+
+    private static double calculateAvgChapterEmotionScore(final com.o3.storyinspector.storydom.Chapter chapter, final EmotionType emotionType) {
+        int blockCount = 0;
+        double accumulatedEmotionScore = 0;
+        for (final Block block : chapter.getBlocks()) {
+            blockCount++;
+            final Emotion emotion = StoryDomUtils.findEmotion(emotionType, block.getEmotions());
+            final double emotionScore = emotion.getScore().doubleValue();
+            accumulatedEmotionScore += emotionScore;
+        }
+        return accumulatedEmotionScore / blockCount;
     }
 
 }

@@ -13,7 +13,7 @@ spring:
     web-allow-others: true
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:~/storyinspectordb
     username: sa
     password: password
   h2:
@@ -24,7 +24,20 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
-
+  mail:
+    host: localhost # production: smtp.gmail.com:587
+    port: 8142
+    username: EMAIL_USERNAME
+    password: EMAIL_PASSWORD
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true
 server:
   port: 8081
 logging:
@@ -55,7 +68,20 @@ spring:
   datasource:
     username: ${GCP_DB_USERNAME}
     password: ${GCP_DB_PASSWORD}
-
+mail:
+  host: ${GCP_EMAIL_HOST}
+  port: 587
+  username: ${GCP_EMAIL_USERNAME}
+  password: ${GCP_EMAIL_PASSWORD}
+  properties:
+    mail:
+      smtp:
+        auth: true
+        connectiontimeout: 5000
+        timeout: 5000
+        writetimeout: 5000
+        starttls:
+          enable: true
 server:
   port: 8080
 logging:

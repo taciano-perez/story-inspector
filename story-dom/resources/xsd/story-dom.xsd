@@ -68,7 +68,7 @@
             </xs:sequence>
             <xs:attribute type="xs:string" name="id" use="required"/>
             <xs:attribute type="xs:string" name="wordCount" use="optional"/>
-            <xs:attribute type="xs:string" name="sentimentScore" use="optional"/>
+            <xs:attribute type="xs:decimal" name="sentimentScore" use="optional"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="Body" type="xs:string"/>

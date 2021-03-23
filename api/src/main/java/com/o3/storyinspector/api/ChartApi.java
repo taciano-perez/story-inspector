@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
 import java.io.StringReader;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,13 +59,14 @@ public class ChartApi {
             final String errMsg = "Unexpected error when building emotion chart. Book id: " +
                     id + " ,emotion:" + emotionName + " Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
+            e.printStackTrace();
             return null;
         }
 
         return chart;
     }
 
-    private static Chart buildSentimentChartFromBook(final BookDAO bookDAO) throws JAXBException, ParseException {
+    private static Chart buildSentimentChartFromBook(final BookDAO bookDAO) throws JAXBException {
         final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
         final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
         final List<String> labels = new ArrayList<>();
@@ -76,7 +76,7 @@ public class ChartApi {
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
                 counter++;
-                final double sentimentScore = StoryDomUtils.getFormatter().parse(block.getSentimentScore()).doubleValue();
+                final double sentimentScore = block.getSentimentScore().doubleValue();
                 labels.add("#" + counter);
                 blocks.add(block.getBody());
                 scores.add(sentimentScore);

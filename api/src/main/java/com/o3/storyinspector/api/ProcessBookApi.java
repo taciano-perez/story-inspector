@@ -13,6 +13,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,9 @@ public class ProcessBookApi {
     @Autowired
     private ThreadPoolTaskScheduler taskScheduler;
 
+    @Autowired
+    private JavaMailSender emailSender;
+
     @RequestMapping(value = "/process-book", method = RequestMethod.POST)
     public void processBook(@RequestParam("ID") Long bookId) {
         logger.trace(String.format("PROCESS BOOK ID - %s", bookId));
@@ -46,7 +50,7 @@ public class ProcessBookApi {
         }
         logger.trace("PROCESS BOOK ID - DOM CREATED");
 
-        taskScheduler.execute(new AnnotateBookTask(db, bookId));
+        taskScheduler.execute(new AnnotateBookTask(db, bookId, emailSender));
         logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
     }
 

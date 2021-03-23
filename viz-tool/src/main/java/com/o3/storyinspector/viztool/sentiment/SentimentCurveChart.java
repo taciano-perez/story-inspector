@@ -3,7 +3,6 @@ package com.o3.storyinspector.viztool.sentiment;
 import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.Chapter;
-import com.o3.storyinspector.storydom.util.StoryDomUtils;
 import com.o3.storyinspector.viztool.chart.CustomSymbolAxis;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -17,7 +16,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import java.awt.*;
 import java.io.File;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -38,7 +36,7 @@ public class SentimentCurveChart {
         ChartUtils.saveChartAsJPEG(lineChart, createChart(book), IMG_WIDTH, IMG_HEIGHT);
     }
 
-    private static JFreeChart createChart(final Book book) throws ParseException {
+    private static JFreeChart createChart(final Book book) {
         // chart settings
         final NumberAxis xAxis = new NumberAxis("Storyline (250-word blocks)");
         final NumberAxis yAxis = new CustomSymbolAxis("Sentiment Score", Y_AXIS_LABELS);
@@ -48,8 +46,8 @@ public class SentimentCurveChart {
         final XYSeries series = new XYSeries("Story");
         final Map<Integer, Double> sentimentScore = getSentimentScore(book);
         for (Map.Entry<Integer, Double> entry : sentimentScore.entrySet()) {
-            Integer blockId = entry.getKey();
-            Double sentiment = entry.getValue();
+            final Integer blockId = entry.getKey();
+            final Double sentiment = entry.getValue();
             series.add(blockId, sentiment);
         }
         xAxis.setRange(1, sentimentScore.keySet().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new));
@@ -80,13 +78,13 @@ public class SentimentCurveChart {
         return renderer;
     }
 
-    private static Map<Integer, Double> getSentimentScore(final Book book) throws ParseException {
+    private static Map<Integer, Double> getSentimentScore(final Book book) {
         // TODO: replace this with Java8 construction
         final Map<Integer, Double> scoresByBlock = new HashMap<>();
         int counter = 1;
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
-                final double sentimentScore = StoryDomUtils.getFormatter().parse(block.getSentimentScore()).doubleValue();
+                final double sentimentScore = block.getSentimentScore().doubleValue();
                 scoresByBlock.put(counter++, sentimentScore);
             }
         }

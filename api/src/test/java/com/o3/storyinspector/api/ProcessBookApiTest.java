@@ -10,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.mail.internet.MimeMessage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -52,7 +56,7 @@ class ProcessBookApiTest {
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0,0600\">\n" +
+            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0.06\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -68,7 +72,7 @@ class ProcessBookApiTest {
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0,0560\">\n" +
+            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0.056\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -126,15 +130,18 @@ class ProcessBookApiTest {
                         .param("ID", bookId.toString())
                         .post(API_CREATE_DOM);
         assertEquals(HttpStatus.OK.value(), givenResponse.getStatusCode());
+        final JavaMailSender mailSenderMock = mock(JavaMailSender.class);
+        when(mailSenderMock.createMimeMessage()).thenReturn(mock(MimeMessage.class));
 
         // when
-        final AnnotateBookTask annotateBookTask = new AnnotateBookTask(db, bookId);
+        final AnnotateBookTask annotateBookTask = new AnnotateBookTask(db, bookId, mailSenderMock);
         annotateBookTask.run();
 
         // then
         final BookDAO book = BookDAO.findByBookId(bookId, db);
         assertEquals(EXPECTED_ANNOTATED_STORYDOM.strip(), book.getAnnotatedStoryDom().strip());
         assertTrue(book.isReportAvailable());
+        verify(mailSenderMock, times(1)).send((MimeMessage) any());
     }
 
     @Test

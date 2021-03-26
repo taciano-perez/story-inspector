@@ -24,6 +24,10 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
   mail:
     host: localhost # production: smtp.gmail.com:587
     port: 8142
@@ -68,6 +72,10 @@ spring:
   datasource:
     username: ${GCP_DB_USERNAME}
     password: ${GCP_DB_PASSWORD}
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
   mail:
     host: ${GCP_EMAIL_HOST}
     port: 587

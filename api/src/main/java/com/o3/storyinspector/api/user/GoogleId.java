@@ -18,7 +18,7 @@ public class GoogleId {
 
     final static Logger logger = LoggerFactory.getLogger(GoogleId.class);
 
-    private static final String CLIENT_ID = "751260516167-l9jekp1m7afmfsrp6ugcf45tf1pi0ms9.apps.googleusercontent.com";
+    private static final String CLIENT_ID = "561138250104-iaovmquhh4jim78lsi0umt64gaai8qe9.apps.googleusercontent.com";
 
     /**
      * Retrieves UserInfo from Google API.

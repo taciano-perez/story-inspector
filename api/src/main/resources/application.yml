@@ -91,7 +91,12 @@ spring:
           starttls:
             enable: true
 server:
-  port: 8080
+  ssl:
+    key-store: classpath:si-keystore.p12
+    key-store-password: ${GCP_KEYSTORE_PASSWORD}
+    key-store-type: pkcs12
+    key-alias: tomcat
+  port: 8443
 logging:
   level.root: WARN
   level.com.o3.storyinspector: TRACE

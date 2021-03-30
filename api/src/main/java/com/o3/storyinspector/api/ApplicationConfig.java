@@ -43,7 +43,9 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .permitAll()
                 .and().csrf().disable();
-    }
+        http.requiresChannel()
+                .anyRequest()
+                .requiresSecure();    }
 
     @Bean
     public JavaMailSender getJavaMailSender() {

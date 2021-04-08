@@ -1,5 +1,7 @@
 package com.o3.storyinspector.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,13 @@ import java.util.Properties;
 @EnableWebSecurity
 @EnableAsync
 public class ApplicationConfig extends WebSecurityConfigurerAdapter {
+
+    final static Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
+
+    private static final String PROFILE_DEV = "dev";
+
+    @Value("${spring.profiles.active}")
+    private String activeSpringProfile;
 
     @Value("${spring.mail.host}")
     private String mailServerHost;
@@ -43,6 +52,14 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .permitAll()
                 .and().csrf().disable();
+        if (PROFILE_DEV.equals(activeSpringProfile)) {
+            logger.warn("Using dev security configuration");
+        } else {
+            logger.info("Using production security configuration");
+            http.requiresChannel()
+                    .anyRequest()
+                    .requiresSecure();
+        }
     }
 
     @Bean

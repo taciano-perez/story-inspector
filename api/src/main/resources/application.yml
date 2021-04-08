@@ -47,6 +47,8 @@ server:
 logging:
   level.root: WARN
   level.com.o3.storyinspector: TRACE
+storyinspector:
+  clientId: 833386775401-bpjfd645e9fg3keb5g4nee1urmliag19.apps.googleusercontent.com
 
 ---
 spring:
@@ -101,3 +103,5 @@ logging:
   level.root: WARN
   level.com.o3.storyinspector: TRACE
 database: mysql
+storyinspector:
+  clientId: 561138250104-iaovmquhh4jim78lsi0umt64gaai8qe9.apps.googleusercontent.com

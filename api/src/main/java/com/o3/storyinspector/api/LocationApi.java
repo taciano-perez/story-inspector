@@ -1,10 +1,10 @@
 package com.o3.storyinspector.api;
 
 import com.o3.storyinspector.db.BookDAO;
-import com.o3.storyinspector.domain.Characters;
+import com.o3.storyinspector.domain.Locations;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.Chapter;
-import com.o3.storyinspector.storydom.Character;
+import com.o3.storyinspector.storydom.Location;
 import com.o3.storyinspector.storydom.Modification;
 import com.o3.storyinspector.storydom.constants.EntityType;
 import com.o3.storyinspector.storydom.constants.ModificationType;
@@ -22,62 +22,62 @@ import java.io.StringReader;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/character")
+@RequestMapping("/api/location")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class CharacterApi {
-    final Logger logger = LoggerFactory.getLogger(CharacterApi.class);
+public class LocationApi {
+    final Logger logger = LoggerFactory.getLogger(LocationApi.class);
 
     @Autowired
     private JdbcTemplate db;
 
     @GetMapping("/{bookId}")
-    public Characters one(@PathVariable final Long bookId) {
-        logger.trace("GET CHARACTERS BOOK ID=[" + bookId + "]");
+    public Locations one(@PathVariable final Long bookId) {
+        logger.trace("GET LocationS BOOK ID=[" + bookId + "]");
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
-        Characters characters;
+        Locations locations;
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
-            characters = Characters.buildFromBook(book);
+            locations = Locations.buildFromBook(book);
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when building book structure report. Book bookId: " +
                     bookId + "Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
             return null;
         }
-        return characters;
+        return locations;
     }
 
-    @PutMapping("/{bookId}/{chapterId}/{characterName}")
-    public ResponseEntity<Long> putCharacter(@PathVariable final Long bookId, @PathVariable final String chapterId, @PathVariable final String characterName) {
-        logger.trace("PUT CHARACTER BOOK ID: " + bookId + ", CHAPTER ID: " + chapterId + ", NAME: " + characterName);
+    @PutMapping("/{bookId}/{chapterId}/{LocationName}")
+    public ResponseEntity<Long> putLocation(@PathVariable final Long bookId, @PathVariable final String chapterId, @PathVariable final String LocationName) {
+        logger.trace("PUT Location BOOK ID: " + bookId + ", CHAPTER ID: " + chapterId + ", NAME: " + LocationName);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
         try {
             // unmarshal storydom
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
 
-            // add character to optionalChapter
+            // add Location to optionalChapter
             Optional<Chapter> optionalChapter = book.getChapters().stream().filter(c -> chapterId.equals(c.getId())).findFirst();
             if (optionalChapter.isPresent()) {
                 final Chapter chapter = optionalChapter.get();
-                final Character newCharacter = new Character();
-                newCharacter.setName(characterName);
-                chapter.getMetadata().getCharacters().getCharacters().add(newCharacter);
+                final Location newLocation = new Location();
+                newLocation.setName(LocationName);
+                chapter.getMetadata().getLocations().getLocations().add(newLocation);
             } else {
-                final String errMsg = "Error: optionalChapter not found when putting new character. Book bookId: " + bookId +
+                final String errMsg = "Error: optionalChapter not found when putting new Location. Book bookId: " + bookId +
                         ", chapterId: " + chapterId +
-                        ", characterName: " + characterName;
+                        ", LocationName: " + LocationName;
                 logger.error(errMsg);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             // update re-marshalled storydom in db
-            bookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
+            BookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
         } catch (final Exception e) {
-            final String errMsg = "Unexpected error when putting new character. Book bookId: " + bookId +
+            final String errMsg = "Unexpected error when putting new Location. Book bookId: " + bookId +
                     ", chapterId: " + chapterId +
-                    ", characterName: " + characterName + ", Exception: " + e.getLocalizedMessage();
+                    ", LocationName: " + LocationName + ", Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -85,9 +85,9 @@ public class CharacterApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/rename/{bookId}/{characterName}/{newCharacterName}")
-    public ResponseEntity<Long> renameCharacter(@PathVariable final Long bookId, @PathVariable final String characterName, @PathVariable final String newCharacterName) {
-        logger.trace("RENAME CHARACTER BOOK ID: " + bookId + ", NAME: " + characterName + ", NEW NAME: " + newCharacterName);
+    @PostMapping("/rename/{bookId}/{LocationName}/{newLocationName}")
+    public ResponseEntity<Long> renameLocation(@PathVariable final Long bookId, @PathVariable final String LocationName, @PathVariable final String newLocationName) {
+        logger.trace("RENAME Location BOOK ID: " + bookId + ", NAME: " + LocationName + ", NEW NAME: " + newLocationName);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
         try {
             // unmarshal storydom
@@ -95,18 +95,18 @@ public class CharacterApi {
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
 
             // add modification to storydom
-            final Modification renameCharacter = new Modification();
-            renameCharacter.setEntity(EntityType.CHARACTER.asString());
-            renameCharacter.setTransformation(ModificationType.RENAME.asString());
-            renameCharacter.setName(characterName);
-            renameCharacter.setNewName(newCharacterName);
-            book.getModifications().add(renameCharacter);
+            final Modification renameLocation = new Modification();
+            renameLocation.setEntity(EntityType.LOCATION.asString());
+            renameLocation.setTransformation(ModificationType.RENAME.asString());
+            renameLocation.setName(LocationName);
+            renameLocation.setNewName(newLocationName);
+            book.getModifications().add(renameLocation);
 
             // update re-marshalled storydom in db
-            bookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
+            BookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
         } catch (final Exception e) {
-            final String errMsg = "Unexpected error when renaming character. Book bookId: " +
-                    bookId + " characterName: " + characterName + ", newCharacterName: " + newCharacterName +
+            final String errMsg = "Unexpected error when renaming Location. Book bookId: " +
+                    bookId + " LocationName: " + LocationName + ", newLocationName: " + newLocationName +
                     ", Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
             return null;
@@ -114,9 +114,9 @@ public class CharacterApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{bookId}/{characterName}")
-    public ResponseEntity<Long> deleteCharacter(@PathVariable final Long bookId, @PathVariable final String characterName) {
-        logger.trace("DELETE CHARACTER BOOK ID: " + bookId + ", NAME: " + characterName);
+    @DeleteMapping("/{bookId}/{LocationName}")
+    public ResponseEntity<Long> deleteLocation(@PathVariable final Long bookId, @PathVariable final String LocationName) {
+        logger.trace("DELETE Location BOOK ID: " + bookId + ", NAME: " + LocationName);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
         try {
             // unmarshal storydom
@@ -124,21 +124,20 @@ public class CharacterApi {
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
 
             // add modification to storydom
-            final Modification deleteCharacter = new Modification();
-            deleteCharacter.setEntity(EntityType.CHARACTER.asString());
-            deleteCharacter.setTransformation(ModificationType.REMOVE.asString());
-            deleteCharacter.setName(characterName);
-            book.getModifications().add(deleteCharacter);
+            final Modification deleteLocation = new Modification();
+            deleteLocation.setEntity(EntityType.LOCATION.asString());
+            deleteLocation.setTransformation(ModificationType.REMOVE.asString());
+            deleteLocation.setName(LocationName);
+            book.getModifications().add(deleteLocation);
 
             // update re-marshalled storydom in db
-            bookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
+            BookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
         } catch (final Exception e) {
-            final String errMsg = "Unexpected error when deleting character. Book bookId: " +
-                    bookId + " characterName: " + characterName + ", Exception: " + e.getLocalizedMessage();
+            final String errMsg = "Unexpected error when deleting Location. Book bookId: " +
+                    bookId + " LocationName: " + LocationName + ", Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
             return null;
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

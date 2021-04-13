@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class UploadFileApiTest {
 
-    private static final String API_UPLOAD_FILE = "http://localhost:8081/api/upload/book";
+    private static final String API_HEADER = "http://localhost:";
+    private static final String API_TRAILER = "/api/upload/book";
 
     private static final String INPUT_PLAINTEXT_BOOK = "Chapter 1: A Startling Start.\n" +
             "This is an example chapter wherein wondrous things would be expected by its eager author.\n" +
@@ -50,9 +52,11 @@ class UploadFileApiTest {
     private GoogleId idValidator;
 
     @Test
-    void testUploadSmallFile() throws Exception {
+    void testUploadSmallFile(@LocalServerPort int port) throws Exception {
         // given
-        MockMultipartHttpServletRequestBuilder builder = multipart(API_UPLOAD_FILE);
+        final String apiEndpoint = API_HEADER + port + API_TRAILER;
+        System.out.println("API ENDPOINT: " + apiEndpoint);
+        MockMultipartHttpServletRequestBuilder builder = multipart(apiEndpoint);
         builder = builder.part(new MockPart("file", "book.txt", INPUT_PLAINTEXT_BOOK.getBytes()));
         builder.param("title", "Mock Title")
                 .param("author", "Mock Author")
@@ -68,10 +72,12 @@ class UploadFileApiTest {
     }
 
     @Test
-    void testUploadLargeFile() throws Exception {
+    void testUploadLargeFile(@LocalServerPort int port) throws Exception {
         // given
+        final String apiEndpoint = API_HEADER + port + API_TRAILER;
+        System.out.println("API ENDPOINT: " + apiEndpoint);
         final byte[] fileContents = createPayload(LARGE_PAYLOAD_SIZE);
-        MockMultipartHttpServletRequestBuilder builder = multipart(API_UPLOAD_FILE);
+        MockMultipartHttpServletRequestBuilder builder = multipart(apiEndpoint);
         builder = builder.part(new MockPart("file", "book.txt", fileContents));
         builder.param("title", "Mock Title")
                 .param("author", "Mock Author")

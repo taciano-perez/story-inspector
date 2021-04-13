@@ -3,8 +3,8 @@ package com.o3.storyinspector.api;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.BookStructure;
 import com.o3.storyinspector.domain.Chapter;
-import com.o3.storyinspector.storydom.*;
 import com.o3.storyinspector.storydom.Character;
+import com.o3.storyinspector.storydom.*;
 import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.io.XmlReader;
 import com.o3.storyinspector.storydom.util.StoryDomUtils;
@@ -15,7 +15,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,8 +43,9 @@ public class BookStructureApi {
             bookStructure = buildFromBook(book);
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when building book structure report. Book bookId: " +
-                    bookId + "Exception: " + e.getLocalizedMessage();
+                    bookId + ", Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
+            e.printStackTrace();
             return null;
         }
 

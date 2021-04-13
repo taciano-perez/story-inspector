@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class CharacterApiTest {
+class LocationApiTest {
 
-    private static final String API_ROOT = "http://localhost:8081/api/character";
+    private static final String API_ROOT = "http://localhost:8081/api/location";
 
     private static final String ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
@@ -114,23 +114,23 @@ class CharacterApiTest {
             "            <Body>This is another example chapter , but the action seems to unfold slower than expected .</Body>\n" +
             "        </Block>\n" +
             "    </Chapter>\n" +
-            "    <Modification entity=\"character\" transformation=\"remove\" name=\"Holmes\"/>\n" +
+            "    <Modification entity=\"location\" transformation=\"remove\" name=\"London\"/>\n" +
             "</Book>\n";
 
-    private final static String EXPECTED_JSON_GET = "{\"characters\":[" +
-            "{\"name\":\"Holmes\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
-            "{\"name\":\"Watson\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
+    private final static String EXPECTED_JSON_GET = "{\"locations\":[" +
+            "{\"name\":\"London\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
+            "{\"name\":\"Paris\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
             "],\"totalNumOfChapters\":2}";
 
-    private final static String EXPECTED_JSON_PUT = "{\"characters\":[" +
-            "{\"name\":\"Holmes\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
-            "{\"name\":\"Professor Moriarty\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
-            "{\"name\":\"Watson\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
+    private final static String EXPECTED_JSON_PUT = "{\"locations\":[" +
+            "{\"name\":\"London\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
+            "{\"name\":\"Paris\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}," +
+            "{\"name\":\"Amsterdam\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
             "],\"totalNumOfChapters\":2}";
 
-    private final static String EXPECTED_JSON_RENAME = "{\"characters\":[" +
-            "{\"name\":\"Sherlock Holmes\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
-            "{\"name\":\"Watson\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
+    private final static String EXPECTED_JSON_RENAME = "{\"locations\":[" +
+            "{\"name\":\"Bristol\",\"chapters\":[1],\"totalPercentageOfChapters\":0.5}," +
+            "{\"name\":\"Paris\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
             "],\"totalNumOfChapters\":2}";
 
     private static final String USER_ID = "108700212624021084744";
@@ -176,7 +176,7 @@ class CharacterApiTest {
         // when
         final Response responsePost = RestAssured.given()
                 .param("ID", bookId)
-                .put(API_ROOT + "/" + bookId + "/1/Professor Moriarty");
+                .put(API_ROOT + "/" + bookId + "/2/Amsterdam");
 
         // then
         assertEquals(HttpStatus.OK.value() ,responsePost.getStatusCode());
@@ -196,7 +196,7 @@ class CharacterApiTest {
         // when
         final Response responsePost = RestAssured.given()
                 .param("ID", bookId)
-                .post(API_ROOT + "/rename/" + bookId + "/Holmes/Sherlock Holmes");
+                .post(API_ROOT + "/rename/" + bookId + "/London/Bristol");
 
         // then
         assertEquals(HttpStatus.OK.value() ,responsePost.getStatusCode());
@@ -216,7 +216,7 @@ class CharacterApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
-                .delete(API_ROOT + "/" + bookId + "/Holmes");
+                .delete(API_ROOT + "/" + bookId + "/London");
 
         // then
         assertEquals(HttpStatus.OK.value() ,response.getStatusCode());

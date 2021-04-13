@@ -1,14 +1,14 @@
 <Book>
     <Chapter title="Chapter 1" id="1">
         <Metadata wordCount="126" sentimentScore="-1">
-            <Locations>
-                <Location type="COUNTRY" name="England"/>
-                <Location type="CITY" name="London"/>
-            </Locations>
             <Characters>
                 <Character name="Sherlock Holmes"/>
                 <Character name="Watson"/>
             </Characters>
+            <Locations>
+                <Location type="COUNTRY" name="England"/>
+                <Location type="CITY" name="London"/>
+            </Locations>
         </Metadata>
         <Block id="1" wordCount="126" sentimentScore="-1">
             <Emotion type="anger" score="0.5"/>
@@ -41,4 +41,8 @@
             </Body>
         </Block>
     </Chapter>
+    <Modifications>
+        <Modification entity="Character" transformation="rename" name="Watson" newName="John Watson"/>
+        <Modification entity="Location" transformation="remove" name="England"/>
+    </Modifications>
 </Book>

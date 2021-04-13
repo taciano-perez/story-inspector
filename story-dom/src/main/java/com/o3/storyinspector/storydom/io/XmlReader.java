@@ -1,6 +1,7 @@
 package com.o3.storyinspector.storydom.io;
 
 import com.o3.storyinspector.storydom.Book;
+import com.o3.storyinspector.storydom.modifications.BookProcessor;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,8 +16,8 @@ public class XmlReader {
 
     public static Book readBookFromXmlStream(final Reader bookStream) throws JAXBException {
         final JAXBContext context = JAXBContext.newInstance(Book.class);
-        return (Book) context.createUnmarshaller()
-                .unmarshal(bookStream);
+        final Book book = (Book) context.createUnmarshaller().unmarshal(bookStream);
+        return BookProcessor.applyModifications(book);
     }
 
     public static Book readBookFromXmlFile(final String filePath) throws JAXBException, IOException {

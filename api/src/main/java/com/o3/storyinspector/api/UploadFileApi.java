@@ -3,6 +3,8 @@ package com.o3.storyinspector.api;
 import com.o3.storyinspector.api.user.GoogleId;
 import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.api.util.ApiUtils;
+import com.o3.storyinspector.bookimporter.msword.DocImporter;
+import com.o3.storyinspector.bookimporter.msword.DocxImporter;
 import com.o3.storyinspector.db.BookDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

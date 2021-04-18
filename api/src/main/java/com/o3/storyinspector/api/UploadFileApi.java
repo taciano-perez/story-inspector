@@ -36,7 +36,7 @@ public class UploadFileApi {
         logger.trace(String.format("AUTHOR - %s", author));
         logger.trace(String.format("FILE - %s", file));
         logger.trace(String.format("ID_TOKEN - %s", idToken));
-        final String content = new String(file.getBytes());
+        final String content = getFileContent(file);
         logger.trace(String.format("CONTENT - %s", content));
 
         final UserInfo userInfo = idValidator.retrieveUserInfo(idToken);
@@ -50,6 +50,22 @@ public class UploadFileApi {
         } else {
             logger.error("Could not upload book, error authenticating user. Title: " + title + ", author:" + author + ", token: " + idToken);
             return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    private String getFileContent(final MultipartFile file) throws IOException {
+        final String filename = file.getOriginalFilename();
+        if (filename == null) {
+            logger.error("Filename cannot be null.");
+            return "";
+        }
+        logger.trace("Uploaded file name: " + filename);
+        if (filename.toUpperCase().endsWith(".DOCX")) {
+            return DocxImporter.getDocxContentAsString(file.getInputStream());
+        } else if (filename.toUpperCase().endsWith(".DOC")) {
+            return DocImporter.getDocContentAsString(file.getInputStream());
+        } else {
+            return new String(file.getBytes());
         }
     }
 

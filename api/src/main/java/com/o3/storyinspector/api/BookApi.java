@@ -21,6 +21,8 @@ public class BookApi {
 
     final Logger logger = LoggerFactory.getLogger(BookApi.class);
 
+    private static final String ADMIN_USER_ID = "108700212624021084744";
+
     private static List<BookDAO> bookList = new ArrayList<>();
 
     @Autowired
@@ -28,7 +30,7 @@ public class BookApi {
 
     @GetMapping("/list")
     public Map<String, List<BookDAO>> findAllById(@RequestParam("userId") final String userId) {
-        logger.trace("QUERYING ALL BOOKS userId=" + userId);
+        logger.trace("QUERYING ALL BOOKS userId: " + userId);
         final List<BookDAO> books = BookDAO.findAll(db, userId);
         bookList.addAll(books);
         return Collections.singletonMap("books", books);
@@ -36,7 +38,7 @@ public class BookApi {
 
     @GetMapping("/{id}")
     public BookDAO one(@PathVariable final Long id) {
-        logger.trace("QUERYING BOOK ID=[" + id + "]");
+        logger.trace("QUERYING BOOK ID: [" + id + "]");
         final BookDAO book = BookDAO.findByBookId(id, db);
         // we don't need to send these over the wire
         book.setRawInput("");
@@ -50,4 +52,23 @@ public class BookApi {
         db.execute("DELETE FROM books WHERE book_id=" + id);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
+
+    @GetMapping("/admin/list")
+    public Map<String, List<BookDAO>> adminFindAllById(@RequestParam("userId") final String userId) {
+        logger.trace("ADMIN QUERYING ALL BOOKS userId: " + userId);
+        if (ADMIN_USER_ID.equals(userId)) {
+            final List<BookDAO> books = BookDAO.findAll(db);
+            bookList.addAll(books);
+            return Collections.singletonMap("books", books);
+        } else {
+            return null;
+        }
+    }
+
+    @GetMapping("/admin/{id}")
+    public BookDAO adminOne(@PathVariable final Long id) {
+        logger.trace("ADMIN QUERYING BOOK ID: [" + id + "]");
+        return BookDAO.findByBookId(id, db);
+    }
+
 }

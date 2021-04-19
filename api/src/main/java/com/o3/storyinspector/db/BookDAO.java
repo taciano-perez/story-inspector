@@ -58,6 +58,17 @@ public class BookDAO {
         this.message = message;
     }
 
+    public BookDAO(final long id, final String title, final String author, final String userEmail, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.userEmail = userEmail;
+        this.isReportAvailable = isReportAvailable;
+        this.message = message;
+        this.percentageComplete = percentageComplete;
+        this.remainingMinutes = remainingMinutes;
+    }
+
     public long getId() {
         return id;
     }
@@ -210,6 +221,24 @@ public class BookDAO {
         if (updatedRowCount != 1) {
             logger.error("Unexpected error when annotating book. Book id: " + bookId + ", updated row count: " + updatedRowCount);
         }
+    }
+
+    /**
+     * Returns ALL books (irrespective of owner).
+     * @param db JDBC template
+     * @return all books.
+     */
+    public static List<BookDAO> findAll(final JdbcTemplate db) {
+        return db.query("SELECT book_id, title, author, user_email, is_report_available, percent_complete, remain_mins, message FROM books",
+                (rs, rowNum) ->
+                        new BookDAO(rs.getInt("book_id"),
+                                rs.getString("title"),
+                                rs.getString("author"),
+                                rs.getString("user_email"),
+                                rs.getBoolean("is_report_available"),
+                                rs.getString("message"),
+                                rs.getInt("percent_complete"),
+                                rs.getInt("remain_mins")));
     }
 
     public static List<BookDAO> findAll(final JdbcTemplate db, final String userId) {

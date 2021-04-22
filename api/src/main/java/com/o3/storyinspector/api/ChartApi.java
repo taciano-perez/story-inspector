@@ -72,6 +72,7 @@ public class ChartApi {
         final List<String> labels = new ArrayList<>();
         final List<String> blocks = new ArrayList<>();
         final List<Double> scores = new ArrayList<>();
+        final List<Integer> chapterDividers = new ArrayList<>();
         int counter = 0;
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
@@ -81,8 +82,10 @@ public class ChartApi {
                 blocks.add(block.getBody());
                 scores.add(sentimentScore);
             }
+            chapterDividers.add(counter);
         }
-        return new Chart(bookDAO.getTitle(), bookDAO.getAuthor(), labels, blocks, scores);
+        chapterDividers.remove(chapterDividers.size()-1);  // remove last marker
+        return new Chart(bookDAO.getTitle(), bookDAO.getAuthor(), labels, blocks, scores, chapterDividers);
     }
 
     private static Chart buildEmotionChartFromBook(final BookDAO bookDAO, final EmotionType emotionType) throws JAXBException {
@@ -92,6 +95,7 @@ public class ChartApi {
         final List<String> labels = new ArrayList<>();
         final List<String> blocks = new ArrayList<>();
         final List<Double> scores = new ArrayList<>();
+        final List<Integer> chapterDividers = new ArrayList<>();
         int counter = 0;
         for (final Chapter chapter : book.getChapters()) {
             for (final Block block : chapter.getBlocks()) {
@@ -103,8 +107,10 @@ public class ChartApi {
                 blocks.add(block.getBody());
                 scores.add(normalizedEmotionScore);
             }
+            chapterDividers.add(counter);
         }
-        return new Chart(bookDAO.getTitle(), bookDAO.getAuthor(), labels, blocks, scores);
+        chapterDividers.remove(chapterDividers.size()-1);  // remove last marker
+        return new Chart(bookDAO.getTitle(), bookDAO.getAuthor(), labels, blocks, scores, chapterDividers);
     }
 
 }

@@ -56,21 +56,18 @@ class ChartApiTest {
             "    </Chapter>\n" +
             "</Book>\n";
 
-    private final static String EXPECTED_JSON_SENTIMENT = "{\"labels\":\n" +
-            "    [\"#1\",\"#2\"],\n" +
-            "\"blocks\":\n" +
-            "    [\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\n" +
-            "    \"This is another example chapter , but the action seems to unfold slower than expected .\"],\n" +
-            "\"scores\":\n" +
-            "    [-0.064,-0.064]}\n";
+    private final static String EXPECTED_JSON_SENTIMENT = "{\"bookTitle\":\"Example Book\"," +
+            "\"bookAuthor\":\"Example Author\",\"labels\":[\"#1\",\"#2\"]," +
+            "\"blocks\":[\"This is an example chapter wherein wondrous things would be expected by its eager author .\"," +
+            "\"This is another example chapter , but the action seems to unfold slower than expected .\"]," +
+            "\"scores\":[-0.064,-0.064],\"chapterDividers\":[1]}";
 
-    private final static String EXPECTED_JSON_EMOTION_ANGER = "{\"labels\":\n" +
-            "    [\"#1\",\"#2\"],\n" +
-            "\"blocks\":\n" +
-            "    [\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\n" +
-            "    \"This is another example chapter , but the action seems to unfold slower than expected .\"],\n" +
-            "\"scores\":\n" +
-            "    [0.00, 0.00]}\n";
+    private final static String EXPECTED_JSON_EMOTION_ANGER = "{\"bookTitle\":\"Example Book\"," +
+            "\"bookAuthor\":\"Example Author\"," +
+            "\"labels\":[\"#1\",\"#2\"]," +
+            "\"blocks\":[\"This is an example chapter wherein wondrous things would be expected by its eager author .\"," +
+            "\"This is another example chapter , but the action seems to unfold slower than expected .\"]," +
+            "\"scores\":[0.0,0.0],\"chapterDividers\":[1]}";
 
     private static final String USER_ID = "108700212624021084744";
 
@@ -91,7 +88,7 @@ class ChartApiTest {
 
         // then
         final String jsonOutput = response.getBody().print();
-        JSONAssert.assertEquals(EXPECTED_JSON_SENTIMENT, jsonOutput, false);
+        JSONAssert.assertEquals(EXPECTED_JSON_SENTIMENT, jsonOutput, true);
     }
 
     @Test
@@ -105,7 +102,7 @@ class ChartApiTest {
 
         // then
         final String jsonOutput = response.getBody().print();
-        JSONAssert.assertEquals(EXPECTED_JSON_EMOTION_ANGER, jsonOutput, false);
+        JSONAssert.assertEquals(EXPECTED_JSON_EMOTION_ANGER, jsonOutput, true);
     }
 
 }

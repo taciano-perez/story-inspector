@@ -21,13 +21,15 @@ public class Chart {
     private List<String> labels;
     private List<String> blocks;
     private List<Double> scores;
+    private List<Integer> chapterDividers;
 
-    public Chart(final String bookTitle, final String bookAuthor, final List<String> labels, final List<String> blocks, final List<Double> scores) {
+    public Chart(final String bookTitle, final String bookAuthor, final List<String> labels, final List<String> blocks, final List<Double> scores, final List<Integer> chapterDividers) {
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
         this.labels = labels;
         this.blocks = blocks;
         this.scores = scores;
+        this.chapterDividers = chapterDividers;
     }
 
     public String getBookTitle() {
@@ -48,6 +50,10 @@ public class Chart {
 
     public List<Double> getScores() {
         return scores;
+    }
+
+    public List<Integer> getChapterDividers() {
+        return chapterDividers;
     }
 
     /**

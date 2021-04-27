@@ -34,11 +34,11 @@ class AnnotationEngineTest {
     private static final String EXPECTED_ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
             "    <Chapter id=\"1\" title=\"Chapter 1: A Startling Start.\">\n" +
-            "        <Metadata wordCount=\"15\">\n" +
+            "        <Metadata wordCount=\"15\" fkGrade=\"9.92666666666667\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0.06\">\n" +
+            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0.06\" fkGrade=\"9.92666666666667\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -50,11 +50,11 @@ class AnnotationEngineTest {
             "        </Block>\n" +
             "    </Chapter>\n" +
             "    <Chapter id=\"2\" title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
-            "        <Metadata wordCount=\"14\">\n" +
+            "        <Metadata wordCount=\"14\" fkGrade=\"11.784285714285716\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0.056\">\n" +
+            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0.056\" fkGrade=\"11.784285714285716\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +

@@ -28,7 +28,7 @@ public class ProcessBookApi {
 
     final static Logger logger = LoggerFactory.getLogger(ProcessBookApi.class);
 
-    public static final int ENGINE_VERSION = 1;
+    public static final int ENGINE_VERSION = 2;
 
     @Autowired
     private JdbcTemplate db;

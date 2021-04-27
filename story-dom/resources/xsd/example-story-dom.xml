@@ -1,6 +1,6 @@
 <Book>
     <Chapter title="Chapter 1" id="1">
-        <Metadata wordCount="126" sentimentScore="-1">
+        <Metadata wordCount="126" sentimentScore="-1" fkGrade="5.1">
             <Characters>
                 <Character name="Sherlock Holmes"/>
                 <Character name="Watson"/>
@@ -10,7 +10,7 @@
                 <Location type="CITY" name="London"/>
             </Locations>
         </Metadata>
-        <Block id="1" wordCount="126" sentimentScore="-1">
+        <Block id="1" wordCount="126" sentimentScore="-1" fkGrade="5.2">
             <Emotion type="anger" score="0.5"/>
             <Body>
                 This
@@ -21,7 +21,7 @@
         </Block>
     </Chapter>
     <Chapter title="Chapter 2" id="2">
-        <Metadata wordCount="200" sentimentScore="5">
+        <Metadata wordCount="200" sentimentScore="5"  fkGrade="5.2">
             <Locations>
                 <Location type="COUNTRY" name="England"/>
                 <Location type="CITY" name="London"/>
@@ -31,7 +31,7 @@
                 <Character name="Watson"/>
             </Characters>
         </Metadata>
-        <Block id="1" wordCount="200" sentimentScore="5">
+        <Block id="1" wordCount="200" sentimentScore="5"  fkGrade="5.2">
             <Emotion type="anger" score="0.5"/>
             <Body>
                 This

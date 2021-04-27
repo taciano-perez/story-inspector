@@ -22,7 +22,7 @@ class BookStructureApiTest {
     private static final String ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
             "    <Chapter title=\"Chapter 1\">\n" +
-            "        <Metadata wordCount=\"16\">\n" +
+            "        <Metadata wordCount=\"16\" fkGrade=\"5.1\">\n" +
             "            <Locations>\n" +
             "                <Location name=\"London\" type=\"CITY\"/>\n" +
             "            </Locations>\n" +
@@ -30,7 +30,7 @@ class BookStructureApiTest {
             "                <Character name=\"Holmes\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\" fkGrade=\"5.1\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -42,7 +42,7 @@ class BookStructureApiTest {
             "        </Block>\n" +
             "    </Chapter>\n" +
             "    <Chapter title=\"Chapter 2\">\n" +
-            "        <Metadata wordCount=\"16\">\n" +
+            "        <Metadata wordCount=\"16\" fkGrade=\"5.1\">\n" +
             "            <Locations>\n" +
             "                <Location name=\"Paris\" type=\"CITY\"/>\n" +
             "            </Locations>\n" +
@@ -50,7 +50,7 @@ class BookStructureApiTest {
             "                <Character name=\"Watson\"/>\n" +
             "            </Characters>\n" +
             "        </Metadata>\n" +
-            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\">\n" +
+            "        <Block wordCount=\"16\" sentimentScore=\"-0.064\" fkGrade=\"5.1\">\n" +
             "            <Emotion type=\"anger\" score=\"0.00\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -64,11 +64,7 @@ class BookStructureApiTest {
             "</Book>\n";
 
     private final static String EXPECTED_JSON_STRUCTURE =
-            "{\"title\":\"Example Book\",\"author\":\"Example Author\",\"wordcount\":32,\"chapters\":[" +
-            "{\"id\":1,\"title\":\"Chapter 1\",\"wordcount\":16," +
-            "\"dominantEmotions\":[\"ANTICIPATION\",\"TRUST\"],\"characters\":[\"Holmes\"],\"locations\":[\"London\"]}," +
-            "{\"id\":2,\"title\":\"Chapter 2\",\"wordcount\":16," +
-            "\"dominantEmotions\":[\"ANTICIPATION\"],\"characters\":[\"Watson\"],\"locations\":[\"Paris\"]}]}";
+            "{\"title\":\"Example Book\",\"author\":\"Example Author\",\"wordcount\":32,\"chapters\":[{\"id\":1,\"title\":\"Chapter 1\",\"wordcount\":16,\"fkGrade\":5.1,\"dominantEmotions\":[\"ANTICIPATION\",\"TRUST\"],\"locations\":[\"London\"],\"characters\":[\"Holmes\"]},{\"id\":2,\"title\":\"Chapter 2\",\"wordcount\":16,\"fkGrade\":5.1,\"dominantEmotions\":[\"ANTICIPATION\"],\"locations\":[\"Paris\"],\"characters\":[\"Watson\"]}]}";
 
     private static final String USER_ID = "108700212624021084744";
 

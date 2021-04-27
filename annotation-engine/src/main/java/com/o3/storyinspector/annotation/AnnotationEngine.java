@@ -4,6 +4,7 @@ import com.o3.storyinspector.annotation.blocks.BlockSplitter;
 import com.o3.storyinspector.annotation.emotions.EmotionInspector;
 import com.o3.storyinspector.annotation.entities.NamedEntities;
 import com.o3.storyinspector.annotation.entities.NamedEntitiesInspector;
+import com.o3.storyinspector.annotation.readability.FleschKincaidReadabilityInspector;
 import com.o3.storyinspector.annotation.sentiments.SentimentInspector;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.*;
@@ -100,6 +101,10 @@ public class AnnotationEngine {
         breakDownBlocks(chapter);
         logEnd(time);
 
+        time = logStart("Chapter: [" + chapter.getTitle() + "]. INSPECTING READABILITY...");
+        inspectReadability(chapter);
+        logEnd(time);
+
         time = logStart("Chapter: [" + chapter.getTitle() + "]. INSPECTING SENTIMENTS...");
         inspectSentiments(chapter);
         logEnd(time);
@@ -150,6 +155,18 @@ public class AnnotationEngine {
         for (final Block block : chapter.getBlocks()) {
             block.setSentimentScore(BigDecimal.valueOf(SentimentInspector.inspectSentimentScore(block, NR_WORDS_PER_BLOCK)));
         }
+    }
+
+    static void inspectReadability(final Chapter chapter) {
+        double maxChapterGradeLevel = 0;
+        for (final Block block : chapter.getBlocks()) {
+            final double fkGradeLevel = FleschKincaidReadabilityInspector.inspectFKGradeLevel(block.getBody());
+            if (maxChapterGradeLevel < fkGradeLevel) {
+                maxChapterGradeLevel = fkGradeLevel;
+            }
+            block.setFkGrade(BigDecimal.valueOf(fkGradeLevel));
+        }
+        chapter.getMetadata().setFkGrade(BigDecimal.valueOf(maxChapterGradeLevel));
     }
 
     private static void inspectEmotions(final Chapter chapter) {

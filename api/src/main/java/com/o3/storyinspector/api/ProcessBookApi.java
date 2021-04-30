@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.bind.JAXBException;
 import java.io.StringReader;
 import java.sql.Types;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @RestController
 @RequestMapping("/api/process-book")
@@ -54,6 +55,23 @@ public class ProcessBookApi {
         logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
     }
 
+    @GetMapping("/admin/task-queue/{userId}")
+    public Long adminQueryTaskQueue(@PathVariable("userId") final String userId) {
+        logger.trace("ADMIN QUERY TASK QUEUE userId: " + userId);
+        if (ApplicationConfig.ADMIN_USER_ID.equals(userId)) {
+            final ScheduledThreadPoolExecutor executor = taskScheduler.getScheduledThreadPoolExecutor();
+            return executor.getTaskCount() - executor.getCompletedTaskCount();
+        } else {
+            return null;
+        }
+    }
+
+    @RequestMapping(value = "/reprocess-book/{bookId}", method = RequestMethod.POST)
+    public void reprocessBook(@PathVariable("bookId") Long bookId) {
+        logger.trace(String.format("REPROCESS BOOK ID - %s", bookId));
+        taskScheduler.execute(new AnnotateBookTask(db, bookId, null));
+        logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
+    }
 
     @RequestMapping(value = "/create-dom", method = RequestMethod.POST)
     public ResponseEntity<Object> createDom(@RequestParam("ID") Long bookId) {

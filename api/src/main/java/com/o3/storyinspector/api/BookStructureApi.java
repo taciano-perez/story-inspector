@@ -29,8 +29,6 @@ public class BookStructureApi {
 
     final static Logger logger = LoggerFactory.getLogger(BookStructureApi.class);
 
-    private static final double FK_GRADE_UNKNOWN = -256;
-
     @Autowired
     private JdbcTemplate db;
 
@@ -67,7 +65,7 @@ public class BookStructureApi {
             chapterList.add(new Chapter(id++,
                     chapter.getTitle(),
                     chapterWordcount,
-                    (chapterFkGrade == null) ? FK_GRADE_UNKNOWN : chapterFkGrade.doubleValue(),
+                    (chapterFkGrade == null) ? com.o3.storyinspector.domain.Block.FK_GRADE_UNKNOWN : chapterFkGrade.doubleValue(),
                     chapterMetadata.getCharacters().getCharacters().stream().map(Character::getName).collect(Collectors.toList()),
                     chapterMetadata.getLocations().getLocations().stream().map(Location::getName).collect(Collectors.toList()),
                     identifyDominantEmotions(chapter)));

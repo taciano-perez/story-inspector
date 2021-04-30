@@ -160,11 +160,13 @@ public class AnnotationEngine {
     static void inspectReadability(final Chapter chapter) {
         double maxChapterGradeLevel = 0;
         for (final Block block : chapter.getBlocks()) {
-            final double fkGradeLevel = FleschKincaidReadabilityInspector.inspectFKGradeLevel(block.getBody());
+            LOG.debug("Inspect readability on block: " + block.getBody());
+            final Double fkGradeLevel = FleschKincaidReadabilityInspector.inspectFKGradeLevel(block.getBody());
             if (maxChapterGradeLevel < fkGradeLevel) {
                 maxChapterGradeLevel = fkGradeLevel;
             }
-            block.setFkGrade(BigDecimal.valueOf(fkGradeLevel));
+            LOG.debug("FkGrade: " + fkGradeLevel);
+            block.setFkGrade((fkGradeLevel.isNaN()) ? BigDecimal.ZERO : BigDecimal.valueOf(fkGradeLevel));
         }
         chapter.getMetadata().setFkGrade(BigDecimal.valueOf(maxChapterGradeLevel));
     }

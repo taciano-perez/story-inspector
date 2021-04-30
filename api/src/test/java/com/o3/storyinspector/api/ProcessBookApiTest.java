@@ -29,6 +29,8 @@ class ProcessBookApiTest {
 
     private static final String API_PROCESS_BOOK = API_ROOT + "/process-book";
 
+    private static final String API_REPROCESS_BOOK = API_ROOT + "/reprocess-book";
+
     private static final String INPUT_PLAINTEXT_BOOK = "Chapter 1: A Startling Start.\n" +
             "This is an example chapter wherein wondrous things would be expected by its eager author.\n" +
             "            \n" +
@@ -142,6 +144,19 @@ class ProcessBookApiTest {
         assertEquals(EXPECTED_ANNOTATED_STORYDOM.strip(), book.getAnnotatedStoryDom().strip());
         assertTrue(book.isReportAvailable());
         verify(mailSenderMock, times(1)).send((MimeMessage) any());
+    }
+
+    @Test
+    void whenProcessBook_ReprocessBook() {
+        // given
+        final long bookId = BookDAO.saveBook(db, USER_ID, USER_EMAIL, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null, null);
+
+        // when
+        final Response response = RestAssured.given()
+                .post(API_REPROCESS_BOOK + "/" + bookId);
+
+        // then
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 
     @Test

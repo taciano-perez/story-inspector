@@ -25,4 +25,23 @@ class FleschKincaidReadabilityInspectorTest {
         // then
         assertEquals(6.943587069864442, fkGradeLevel);
     }
+
+    @Test
+    void inspectFKGradeLevelWithEllipses() {
+        // given
+        final String CONTENT = "Harry Potter rolled over inside his blankets without waking up. " +
+                "One small hand closed on the letter beside him and he slept on, not knowing he was special, " +
+                "not knowing he was famous, not knowing he would be woken in a few hours' time by Mrs. Dursley's scream " +
+                "as she opened the front door to put out the milk bottles, nor that he would spend the next few weeks " +
+                "being prodded and pinched by his cousin Dudley... " +
+                "He couldn't know that at this very moment, people meeting in secret all over the country were " +
+                "holding up their glasses and saying in hushed voices: \"To Harry Potter -- the boy who lived!";
+
+        // when
+        double fkGradeLevel = FleschKincaidReadabilityInspector.inspectFKGradeLevel(CONTENT);
+
+        // then
+        assertEquals(14.892252252252256, fkGradeLevel);
+    }
+
 }

@@ -52,17 +52,19 @@ public class AnnotateBookTask implements Runnable {
 
             BookDAO.updateBook(db, annotatedBookAsString, new Date(System.currentTimeMillis()), bookId.toString());
 
-            try {
-                EmailUtils.sendHtmlEmail(emailSender, bookDAO.getUserEmail(),
-                        "StoryInspector analysis complete: " + bookDAO.getTitle(),
-                        "<p>StoryInspector has finished analyzing the book \"" + bookDAO.getTitle() + "\" by " + bookDAO.getAuthor() + ".\n" +
-                        "<p>Click <a href='http://www.storyinspector.com/report-structure.html?book_id=" + bookDAO.getId() + "'>here</a> to access the results." +
-                        "<p>We hope you enjoy it. Thanks for using StoryInspector." +
-                        "<br><img src=\"www.storyinspector.com/img/logo.png\" alt=\"Story Inspector\" width=\"56\" height=\"56\">");
-            } catch (MessagingException e) {
-                logger.error("Error sending mail to: " + bookDAO.getUserEmail() + " for book id: " + bookId);
-                logger.error(e.getMessage());
-                e.printStackTrace();
+            if (emailSender != null) {
+                try {
+                    EmailUtils.sendHtmlEmail(emailSender, bookDAO.getUserEmail(),
+                            "StoryInspector analysis complete: " + bookDAO.getTitle(),
+                            "<p>StoryInspector has finished analyzing the book \"" + bookDAO.getTitle() + "\" by " + bookDAO.getAuthor() + ".\n" +
+                                    "<p>Click <a href='http://www.storyinspector.com/report-structure.html?book_id=" + bookDAO.getId() + "'>here</a> to access the results." +
+                                    "<p>We hope you enjoy it. Thanks for using StoryInspector." +
+                                    "<br><img src=\"www.storyinspector.com/img/logo.png\" alt=\"Story Inspector\" width=\"56\" height=\"56\">");
+                } catch (MessagingException e) {
+                    logger.error("Error sending mail to: " + bookDAO.getUserEmail() + " for book id: " + bookId);
+                    logger.error(e.getMessage());
+                    e.printStackTrace();
+                }
             }
 
         } catch (EmptyResultDataAccessException erdae) {

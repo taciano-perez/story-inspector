@@ -5,9 +5,7 @@ import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.json.JSONException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,15 +138,15 @@ class CharacterApiTest {
     @Autowired
     private JdbcTemplate db;
 
-    private SimpleSmtpServer testSmtpServer;
+    private static SimpleSmtpServer testSmtpServer;
 
-    @BeforeEach
-    void setUp() throws IOException {
+    @BeforeAll
+    static void setUp() throws IOException {
         testSmtpServer = SimpleSmtpServer.start(8142);    // mock e-mail server at port 8142
     }
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void tearDown() {
         testSmtpServer.stop();
     }
 

@@ -63,11 +63,9 @@ class BlockApiTest {
             "</Book>\n";
 
     private final static String EXPECTED_JSON_STRUCTURE =
-            "{ bookTitle: 'Example Book', bookAuthor: 'Example Author', blocks: " +
-            "  [ { body: 'This is an example chapter wherein wondrous things would be expected by its eager author .'," +
-                    " fkGrade: 5.1, id=1, chapterName: 'Chapter #1 Chapter 1' }," +
-            " { body: 'This is another example chapter , but the action seems to unfold slower than expected .'," +
-                    " fkGrade: 5.1, id=2, chapterName: 'Chapter #2 Chapter 2' } ]}";
+            "{\"bookTitle\":\"Example Book\",\"bookAuthor\":\"Example Author\"," +
+            "\"blocks\":[{\"id\":1,\"body\":\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\"chapterName\":\"Chapter #1 Chapter 1\",\"fkGrade\":5.1,\"sentences\":[{\"body\":\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\"fkGrade\":9.92666666666667,\"wordCount\":16}]},{\"id\":2,\"body\":\"This is another example chapter , but the action seems to unfold slower than expected .\",\"chapterName\":\"Chapter #2 Chapter 2\",\"fkGrade\":5.1,\"sentences\":[{\"body\":\"This is another example chapter , but the action seems to unfold slower than expected .\"," +
+            "\"fkGrade\":11.784285714285716,\"wordCount\":16}]}]}";
 
     private static final String USER_ID = "108700212624021084744";
 

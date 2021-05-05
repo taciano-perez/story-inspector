@@ -1,6 +1,7 @@
 package com.o3.storyinspector.annotation.sentiments;
 
 import com.o3.storyinspector.annotation.AnnotationEngine;
+import com.o3.storyinspector.annotation.blocks.SentenceSplitter;
 import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.Block;
@@ -27,7 +28,7 @@ public class SentimentInspector {
      */
     public static double inspectSentimentScore(final Block block, final int wordsPerBlock) {
         LOG.debug("Inspecting sentiment on block: [" + block.getBody() + "]");
-        final List<String> sentences = StanfordCoreNLPUtils.splitSentences(block.getBody());
+        final List<String> sentences = SentenceSplitter.splitSentences(block);
         double accumulatedSentimentScore = 0;
         int numOfSentences = 0;
         for (final String sentence : sentences) {

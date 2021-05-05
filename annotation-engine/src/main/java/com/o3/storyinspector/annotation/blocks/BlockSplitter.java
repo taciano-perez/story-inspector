@@ -1,6 +1,5 @@
 package com.o3.storyinspector.annotation.blocks;
 
-import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Chapter;
@@ -28,7 +27,7 @@ public class BlockSplitter {
     public static List<Block> splitChapter(final Chapter chapter, final int wordsPerBlock) {
         final List<Block> newBlocks = new ArrayList<>();
         for (final Block oldBlock : chapter.getBlocks()) {
-            final List<String> sentences = StanfordCoreNLPUtils.splitSentences(oldBlock.getBody());
+            final List<String> sentences = SentenceSplitter.splitSentences(oldBlock);
             int blockCounter = 1;
             BlockBuilder blockBuilder = new BlockBuilder(chapter, blockCounter++);
             for (final String sentence : sentences) {

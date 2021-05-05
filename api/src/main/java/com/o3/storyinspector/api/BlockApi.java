@@ -1,8 +1,12 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.annotation.blocks.SentenceSplitter;
+import com.o3.storyinspector.annotation.readability.FleschKincaidReadabilityInspector;
+import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.Block;
 import com.o3.storyinspector.domain.Blocks;
+import com.o3.storyinspector.domain.Sentence;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.io.XmlReader;
 import org.slf4j.Logger;
@@ -38,7 +42,13 @@ public class BlockApi {
             for (final com.o3.storyinspector.storydom.Chapter chapter : book.getChapters()) {
                 final String chapterTitle = "Chapter #" + chapterId++ + " " + chapter.getTitle();
                 for (final com.o3.storyinspector.storydom.Block domBlock : chapter.getBlocks()) {
-                    blockList.add(new Block(blockId++, domBlock, chapterTitle));
+                    final List<Sentence> sentences = new ArrayList<>();
+                    for (final String sentenceText : SentenceSplitter.splitSentences(domBlock)) {
+                        final int wordCount = WordCountInspector.inspectWordCount(sentenceText);
+                        double fkGradeLevel = FleschKincaidReadabilityInspector.inspectFKGradeLevel(sentenceText);
+                        sentences.add(new Sentence(sentenceText, fkGradeLevel, wordCount));
+                    }
+                    blockList.add(new Block(blockId++, domBlock, chapterTitle, sentences));
                 }
             }
             return new Blocks(bookDAO.getTitle(), bookDAO.getAuthor(), blockList);

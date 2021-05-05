@@ -1,5 +1,7 @@
 package com.o3.storyinspector.domain;
 
+import java.util.List;
+
 public class Block {
 
     public static final double FK_GRADE_UNKNOWN = -256;
@@ -8,19 +10,14 @@ public class Block {
     private String body;
     private String chapterName;
     private Double fkGrade;
+    private List<Sentence> sentences;
 
-    public Block(final Integer id, final com.o3.storyinspector.storydom.Block domBlock, final String chapterName) {
+    public Block(final Integer id, final com.o3.storyinspector.storydom.Block domBlock, final String chapterName, final List<Sentence> sentences) {
         this.body = domBlock.getBody();
         this.fkGrade = (domBlock.getFkGrade() != null) ? domBlock.getFkGrade().doubleValue() : FK_GRADE_UNKNOWN;
         this.id = id;
         this.chapterName = chapterName;
-    }
-
-    public Block(final com.o3.storyinspector.storydom.Block domBlock, final String chapterName) {
-        this.body = domBlock.getBody();
-        this.fkGrade = (domBlock.getFkGrade() != null) ? domBlock.getFkGrade().doubleValue() : FK_GRADE_UNKNOWN;
-        this.id = (this.id != null) ? Integer.valueOf(domBlock.getId()) : 0;
-        this.chapterName = chapterName;
+        this.sentences = sentences;
     }
 
     public Integer getId() {
@@ -37,5 +34,9 @@ public class Block {
 
     public String getChapterName() {
         return chapterName;
+    }
+
+    public List<Sentence> getSentences() {
+        return sentences;
     }
 }

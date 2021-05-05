@@ -13,6 +13,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import javax.xml.bind.JAXBException;
 import java.io.StringReader;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -21,6 +23,8 @@ import java.util.List;
 public class BookDAO {
 
     final static Logger logger = LoggerFactory.getLogger(BookDAO.class);
+
+    final static DateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");;
 
     private long id;
     private String title;
@@ -34,6 +38,7 @@ public class BookDAO {
     private String message;
     private int percentageComplete;
     private int remainingMinutes;
+    private String createTime;
 
     public BookDAO(final long id, final String title, final String author, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes) {
         this.id = id;
@@ -58,11 +63,25 @@ public class BookDAO {
         this.message = message;
     }
 
-    public BookDAO(final long id, final String title, final String author, final String userEmail, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes) {
+    public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes, final Timestamp createTime) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.userEmail = userEmail;
+        this.engineVersion = engineVersion;
+        this.isReportAvailable = isReportAvailable;
+        this.message = message;
+        this.percentageComplete = percentageComplete;
+        this.remainingMinutes = remainingMinutes;
+        this.createTime = DATE_TIME_FORMATTER.format(createTime.getTime());
+    }
+
+    public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.userEmail = userEmail;
+        this.engineVersion = engineVersion;
         this.isReportAvailable = isReportAvailable;
         this.message = message;
         this.percentageComplete = percentageComplete;
@@ -161,6 +180,14 @@ public class BookDAO {
         this.remainingMinutes = remainingMinutes;
     }
 
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
     public Book asBook() throws JAXBException {
         final Book book = XmlReader.readBookFromXmlStream(new StringReader(this.getAnnotatedStoryDom()));
         book.setAuthor(this.getAuthor());
@@ -229,16 +256,18 @@ public class BookDAO {
      * @return all books.
      */
     public static List<BookDAO> findAll(final JdbcTemplate db) {
-        return db.query("SELECT book_id, title, author, user_email, is_report_available, percent_complete, remain_mins, message FROM books",
+        return db.query("SELECT book_id, title, author, user_email, engine_version, is_report_available, percent_complete, remain_mins, message, create_time FROM books",
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),
                                 rs.getString("title"),
                                 rs.getString("author"),
                                 rs.getString("user_email"),
+                                rs.getInt("engine_version"),
                                 rs.getBoolean("is_report_available"),
                                 rs.getString("message"),
                                 rs.getInt("percent_complete"),
-                                rs.getInt("remain_mins")));
+                                rs.getInt("remain_mins"),
+                                rs.getTimestamp("create_time")));
     }
 
     public static List<BookDAO> findAll(final JdbcTemplate db, final String userId) {

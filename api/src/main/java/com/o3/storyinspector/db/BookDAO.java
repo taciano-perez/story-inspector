@@ -241,10 +241,10 @@ public class BookDAO {
     }
 
     public static void updateBook(final JdbcTemplate db, final String annotatedBookAsString, final Date annotationCompleteTime, final String bookId) {
-        final String sql = "UPDATE books SET annotated_storydom = ?, annotation_complete_time = ?, engine_version=?, is_report_available=TRUE WHERE book_id = ?";
-        final Object[] params = {annotatedBookAsString, annotationCompleteTime, bookId};
+        final String sql = "UPDATE books SET annotated_storydom = ?, annotation_complete_time = ?, engine_version = ?, is_report_available=TRUE WHERE book_id = ?";
+        final Object[] params = {annotatedBookAsString, annotationCompleteTime, ProcessBookApi.ENGINE_VERSION, bookId};
         final int[] types = {Types.LONGNVARCHAR, Types.TIMESTAMP, Types.INTEGER, Types.INTEGER};
-        final int updatedRowCount = db.update(sql, params, types, ProcessBookApi.ENGINE_VERSION);
+        final int updatedRowCount = db.update(sql, params, types);
         if (updatedRowCount != 1) {
             logger.error("Unexpected error when annotating book. Book id: " + bookId + ", updated row count: " + updatedRowCount);
         }

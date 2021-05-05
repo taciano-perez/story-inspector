@@ -19,6 +19,8 @@ import java.util.Properties;
 @EnableAsync
 public class ApplicationConfig extends WebSecurityConfigurerAdapter {
 
+    public static final String ADMIN_USER_ID = "108700212624021084744";
+
     final static Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
     private static final String PROFILE_DEV = "dev";

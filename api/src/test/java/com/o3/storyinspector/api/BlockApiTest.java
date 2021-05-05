@@ -16,8 +16,7 @@ import java.sql.Timestamp;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class BookStructureApiTest {
-    private static final String API_ROOT = "http://localhost:8081/api/bookstructure";
+class BlockApiTest {
 
     private static final String ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
@@ -64,28 +63,31 @@ class BookStructureApiTest {
             "</Book>\n";
 
     private final static String EXPECTED_JSON_STRUCTURE =
-            "{\"title\":\"Example Book\",\"author\":\"Example Author\",\"wordcount\":32,\"chapters\":[{\"id\":1,\"title\":\"Chapter 1\",\"wordcount\":16,\"fkGrade\":5.1,\"dominantEmotions\":[\"ANTICIPATION\",\"TRUST\"],\"locations\":[\"London\"],\"characters\":[\"Holmes\"]},{\"id\":2,\"title\":\"Chapter 2\",\"wordcount\":16,\"fkGrade\":5.1,\"dominantEmotions\":[\"ANTICIPATION\"],\"locations\":[\"Paris\"],\"characters\":[\"Watson\"]}]}";
+            "{\"bookTitle\":\"Example Book\",\"bookAuthor\":\"Example Author\"," +
+            "\"blocks\":[{\"id\":1,\"body\":\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\"chapterName\":\"Chapter #1 Chapter 1\",\"fkGrade\":5.1,\"sentences\":[{\"body\":\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\"fkGrade\":9.92666666666667,\"wordCount\":16}]},{\"id\":2,\"body\":\"This is another example chapter , but the action seems to unfold slower than expected .\",\"chapterName\":\"Chapter #2 Chapter 2\",\"fkGrade\":5.1,\"sentences\":[{\"body\":\"This is another example chapter , but the action seems to unfold slower than expected .\"," +
+            "\"fkGrade\":11.784285714285716,\"wordCount\":16}]}]}";
 
     private static final String USER_ID = "108700212624021084744";
 
     private static final String USER_EMAIL = "contact@storyinspector.com";
 
+    private static final String API_ROOT = "http://localhost:8081/api/blocks";
+
     @Autowired
     private JdbcTemplate db;
 
     @Test
-    void testBookStructure() throws JSONException {
+    void findAllByBook() throws JSONException {
         // given
         final long bookId = BookDAO.saveBook(db, USER_ID, USER_EMAIL, "Example Book", "Example Author", "", "", ANNOTATED_STORYDOM, new Timestamp(System.currentTimeMillis()));
 
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
-                .get(API_ROOT + "/" + bookId);
+                .get(API_ROOT + "/list/" + bookId);
 
         // then
         final String jsonOutput = response.getBody().print();
         JSONAssert.assertEquals(EXPECTED_JSON_STRUCTURE, jsonOutput, true);
     }
-
 }

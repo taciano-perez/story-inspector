@@ -29,6 +29,8 @@ class ProcessBookApiTest {
 
     private static final String API_PROCESS_BOOK = API_ROOT + "/process-book";
 
+    private static final String API_REPROCESS_BOOK = API_ROOT + "/reprocess-book";
+
     private static final String INPUT_PLAINTEXT_BOOK = "Chapter 1: A Startling Start.\n" +
             "This is an example chapter wherein wondrous things would be expected by its eager author.\n" +
             "            \n" +
@@ -52,11 +54,11 @@ class ProcessBookApiTest {
     private static final String EXPECTED_ANNOTATED_STORYDOM = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<Book title=\"Example Book\">\n" +
             "    <Chapter id=\"1\" title=\"Chapter 1: A Startling Start.\">\n" +
-            "        <Metadata wordCount=\"15\">\n" +
+            "        <Metadata wordCount=\"15\" fkGrade=\"9.92666666666667\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0.06\">\n" +
+            "        <Block id=\"1#1\" wordCount=\"15\" sentimentScore=\"-0.06\" fkGrade=\"9.92666666666667\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.08693333333333333\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -68,11 +70,11 @@ class ProcessBookApiTest {
             "        </Block>\n" +
             "    </Chapter>\n" +
             "    <Chapter id=\"2\" title=\"Chapter 2: The Unexciting Aftermath.\">\n" +
-            "        <Metadata wordCount=\"14\">\n" +
+            "        <Metadata wordCount=\"14\" fkGrade=\"11.784285714285716\">\n" +
             "            <Locations/>\n" +
             "            <Characters/>\n" +
             "        </Metadata>\n" +
-            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0.056\">\n" +
+            "        <Block id=\"2#1\" wordCount=\"14\" sentimentScore=\"-0.056\" fkGrade=\"11.784285714285716\">\n" +
             "            <Emotion type=\"anger\" score=\"0.0\"/>\n" +
             "            <Emotion type=\"anticipation\" score=\"0.07978571428571428\"/>\n" +
             "            <Emotion type=\"disgust\" score=\"0.0\"/>\n" +
@@ -83,7 +85,7 @@ class ProcessBookApiTest {
             "            <Body>This is another example chapter, but the action seems to unfold slower than expected.</Body>\n" +
             "        </Block>\n" +
             "    </Chapter>\n" +
-            "</Book>\n";
+            "</Book>";
 
     private static final String USER_ID = "108700212624021084744";
 
@@ -142,6 +144,19 @@ class ProcessBookApiTest {
         assertEquals(EXPECTED_ANNOTATED_STORYDOM.strip(), book.getAnnotatedStoryDom().strip());
         assertTrue(book.isReportAvailable());
         verify(mailSenderMock, times(1)).send((MimeMessage) any());
+    }
+
+    @Test
+    void whenProcessBook_ReprocessBook() {
+        // given
+        final long bookId = BookDAO.saveBook(db, USER_ID, USER_EMAIL, "Example Book", "Example Author", INPUT_PLAINTEXT_BOOK, null, null, null);
+
+        // when
+        final Response response = RestAssured.given()
+                .post(API_REPROCESS_BOOK + "/" + bookId);
+
+        // then
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }
 
     @Test

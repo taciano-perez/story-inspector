@@ -21,7 +21,6 @@ public class BookApi {
 
     final Logger logger = LoggerFactory.getLogger(BookApi.class);
 
-    private static final String ADMIN_USER_ID = "108700212624021084744";
 
     private static List<BookDAO> bookList = new ArrayList<>();
 
@@ -56,7 +55,7 @@ public class BookApi {
     @GetMapping("/admin/list")
     public Map<String, List<BookDAO>> adminFindAllById(@RequestParam("userId") final String userId) {
         logger.trace("ADMIN QUERYING ALL BOOKS userId: " + userId);
-        if (ADMIN_USER_ID.equals(userId)) {
+        if (ApplicationConfig.ADMIN_USER_ID.equals(userId)) {
             final List<BookDAO> books = BookDAO.findAll(db);
             bookList.addAll(books);
             return Collections.singletonMap("books", books);

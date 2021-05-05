@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,10 +60,12 @@ public class BookStructureApi {
         for (final com.o3.storyinspector.storydom.Chapter chapter : book.getChapters()) {
             final Metadata chapterMetadata = chapter.getMetadata();
             final long chapterWordcount = Long.parseLong(chapterMetadata.getWordCount());
+            final BigDecimal chapterFkGrade = chapter.getMetadata().getFkGrade();
             bookWordcount += chapterWordcount;
             chapterList.add(new Chapter(id++,
                     chapter.getTitle(),
                     chapterWordcount,
+                    (chapterFkGrade == null) ? com.o3.storyinspector.domain.Block.FK_GRADE_UNKNOWN : chapterFkGrade.doubleValue(),
                     chapterMetadata.getCharacters().getCharacters().stream().map(Character::getName).collect(Collectors.toList()),
                     chapterMetadata.getLocations().getLocations().stream().map(Location::getName).collect(Collectors.toList()),
                     identifyDominantEmotions(chapter)));

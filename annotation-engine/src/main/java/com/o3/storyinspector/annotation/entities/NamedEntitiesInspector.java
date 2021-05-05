@@ -1,6 +1,7 @@
 package com.o3.storyinspector.annotation.entities;
 
 import com.o3.storyinspector.annotation.AnnotationEngine;
+import com.o3.storyinspector.annotation.blocks.SentenceSplitter;
 import com.o3.storyinspector.annotation.util.NamedEntityToken;
 import com.o3.storyinspector.annotation.util.StanfordCoreNLPUtils;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
@@ -39,7 +40,7 @@ public class NamedEntitiesInspector {
         final NamedEntities namedEntities = new NamedEntities(new HashSet<>(), new HashSet<>());
         for (final Block block : chapter.getBlocks()) {
             LOG.debug("Inspecting NER on block: [" + block.getBody() + "]");
-            final List<String> sentences = StanfordCoreNLPUtils.splitSentences(block.getBody());
+            final List<String> sentences = SentenceSplitter.splitSentences(block);
             for (final String sentence : sentences) {
                 final int wordCount = WordCountInspector.inspectWordCount(sentence);
                 if (wordCount > AnnotationEngine.MAX_SENTENCE_LENGTH) {

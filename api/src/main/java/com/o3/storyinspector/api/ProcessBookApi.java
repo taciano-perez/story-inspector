@@ -29,7 +29,7 @@ public class ProcessBookApi {
 
     final static Logger logger = LoggerFactory.getLogger(ProcessBookApi.class);
 
-    public static final int ENGINE_VERSION = 2;
+    public static final int ENGINE_VERSION = 4;
 
     @Autowired
     private JdbcTemplate db;
@@ -50,6 +50,8 @@ public class ProcessBookApi {
             return;
         }
         logger.trace("PROCESS BOOK ID - DOM CREATED");
+
+        BookDAO.updateBookValidation(db, true, bookId);
 
         taskScheduler.execute(new AnnotateBookTask(db, bookId, emailSender));
         logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
@@ -113,6 +115,5 @@ public class ProcessBookApi {
                     HttpStatus.BAD_REQUEST);
         }
     }
-
 
 }

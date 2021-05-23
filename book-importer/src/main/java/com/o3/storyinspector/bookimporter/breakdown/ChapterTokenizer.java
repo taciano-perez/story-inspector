@@ -34,7 +34,7 @@ public class ChapterTokenizer {
                 currentChapter.setId(Integer.toString(uniqueChapterId++));
                 currentChapter.getBlocks().add(new Block());
                 chapters.add(currentChapter);
-                currentChapter.setTitle(sentenceString);
+                currentChapter.setTitle(cleanChapterName(sentenceString));
                 currentChapter.getBlocks().get(0).setBody("");
             } else {
                 if (currentChapter != null && currentChapter.getBlocks().get(0) != null) {
@@ -48,6 +48,21 @@ public class ChapterTokenizer {
             }
         }
         return chapters;
+    }
+
+    private static String cleanChapterName(final String inputChapterName) {
+        String outputChapterName = inputChapterName;
+
+        // remove trailing characters before "chapter"
+        while (!outputChapterName.toLowerCase().startsWith("chapter")) {
+            outputChapterName = outputChapterName.substring(1);
+            if (outputChapterName.isEmpty()) {  // should never happen, but just in case...
+                outputChapterName = inputChapterName;
+                break;
+            }
+        }
+
+        return outputChapterName.trim();
     }
 
     private static boolean isBlankString(final String string) {

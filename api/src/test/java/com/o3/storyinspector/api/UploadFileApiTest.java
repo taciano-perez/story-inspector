@@ -29,7 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UploadFileApiTest {
 
     private static final String API_HEADER = "http://localhost:";
-    private static final String API_TRAILER = "/api/upload/book";
+    private static final String API_UPLOAD_BOOK_TRAILER = "/api/upload/book";
+    private static final String API_PREVIEW_BOOK_TRAILER = "/api/upload/book-preview";
 
     private static final String INPUT_PLAINTEXT_BOOK = "Chapter 1: A Startling Start.\n" +
             "This is an example chapter wherein wondrous things would be expected by its eager author.\n" +
@@ -54,7 +55,7 @@ class UploadFileApiTest {
     @Test
     void testUploadSmallFile(@LocalServerPort int port) throws Exception {
         // given
-        final String apiEndpoint = API_HEADER + port + API_TRAILER;
+        final String apiEndpoint = API_HEADER + port + API_UPLOAD_BOOK_TRAILER;
         System.out.println("API ENDPOINT: " + apiEndpoint);
         MockMultipartHttpServletRequestBuilder builder = multipart(apiEndpoint);
         builder = builder.part(new MockPart("file", "book.txt", INPUT_PLAINTEXT_BOOK.getBytes()));
@@ -74,7 +75,7 @@ class UploadFileApiTest {
     @Test
     void testUploadLargeFile(@LocalServerPort int port) throws Exception {
         // given
-        final String apiEndpoint = API_HEADER + port + API_TRAILER;
+        final String apiEndpoint = API_HEADER + port + API_UPLOAD_BOOK_TRAILER;
         System.out.println("API ENDPOINT: " + apiEndpoint);
         final byte[] fileContents = createPayload(LARGE_PAYLOAD_SIZE);
         MockMultipartHttpServletRequestBuilder builder = multipart(apiEndpoint);
@@ -87,6 +88,26 @@ class UploadFileApiTest {
         // when
         mockMvc.perform(builder
                 .content(createFileContent(fileContents, BOUNDARY, MediaType.TEXT_PLAIN_VALUE, "book.txt"))
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE + "; boundary=" + BOUNDARY))
+                // then
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testUploadBookPreview(@LocalServerPort int port) throws Exception {
+        // given
+        final String apiEndpoint = API_HEADER + port + API_PREVIEW_BOOK_TRAILER;
+        System.out.println("API ENDPOINT: " + apiEndpoint);
+        MockMultipartHttpServletRequestBuilder builder = multipart(apiEndpoint);
+        builder = builder.part(new MockPart("file", "book.txt", INPUT_PLAINTEXT_BOOK.getBytes()));
+        builder.param("title", "Mock Title")
+                .param("author", "Mock Author")
+                .param("id_token", USER_ID);
+        given(idValidator.retrieveUserInfo(any())).willReturn(new UserInfo(USER_ID, "Test User", "contact@storyinspector.com"));
+
+        // when
+        mockMvc.perform(builder
+                .content(createFileContent(INPUT_PLAINTEXT_BOOK.getBytes(), BOUNDARY, MediaType.TEXT_PLAIN_VALUE, "book.txt"))
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE + "; boundary=" + BOUNDARY))
                 // then
                 .andExpect(status().isOk());

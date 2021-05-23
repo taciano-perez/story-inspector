@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import javax.mail.MessagingException;
 import java.io.StringReader;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class AnnotateBookTask implements Runnable {
 
@@ -40,6 +41,7 @@ public class AnnotateBookTask implements Runnable {
 
             String annotatedBookAsString = "";
             try {
+                BookDAO.updateBookAnnotationStartTime(db, new Timestamp(System.currentTimeMillis()), bookId);
                 final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(bookDAO.getStoryDom()),
                         (double percentageCompleted, int minutesLeft) -> {this.updateStatus(percentageCompleted, minutesLeft, bookDAO, db);}
                         );

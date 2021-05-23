@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Takes a StoryDOM as input and annotates it with metadata
@@ -94,7 +93,7 @@ public class AnnotationEngine {
         long time;
 
         time = logStart("Chapter: [" + chapter.getTitle() + "]. COUNTING WORDS...");
-        countWords(chapter);
+        countChapterWords(chapter);
         logEnd(time);
 
         time = logStart("Chapter: [" + chapter.getTitle() + "]. BREAKING DOWN BLOCKS...");
@@ -192,26 +191,17 @@ public class AnnotationEngine {
         }
     }
 
-    private static void countWords(final Chapter chapter) {
-        final int wordCount = WordCountInspector.inspectWordCount(getChapterBody(chapter));
+    public static int countChapterWords(final Chapter chapter) {
+        final int wordCount = WordCountInspector.inspectChapterWordCount(chapter);
         chapter.getMetadata().setWordCount(Integer.toString(wordCount));
+        return wordCount;
     }
 
     private static int countBookWords(final Book book) {
         return book.getChapters().stream()
-                .map(c -> WordCountInspector.inspectWordCount(getChapterBody(c)))
+                .map(chapter -> WordCountInspector.inspectChapterWordCount(chapter))
                 .mapToInt(Integer::intValue)
                 .sum();
     }
 
-    /**
-     * Reads all chapter body regardless of blocks.
-     *
-     * @return complete chapter body
-     */
-    private static String getChapterBody(final Chapter chapter) {
-        return chapter.getBlocks().stream()
-                .map(Block::getBody)
-                .collect(Collectors.joining());
-    }
 }

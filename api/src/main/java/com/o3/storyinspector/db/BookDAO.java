@@ -24,7 +24,7 @@ public class BookDAO {
 
     final static Logger logger = LoggerFactory.getLogger(BookDAO.class);
 
-    final static DateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");;
+    final static DateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     private long id;
     private String title;
@@ -39,8 +39,10 @@ public class BookDAO {
     private int percentageComplete;
     private int remainingMinutes;
     private String createTime;
+    private String annotationStartTime = null;
+    private Boolean validatedByUser = false;
 
-    public BookDAO(final long id, final String title, final String author, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes) {
+    public BookDAO(final long id, final String title, final String author, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes, final Timestamp annotationStartTime, final Boolean validatedByUser) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -48,9 +50,11 @@ public class BookDAO {
         this.message = message;
         this.percentageComplete = percentageComplete;
         this.remainingMinutes = remainingMinutes;
+        this.annotationStartTime = (annotationStartTime == null) ? null : DATE_TIME_FORMATTER.format(annotationStartTime.getTime());
+        this.validatedByUser = validatedByUser;
     }
 
-    public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final String rawInput, final String storyDom, final String annotatedStoryDom, final boolean isReportAvailable, final String message) {
+    public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final String rawInput, final String storyDom, final String annotatedStoryDom, final boolean isReportAvailable, final String message, final Timestamp annotationStartTime, final Boolean validatedByUser) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -61,9 +65,11 @@ public class BookDAO {
         this.annotatedStoryDom = annotatedStoryDom;
         this.isReportAvailable = isReportAvailable;
         this.message = message;
+        this.annotationStartTime = (annotationStartTime == null) ? null : DATE_TIME_FORMATTER.format(annotationStartTime.getTime());
+        this.validatedByUser = validatedByUser;
     }
 
-    public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes, final Timestamp createTime) {
+    public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes, final Timestamp createTime, final Timestamp annotationStartTime, final Boolean validatedByUser) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -74,6 +80,8 @@ public class BookDAO {
         this.percentageComplete = percentageComplete;
         this.remainingMinutes = remainingMinutes;
         this.createTime = DATE_TIME_FORMATTER.format(createTime.getTime());
+        this.annotationStartTime = (annotationStartTime == null) ? null : DATE_TIME_FORMATTER.format(annotationStartTime.getTime());
+        this.validatedByUser = validatedByUser;
     }
 
     public BookDAO(final long id, final String title, final String author, final String userEmail, final int engineVersion, final boolean isReportAvailable, final String message, final int percentageComplete, final int remainingMinutes) {
@@ -188,6 +196,22 @@ public class BookDAO {
         this.createTime = createTime;
     }
 
+    public String getAnnotationStartTime() {
+        return annotationStartTime;
+    }
+
+    public void setAnnotationStartTime(String annotationStartTime) {
+        this.annotationStartTime = annotationStartTime;
+    }
+
+    public Boolean getValidatedByUser() {
+        return validatedByUser;
+    }
+
+    public void setValidatedByUser(Boolean validatedByUser) {
+        this.validatedByUser = validatedByUser;
+    }
+
     public Book asBook() throws JAXBException {
         final Book book = XmlReader.readBookFromXmlStream(new StringReader(this.getAnnotatedStoryDom()));
         book.setAuthor(this.getAuthor());
@@ -230,6 +254,25 @@ public class BookDAO {
         }
     }
 
+    public static void updateBookAnnotationStartTime(final JdbcTemplate db, final Timestamp annotationStartTime, final Long bookId) {
+        final String sql = "UPDATE books SET annotation_start_time = ? WHERE book_id = ?";
+        final Object[] params = {annotationStartTime, bookId};
+        final int[] types = {Types.TIMESTAMP, Types.INTEGER};
+        final int updatedRowCount = db.update(sql, params, types);
+        if (updatedRowCount != 1) {
+            logger.error("Unexpected error when updating annotation start time. Book id: " + bookId + ", updated row count: " + updatedRowCount);
+        }
+    }
+    public static void updateBookValidation(final JdbcTemplate db, final Boolean validBook, final Long bookId) {
+        final String sql = "UPDATE books SET validated_by_user = ? WHERE book_id = ?";
+        final Object[] params = {validBook, bookId};
+        final int[] types = {Types.BOOLEAN, Types.INTEGER};
+        final int updatedRowCount = db.update(sql, params, types);
+        if (updatedRowCount != 1) {
+            logger.error("Unexpected error when updating book validation. Book id: " + bookId + ", updated row count: " + updatedRowCount);
+        }
+    }
+
     public static void updateBook(final JdbcTemplate db, final String annotatedBookAsString, final Long bookId) {
         final String sql = "UPDATE books SET annotated_storydom = ?, is_report_available=TRUE WHERE book_id = ?";
         final Object[] params = {annotatedBookAsString, bookId};
@@ -256,7 +299,7 @@ public class BookDAO {
      * @return all books.
      */
     public static List<BookDAO> findAll(final JdbcTemplate db) {
-        return db.query("SELECT book_id, title, author, user_email, engine_version, is_report_available, percent_complete, remain_mins, message, create_time FROM books",
+        return db.query("SELECT book_id, title, author, user_email, engine_version, is_report_available, percent_complete, remain_mins, message, create_time, annotation_start_time, validated_by_user FROM books",
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),
                                 rs.getString("title"),
@@ -267,11 +310,13 @@ public class BookDAO {
                                 rs.getString("message"),
                                 rs.getInt("percent_complete"),
                                 rs.getInt("remain_mins"),
-                                rs.getTimestamp("create_time")));
+                                rs.getTimestamp("create_time"),
+                                rs.getTimestamp("annotation_start_time"),
+                                rs.getBoolean("validated_by_user")));
     }
 
     public static List<BookDAO> findAll(final JdbcTemplate db, final String userId) {
-        return db.query("SELECT book_id, title, author, is_report_available, percent_complete, remain_mins, message FROM books WHERE user_id = ?",
+        return db.query("SELECT book_id, title, author, is_report_available, percent_complete, remain_mins, message, annotation_start_time, validated_by_user FROM books WHERE user_id = ?",
                 new Object[]{userId},
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),
@@ -280,12 +325,14 @@ public class BookDAO {
                                 rs.getBoolean("is_report_available"),
                                 rs.getString("message"),
                                 rs.getInt("percent_complete"),
-                                rs.getInt("remain_mins")));
+                                rs.getInt("remain_mins"),
+                                rs.getTimestamp("annotation_start_time"),
+                                rs.getBoolean("validated_by_user")));
     }
 
 
     public static BookDAO findByBookId(final Long bookId, final JdbcTemplate db) throws EmptyResultDataAccessException {
-        return db.queryForObject("SELECT book_id, title, author, user_email, engine_version, raw_input, storydom, annotated_storydom, is_report_available, message FROM books WHERE book_id = ?",
+        return db.queryForObject("SELECT book_id, title, author, user_email, engine_version, raw_input, storydom, annotated_storydom, is_report_available, message, annotation_start_time, validated_by_user FROM books WHERE book_id = ?",
                 new Object[]{bookId},
                 (rs, rowNum) ->
                         new BookDAO(rs.getInt("book_id"),
@@ -297,6 +344,8 @@ public class BookDAO {
                                 rs.getString("storydom"),
                                 rs.getString("annotated_storydom"),
                                 rs.getBoolean("is_report_available"),
-                                rs.getString("message")));
+                                rs.getString("message"),
+                                rs.getTimestamp("annotation_start_time"),
+                                rs.getBoolean("validated_by_user")));
     }
 }

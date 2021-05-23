@@ -1,5 +1,6 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.BookStructure;
 import com.o3.storyinspector.domain.Chapter;
@@ -16,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,9 +37,16 @@ public class BookStructureApi {
         BookStructure bookStructure;
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
-            final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
-            book.setAuthor(bookDAO.getAuthor());    // FIXME: parse this at the appropriate spot
-            bookStructure = buildFromBook(book);
+            if (annotatedStoryDom != null) {
+                final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
+                book.setAuthor(bookDAO.getAuthor());    // FIXME: parse this at the appropriate spot
+                bookStructure = buildFromAnnotatedBook(book);
+            } else {
+                final String unannotatedStoryDom = bookDAO.getStoryDom();
+                final Book book = XmlReader.readBookFromXmlStream(new StringReader(unannotatedStoryDom));
+                book.setAuthor(bookDAO.getAuthor());    // FIXME: parse this at the appropriate spot
+                bookStructure = buildFromUnannotatedBook(book);
+            }
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when building book structure report. Book bookId: " +
                     bookId + ", Exception: " + e.getLocalizedMessage();
@@ -53,7 +58,7 @@ public class BookStructureApi {
         return bookStructure;
     }
 
-    private static BookStructure buildFromBook(final Book book) {
+    private static BookStructure buildFromAnnotatedBook(final Book book) {
         final List<Chapter> chapterList = new ArrayList<>();
         long bookWordcount = 0;
         long id = 1;
@@ -78,6 +83,29 @@ public class BookStructureApi {
         );
     }
 
+    private static BookStructure buildFromUnannotatedBook(final Book book) {
+        final List<Chapter> chapterList = new ArrayList<>();
+        long bookWordcount = 0;
+        long id = 1;
+        for (final com.o3.storyinspector.storydom.Chapter chapter : book.getChapters()) {
+            final long chapterWordcount = WordCountInspector.inspectChapterWordCount(chapter);
+            bookWordcount += chapterWordcount;
+            chapterList.add(new Chapter(id++,
+                    chapter.getTitle(),
+                    chapterWordcount,
+                    Double.NaN,                 // FK grade
+                    Collections.emptyList(),    // characters
+                    Collections.emptyList(),    // locations
+                    Collections.emptyList()     // dominant emotions
+            ));
+        }
+        return new BookStructure(
+                book.getTitle(),
+                book.getAuthor(),
+                bookWordcount,
+                chapterList
+        );
+    }
     public static List<EmotionType> identifyDominantEmotions(final com.o3.storyinspector.storydom.Chapter chapter) {
         final Map<EmotionType, Double> avgScoresByEmotion = new HashMap<>();
         double totalAccumulatedScore = 0;

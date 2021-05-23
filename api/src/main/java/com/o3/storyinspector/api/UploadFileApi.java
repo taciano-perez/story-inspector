@@ -29,6 +29,32 @@ public class UploadFileApi {
     @Autowired
     private GoogleId idValidator;
 
+    @RequestMapping(value = "/book-preview", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    public ResponseEntity<Long> submitPreview(@RequestParam("file") MultipartFile file,
+                                         @RequestParam("title") String title,
+                                         @RequestParam("author") String author,
+                                         @RequestParam("id_token") String idToken) throws IOException {
+        logger.trace(String.format("TITLE - %s", title));
+        logger.trace(String.format("AUTHOR - %s", author));
+        logger.trace(String.format("FILE - %s", file));
+        logger.trace(String.format("ID_TOKEN - %s", idToken));
+        final String content = getFileContent(file);
+        logger.trace(String.format("CONTENT - %s", content));
+
+        final UserInfo userInfo = idValidator.retrieveUserInfo(idToken);
+        if (userInfo != null) {
+            logger.trace("User name: " + userInfo.getName() + ", email: " + userInfo.getEmail());
+            final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
+            logger.trace(String.format("BOOK ID - %s", bookId));
+
+            ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
+            return ResponseEntity.ok(bookId);
+        } else {
+            logger.error("Could not upload book, error authenticating user. Title: " + title + ", author:" + author + ", token: " + idToken);
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
     @RequestMapping(value = "/book", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<Object> submit(@RequestParam("file") MultipartFile file,
                                          @RequestParam("title") String title,

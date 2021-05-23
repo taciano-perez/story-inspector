@@ -33,7 +33,7 @@ class ChapterTokenizerTest {
     void tokenizeFromFile() throws IOException {
         final List<Chapter> chapters = ChapterTokenizer.tokenizeFromFile(FileUtils.getPathFromUri(SAMPLE_BOOK_PATH));
         assertEquals(14, chapters.size());
-        assertEquals("_) [2] CHAPTER I.", chapters.get(0).getTitle());
+        assertEquals("CHAPTER I.", chapters.get(0).getTitle());
         assertEquals("1", chapters.get(0).getId());
         assertEquals(EXPECTED_CHAPTER_I_BODY_SAMPLE_BOOK, chapters.get(0).getBlocks().get(0).getBody());
         assertEquals("CHAPTER III.", chapters.get(2).getTitle());

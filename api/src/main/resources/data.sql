@@ -33,6 +33,7 @@ ALTER TABLE books
 ADD annotation_start_time TIMESTAMP DEFAULT NULL;
 ALTER TABLE books
 ADD validated_by_user BOOL DEFAULT FALSE;
+-- update books set annotation_start_time = create_time, validated_by_user = true where annotation_start_time is null;
 
 -- populate tables with test data
 DROP TABLE IF EXISTS SYSTEM_LOB_STREAM CASCADE;

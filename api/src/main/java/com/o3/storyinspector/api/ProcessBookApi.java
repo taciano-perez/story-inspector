@@ -44,6 +44,7 @@ public class ProcessBookApi {
     public void processBook(@RequestParam("ID") Long bookId) {
         logger.trace(String.format("PROCESS BOOK ID - %s", bookId));
 
+        // FIXME: if this book was previewed, DOM is already created
         final ResponseEntity<String> res1 = ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
         if (res1.getStatusCode() != HttpStatus.OK) {
             logger.error("PROCESS BOOK ID - ERROR CREATING DOM " + res1.getBody());

@@ -152,7 +152,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: *  # enable all management endpoints
+        include: "*"  # enable all management endpoints
   endpoint:
     health:
       show-details: always

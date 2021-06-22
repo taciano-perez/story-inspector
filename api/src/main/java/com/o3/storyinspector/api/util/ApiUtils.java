@@ -39,14 +39,14 @@ public class ApiUtils {
 
     @Async
     public static void callAsyncApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
-        final String endpoint = getBaseUrl(true) + endpointPath;
+        final String endpoint = getBaseUrl() + endpointPath;
         logger.trace("Calling async endpoint " + endpoint + " with parameter " + paramName + "=" + paramValue);
         final RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForEntity(endpoint, buildRestRequest(paramName, paramValue), String.class);
     }
 
     public static ResponseEntity<String> callApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
-        final String endpoint = getBaseUrl(true) + endpointPath;
+        final String endpoint = getBaseUrl() + endpointPath;
         logger.trace("Calling endpoint " + endpoint + " with parameter " + paramName + "=" + paramValue);
         final RestTemplate restTemplate = new RestTemplate();
         return restTemplate.postForEntity(endpoint, buildRestRequest(paramName, paramValue), String.class);
@@ -60,13 +60,13 @@ public class ApiUtils {
         return new HttpEntity<>(map, headers);
     }
 
-    private static String getBaseUrl(final boolean forceHttpsProtocol) {
+    private static String getBaseUrl() {
         String baseUrl = "http://localhost:8081";
         final Optional<HttpServletRequest> currentHttpRequest = getCurrentHttpRequest();
         try {
             final URL requestURL = new URL(currentHttpRequest.get().getRequestURL().toString());
             final String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
-            final String protocol = forceHttpsProtocol ? "https" : requestURL.getProtocol();
+            final String protocol = forceHttps ? "https" : requestURL.getProtocol();
             baseUrl = protocol + "://" + requestURL.getHost() + port;
             logger.trace("Base URL: " + baseUrl);
         } catch (MalformedURLException e) {

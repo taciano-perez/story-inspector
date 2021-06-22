@@ -31,29 +31,33 @@ public class ApiUtils {
 
     public static final String API_PROCESS_BOOK_ENDPOINT = API_ROOT + "/process-book";
 
+    static boolean forceHttps = false;
+
+    public static void setForceHttps(final boolean forceHttpsProtocol) {
+        forceHttps = forceHttpsProtocol;
+    }
+
     @Async
     public static void callAsyncApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
         final String endpoint = getBaseUrl() + endpointPath;
         logger.trace("Calling async endpoint " + endpoint + " with parameter " + paramName + "=" + paramValue);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        final MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add(paramName, paramValue);
-        final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         final RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForEntity(endpoint, request, String.class);
+        restTemplate.postForEntity(endpoint, buildRestRequest(paramName, paramValue), String.class);
     }
 
     public static ResponseEntity<String> callApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
         final String endpoint = getBaseUrl() + endpointPath;
         logger.trace("Calling endpoint " + endpoint + " with parameter " + paramName + "=" + paramValue);
+        final RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.postForEntity(endpoint, buildRestRequest(paramName, paramValue), String.class);
+    }
+
+    private static HttpEntity<MultiValueMap<String, String>> buildRestRequest(final String paramName, final String paramValue) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         final MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add(paramName, paramValue);
-        final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        final RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForEntity(endpoint, request, String.class);
+        return new HttpEntity<>(map, headers);
     }
 
     private static String getBaseUrl() {
@@ -62,7 +66,8 @@ public class ApiUtils {
         try {
             final URL requestURL = new URL(currentHttpRequest.get().getRequestURL().toString());
             final String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
-            baseUrl = requestURL.getProtocol() + "://" + requestURL.getHost() + port;
+            final String protocol = forceHttps ? "https" : requestURL.getProtocol();
+            baseUrl = protocol + "://" + requestURL.getHost() + port;
             logger.trace("Base URL: " + baseUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();

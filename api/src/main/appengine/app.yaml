@@ -1,0 +1,42 @@
+#service: storyinspector-api
+
+# standard
+#runtime: java11
+#instance_class: B8
+
+# flexible
+runtime: java
+env: flex
+runtime_config:
+  jdk: openjdk9
+resources:
+  cpu: 2
+  memory_gb: 4
+  disk_size_gb: 10
+
+env_variables:
+  SPRING_PROFILES_ACTIVE: "gcp-appengine"
+  GCP_DB_NAME: "storyinspectordb"
+  GCP_ICN: "story-inspector:us-central1:story-inspector-db-3"
+  GCP_DB_USERNAME: "story-inspector-db-3"
+  GCP_DB_PASSWORD: "Br199301"
+  GCP_EMAIL_HOST: "smtp.gmail.com"
+  GCP_EMAIL_USERNAME: "taciano@storyinspector.com"
+  GCP_EMAIL_PASSWORD: "Valentina15012009"
+  GCP_KEYSTORE_PASSWORD: "Br199301"
+handlers:
+  - url: /(.*)
+    script: auto
+    secure: always
+manual_scaling:
+  instances: 1
+#automatic_scaling:
+#  min_idle_instances: 1
+#  max_idle_instances: 1
+#liveness_check:
+#  path: "/actuator/health"
+#  check_interval_sec: 30
+#  timeout_sec: 4
+#  failure_threshold: 2
+#  success_threshold: 2
+entrypoint: java -noverify -jar api-1.0-SNAPSHOT.jar

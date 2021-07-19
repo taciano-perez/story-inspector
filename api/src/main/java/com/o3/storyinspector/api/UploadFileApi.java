@@ -11,10 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/api/upload")
@@ -30,10 +32,11 @@ public class UploadFileApi {
     private GoogleId idValidator;
 
     @RequestMapping(value = "/book-preview", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    @Transactional
     public ResponseEntity<Long> submitPreview(@RequestParam("file") MultipartFile file,
                                          @RequestParam("title") String title,
                                          @RequestParam("author") String author,
-                                         @RequestParam("id_token") String idToken) throws IOException {
+                                         @RequestParam("id_token") String idToken) throws IOException, SQLException {
         logger.trace(String.format("TITLE - %s", title));
         logger.trace(String.format("AUTHOR - %s", author));
         logger.trace(String.format("FILE - %s", file));
@@ -44,10 +47,12 @@ public class UploadFileApi {
         final UserInfo userInfo = idValidator.retrieveUserInfo(idToken);
         if (userInfo != null) {
             logger.trace("User name: " + userInfo.getName() + ", email: " + userInfo.getEmail());
+            BookDAO.dbTrace(db);
             final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
             logger.trace(String.format("BOOK ID - %s", bookId));
 
-            ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
+            //ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
+            ProcessBookApi.createDom(bookId, db);
             return ResponseEntity.ok(bookId);
         } else {
             logger.error("Could not upload book, error authenticating user. Title: " + title + ", author:" + author + ", token: " + idToken);
@@ -56,6 +61,7 @@ public class UploadFileApi {
     }
 
     @RequestMapping(value = "/book", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    @Transactional
     public ResponseEntity<Object> submit(@RequestParam("file") MultipartFile file,
                                          @RequestParam("title") String title,
                                          @RequestParam("author") String author,

@@ -16,6 +16,7 @@
         <module>book-importer</module>
         <module>viz-tool</module>
         <module>api</module>
+        <module>book-processor-batch</module>
     </modules>
 
     <properties>

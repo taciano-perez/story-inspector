@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
@@ -41,10 +42,11 @@ public class ProcessBookApi {
     private JavaMailSender emailSender;
 
     @RequestMapping(value = "/process-book", method = RequestMethod.POST)
+    @Transactional
     public void processBook(@RequestParam("ID") Long bookId) {
         logger.trace(String.format("PROCESS BOOK ID - %s", bookId));
 
-        // FIXME: if this book was previewed, DOM is already created
+        // FIXME: if this book was previewed, DOM is already created, no need to create it once more
         final ResponseEntity<String> res1 = ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
         if (res1.getStatusCode() != HttpStatus.OK) {
             logger.error("PROCESS BOOK ID - ERROR CREATING DOM " + res1.getBody());
@@ -54,11 +56,15 @@ public class ProcessBookApi {
 
         BookDAO.updateBookValidation(db, true, bookId);
 
-        taskScheduler.execute(new AnnotateBookTask(db, bookId, emailSender));
+        // FIXME: this is just a test
+        //taskScheduler.execute(new AnnotateBookTask(db, bookId, emailSender));
+        final AnnotateBookTask annotateBookTask = new AnnotateBookTask(db, bookId, emailSender);
+        annotateBookTask.run();
         logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
     }
 
     @GetMapping("/admin/task-queue/{userId}")
+    @Transactional
     public Long adminQueryTaskQueue(@PathVariable("userId") final String userId) {
         logger.trace("ADMIN QUERY TASK QUEUE userId: " + userId);
         if (ApplicationConfig.ADMIN_USER_ID.equals(userId)) {
@@ -70,6 +76,7 @@ public class ProcessBookApi {
     }
 
     @RequestMapping(value = "/reprocess-book/{bookId}", method = RequestMethod.POST)
+    @Transactional
     public void reprocessBook(@PathVariable("bookId") Long bookId) {
         logger.trace(String.format("REPROCESS BOOK ID - %s", bookId));
         taskScheduler.execute(new AnnotateBookTask(db, bookId, null));
@@ -77,7 +84,13 @@ public class ProcessBookApi {
     }
 
     @RequestMapping(value = "/create-dom", method = RequestMethod.POST)
+    @Transactional
     public ResponseEntity<Object> createDom(@RequestParam("ID") Long bookId) {
+        return createDom(bookId, db);
+    }
+
+    // FIXME: refactor this hack meant to solve synchronization problems with calls from UploadFileApi
+    public static ResponseEntity<Object> createDom(final Long bookId, final JdbcTemplate db) {
         logger.trace(String.format("CREATE DOM ID - %s", bookId));
 
         try {
@@ -96,6 +109,7 @@ public class ProcessBookApi {
                         HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
+            // FIXME: delegate query to BookDAO
             final String sql = "UPDATE books SET storydom = ? WHERE book_id = ?";
             final Object[] params = {importedBookAsString, bookId.toString()};
             final int[] types = {Types.CLOB, Types.INTEGER};

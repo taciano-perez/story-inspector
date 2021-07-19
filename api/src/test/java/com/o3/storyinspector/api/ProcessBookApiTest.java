@@ -1,9 +1,12 @@
 package com.o3.storyinspector.api;
 
+import com.dumbster.smtp.SimpleSmtpServer;
 import com.o3.storyinspector.api.task.AnnotateBookTask;
 import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.mail.internet.MimeMessage;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -93,6 +98,18 @@ class ProcessBookApiTest {
 
     @Autowired
     private JdbcTemplate db;
+
+    private static SimpleSmtpServer testSmtpServer;
+
+    @BeforeAll
+    static void setUp() throws IOException {
+        testSmtpServer = SimpleSmtpServer.start(8142);    // mock e-mail server at port 8142
+    }
+
+    @AfterAll
+    static void tearDown() {
+        testSmtpServer.stop();
+    }
 
     @Test
     void whenProcessBook_CreateDom_noBookExists() {

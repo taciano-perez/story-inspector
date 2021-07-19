@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
@@ -31,6 +32,7 @@ public class LocationApi {
     private JdbcTemplate db;
 
     @GetMapping("/{bookId}")
+    @Transactional
     public Locations one(@PathVariable final Long bookId) {
         logger.trace("GET LocationS BOOK ID=[" + bookId + "]");
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
@@ -49,6 +51,7 @@ public class LocationApi {
     }
 
     @PutMapping("/{bookId}/{chapterId}/{LocationName}")
+    @Transactional
     public ResponseEntity<Long> putLocation(@PathVariable final Long bookId, @PathVariable final String chapterId, @PathVariable final String LocationName) {
         logger.trace("PUT Location BOOK ID: " + bookId + ", CHAPTER ID: " + chapterId + ", NAME: " + LocationName);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
@@ -86,6 +89,7 @@ public class LocationApi {
     }
 
     @PostMapping("/rename/{bookId}/{LocationName}/{newLocationName}")
+    @Transactional
     public ResponseEntity<Long> renameLocation(@PathVariable final Long bookId, @PathVariable final String LocationName, @PathVariable final String newLocationName) {
         logger.trace("RENAME Location BOOK ID: " + bookId + ", NAME: " + LocationName + ", NEW NAME: " + newLocationName);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
@@ -115,6 +119,7 @@ public class LocationApi {
     }
 
     @DeleteMapping("/{bookId}/{LocationName}")
+    @Transactional
     public ResponseEntity<Long> deleteLocation(@PathVariable final Long bookId, @PathVariable final String LocationName) {
         logger.trace("DELETE Location BOOK ID: " + bookId + ", NAME: " + LocationName);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
@@ -31,6 +32,7 @@ public class BookStructureApi {
     private JdbcTemplate db;
 
     @GetMapping("/{bookId}")
+    @Transactional
     public BookStructure one(@PathVariable final Long bookId) {
         logger.trace("BOOK STRUCTURE BOOK ID=[" + bookId + "]");
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);

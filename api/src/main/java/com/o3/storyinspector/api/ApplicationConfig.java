@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Properties;
@@ -19,6 +20,7 @@ import java.util.Properties;
 @Configuration
 @EnableWebSecurity
 @EnableAsync
+@EnableTransactionManagement
 public class ApplicationConfig extends WebSecurityConfigurerAdapter {
 
     public static final String ADMIN_USER_ID = "108700212624021084744";
@@ -28,6 +30,7 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
     private static final String PROFILE_DEV = "dev";
     private static final String PROFILE_GCP_COMPENGINE = "gcp-compengine";
     private static final String PROFILE_GCP_APPENGINE = "gcp-appengine";
+    private static final String PROFILE_GCP_CLOUDRUN = "gcp-cloudrun";
 
     @Value("${spring.profiles.active}")
     private String activeSpringProfile;
@@ -64,6 +67,9 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
             ApiUtils.setForceHttps(false);
         } else if (PROFILE_GCP_APPENGINE.equals(activeSpringProfile)) {
             logger.info("Using gcp-appengine security configuration");
+            ApiUtils.setForceHttps(true);
+        } else if (PROFILE_GCP_CLOUDRUN.equals(activeSpringProfile)) {
+            logger.info("Using gcp-cloudrun security configuration");
             ApiUtils.setForceHttps(true);
         } else {
             logger.info("Using gcp-compengine production security configuration");

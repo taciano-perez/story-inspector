@@ -3,6 +3,7 @@ package com.o3.storyinspector.api;
 import com.o3.storyinspector.api.user.GoogleId;
 import com.o3.storyinspector.api.user.UserInfo;
 import org.apache.commons.lang3.ArrayUtils;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ class UploadFileApiTest {
     private GoogleId idValidator;
 
     @Test
+    @Ignore
     void testUploadSmallFile(@LocalServerPort int port) throws Exception {
         // given
         final String apiEndpoint = API_HEADER + port + API_UPLOAD_BOOK_TRAILER;
@@ -73,6 +75,7 @@ class UploadFileApiTest {
     }
 
     @Test
+    @Ignore
     void testUploadLargeFile(@LocalServerPort int port) throws Exception {
         // given
         final String apiEndpoint = API_HEADER + port + API_UPLOAD_BOOK_TRAILER;

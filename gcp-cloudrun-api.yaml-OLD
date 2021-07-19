@@ -1,0 +1,25 @@
+piVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: storyinspector-api-cloudrun
+  labels:
+    cloud.googleapis.com/location: us-central1
+  annotations:
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '3'
+    spec:
+#      serviceAccountName: storyinspector-api-cloudrun
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        - image: gcr.io/story-inspector/gcp-cloudrun-api:latest
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 4Gi
+  traffic:
+    - percent: 100
+      latestRevision: true

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
@@ -31,6 +32,7 @@ public class ChartApi {
     private JdbcTemplate db;
 
     @GetMapping("/{id}/posneg/")
+    @Transactional
     public Chart one(@PathVariable final Long id) {
         logger.trace("CHART SENTIMENT BOOK ID=[" + id + "]");
         final BookDAO bookDAO = BookDAO.findByBookId(id, db);
@@ -48,6 +50,7 @@ public class ChartApi {
     }
 
     @GetMapping("/{id}/{emotionName}/")
+    @Transactional
     public Chart one(@PathVariable final Long id, @PathVariable final String emotionName) {
         logger.trace("CHART EMOTION BOOK ID=[" + id + "], EMOTION=[" + emotionName + "]");
         final BookDAO bookDAO = BookDAO.findByBookId(id, db);

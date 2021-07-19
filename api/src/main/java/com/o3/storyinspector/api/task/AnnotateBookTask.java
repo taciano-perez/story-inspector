@@ -13,7 +13,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.MessagingException;
 import java.io.StringReader;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class AnnotateBookTask implements Runnable {
@@ -34,8 +36,30 @@ public class AnnotateBookTask implements Runnable {
 
     @Override
     public void run() {
-        logger.trace(String.format("ANNOTATE BOOK ID - %s", bookId));
+        logger.trace(String.format("RUN ANNOTATE BOOK ID - %s", bookId));
 
+        Connection connection = null;
+        try {
+            // get a db connection from the pool
+            connection = db.getDataSource().getConnection();
+
+            this.annotateBook();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            logger.error("SQL exception: " + sqle.getMessage());
+        } finally {
+            try {
+                // release the db connection back to the pool
+                if (connection != null) connection.close();
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+                logger.error("SQL exception while closing connection: " + sqle.getMessage());
+            }
+        }
+    }
+
+    public void annotateBook() {
+        logger.trace(String.format("ANNOTATE BOOK ID - %s", bookId));
         try {
             final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
 
@@ -44,7 +68,7 @@ public class AnnotateBookTask implements Runnable {
                 BookDAO.updateBookAnnotationStartTime(db, new Timestamp(System.currentTimeMillis()), bookId);
                 final Book annotatedBook = AnnotationEngine.annotateBook(new StringReader(bookDAO.getStoryDom()),
                         (double percentageCompleted, int minutesLeft) -> {this.updateStatus(percentageCompleted, minutesLeft, bookDAO, db);}
-                        );
+                );
                 annotatedBookAsString = XmlWriter.exportBookToString(annotatedBook);
             } catch (Exception e) {
                 logger.error(e.getLocalizedMessage());

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
@@ -30,6 +31,7 @@ public class BlockApi {
     private JdbcTemplate db;
 
     @GetMapping("/list/{bookId}")
+    @Transactional
     public Blocks findAllByBook(@PathVariable final Long bookId) {
         logger.trace("LIST ALL BLOCKS bookId: " + bookId);
         final List<Block> blockList = new ArrayList<>();

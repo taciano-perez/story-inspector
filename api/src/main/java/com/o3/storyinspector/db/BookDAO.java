@@ -330,6 +330,19 @@ public class BookDAO {
                                 rs.getBoolean("validated_by_user")));
     }
 
+    public static List<BookDAO> findValidatedUnprocessed(final JdbcTemplate db) {
+        return db.query("SELECT book_id, title, author, is_report_available, percent_complete, remain_mins, message, annotation_start_time, validated_by_user FROM books WHERE validated_by_user = true AND is_report_available = false",
+                (rs, rowNum) ->
+                        new BookDAO(rs.getInt("book_id"),
+                                rs.getString("title"),
+                                rs.getString("author"),
+                                rs.getBoolean("is_report_available"),
+                                rs.getString("message"),
+                                rs.getInt("percent_complete"),
+                                rs.getInt("remain_mins"),
+                                rs.getTimestamp("annotation_start_time"),
+                                rs.getBoolean("validated_by_user")));
+    }
 
     public static BookDAO findByBookId(final Long bookId, final JdbcTemplate db) throws EmptyResultDataAccessException {
         return db.queryForObject("SELECT book_id, title, author, user_email, engine_version, raw_input, storydom, annotated_storydom, is_report_available, message, annotation_start_time, validated_by_user FROM books WHERE book_id = ?",
@@ -347,5 +360,10 @@ public class BookDAO {
                                 rs.getString("message"),
                                 rs.getTimestamp("annotation_start_time"),
                                 rs.getBoolean("validated_by_user")));
+    }
+
+    public static void dbTrace(final JdbcTemplate db) throws SQLException {
+//        logger.trace("db product name:" + db.getDataSource().getConnection().getMetaData().getDatabaseProductName());
+//        logger.trace("db URL:" + db.getDataSource().getConnection().getMetaData().getURL());
     }
 }

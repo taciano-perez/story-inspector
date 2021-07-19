@@ -1,40 +1,3 @@
--- create database
-
-DROP TABLE IF EXISTS books CASCADE;
-
--- V1
-CREATE TABLE books (
-  book_id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id VARCHAR(30) NOT NULL,
-  title VARCHAR(250) NOT NULL,
-  author VARCHAR(250) NOT NULL,
-  engine_version INT NOT NULL,
-  create_time TIMESTAMP NOT NULL,
-  raw_input CLOB DEFAULT NULL, -- MySQL replace CLOB by LONGTEXT
-  storydom CLOB DEFAULT NULL, -- MySQL replace CLOB by LONGTEXT
-  annotated_storydom CLOB DEFAULT NULL, -- MySQL replace CLOB by LONGTEXT
-  annotation_complete_time TIMESTAMP DEFAULT NULL,
-  is_report_available BOOL DEFAULT FALSE,
-  message VARCHAR(1000) DEFAULT NULL
-);
-
--- V2
-ALTER TABLE books
-ADD user_email VARCHAR(256);
-
--- V3
-ALTER TABLE books
-ADD percent_complete INT DEFAULT NULL;
-ALTER TABLE books
-ADD remain_mins INT DEFAULT NULL;
-
--- V4
-ALTER TABLE books
-ADD annotation_start_time TIMESTAMP DEFAULT NULL;
-ALTER TABLE books
-ADD validated_by_user BOOL DEFAULT FALSE;
--- update books set annotation_start_time = create_time, validated_by_user = true where annotation_start_time is null;
-
 -- populate tables with test data
 DROP TABLE IF EXISTS SYSTEM_LOB_STREAM CASCADE;
 CREATE TABLE IF NOT EXISTS SYSTEM_LOB_STREAM(ID INT NOT NULL, PART INT NOT NULL, CDATA VARCHAR, BDATA BINARY);
@@ -620,6 +583,7 @@ INSERT INTO SYSTEM_LOB_STREAM VALUES(5, 160, STRINGDECODE('the house cup for the
 INSERT INTO SYSTEM_LOB_STREAM VALUES(5, 161, STRINGDECODE('enemies, but just as much to stand up to our friends. I therefore award ten points to Mr. Neville Longbottom. \" Someone standing outside the Great Hall might well have thought some sort of explosion had taken place, so loud was the noise that erupted from the Gryffindor table. Harry, Ron, and Hermione stood up to yell and cheer as Neville, white with shock, disappeared under a pile of people hugging him. He had never won so much as a point for Gryffindor before. Harry, still cheering, nudged Ron in the ribs and pointed at Malfoy, who couldn''t have looked more stunned and horrified if he''d just had the Body-Bind Curse put on him. \" Which means, Dumbledore called over the storm of applause, for even Ravenclaw and Hufflepuff were celebrating the downfall of Slytherin, \"we need a little change of decoration. \" He clapped his hands. In an instant, the green hangings became scarlet and the silver became gold; the huge Slytherin serpent vanished and a towering Gryffindor lion took its place. Snape was shaking Professor McGonagall''s hand, with a horrible, forced smile. He caught Harry''s eye and Harry knew at once that Snape''s feelings toward him hadn''t changed one jot. This didn''t worry Harry. It seemed as though life would be back to normal next year, or as normal as it ever was at Hogwarts.</Body>\n        </Block>\n        <Block id=\"17#21\" wordCount=\"285\" sentimentScore=\"-0.12666666666666665\" fkGrade=\"11.849858131487888\">\n            <Emotion type=\"anger\" score=\"0.004341296928327645\"/>\n            <Emotion type=\"anticipation\" score=\"0.01018430034129693\"/>\n            <Emotion type=\"disgust\" score=\"0.0034641638225255977\"/>\n            <Emotion type=\"fear\" score=\"0.009013651877133105\"/>\n            <Emotion type=\"sadness\" score=\"0.012938566552901026\"/>\n            <Emotion type=\"surprise\" score=\"0.014532423208191127\"/>\n            <Emotion type=\"trust\" score=\"0.01308873720136519\"/>\n            <Body>It was the best evening of Harry''s life, better than winning at Quidditch, or Christmas, or knocking out mountain trolls... he would never, ever forget tonight. Harry had almost forgotten that the exam results were still to come, but come they did. To their great surprise, both he and Ron passed with good marks; Hermione, of course, had the best grades of the first years. Even Neville scraped through, his good Herbology mark making up for his abysmal Potions one. They had hoped that Goyle, who was almost as stupid as he was mean, might be thrown out, but he had passed, too. It was a shame, but as Ron said, you couldn''t have everything in life. And suddenly, their wardrobes were empty, their trunks were packed, Neville''s toad was found lurking in a corner of the toilets; notes were handed out to all students, warning them not to use magic over the holidays (\"I always hope they''ll forget to give us these,\" said Fred Weasley sadly); Hagrid was there to take them down to the fleet of boats that sailed across the lake; they were boarding the Hogwarts Express; talking and laughing as the countryside became greener and tidier; eating Bettie Bott''s Every Flavor Beans as they sped past Muggle towns; pulling off their wizard robes and putting on jackets and coats; pulling into platform nine and three-quarters at King''s Cross Station. It took quite a while for them all to get off the platform. A wizened old guard was up by the ticket barrier, letting them go through the gate in twos and threes so they didn''t attract attention by all bursting out of a solid wall at once and alarming the Muggles.</Body>\n        </Block>\n        <Block id=\"17#22\" wordCount=\"250\" sentimentScore=\"0.03333333333333333\" fkGrade=\"3.4149079497907984\">\n            <Emotion type=\"anger\" score=\"0.011771784232365148\"/>\n            <Emotion type=\"anticipation\" score=\"0.006029045643153526\"/>\n            <Emotion type=\"disgust\" score=\"0.0\"/>\n            <Emotion type=\"fear\" score=\"0.004601659751037344\"/>\n            <Emotion type=\"sadness\" score=\"0.00724896265560166\"/>\n            <Emotion type=\"surprise\" score=\"0.0\"/>\n            <Emotion type=\"trust\" score=\"0.0138091286307053'), NULL);
 INSERT INTO SYSTEM_LOB_STREAM VALUES(5, 162, STRINGDECODE('93\"/>\n            <Body>\" You must come and stay this summer,\" said Ron, \"both of you -- I''ll send you an owl.\" \" Thanks,\" said Harry, \"I''ll need something to look forward to.\" People jostled them as they moved forward toward the gateway back to the Muggle world. Some of them called: \"Bye, Harry!\" \" See you, Potter!\" \" Still famous,\" said Ron, grinning at him. \" Not where I''m going, I promise you,\" said Harry. He, Ron, and Hermione passed through the gateway together. \" There he is, Mom, there he is, look!\" It was Ginny Weasley, Ron''s younger sister, but she wasn''t pointing at Ron. \" Harry Potter!\" she squealed. \" Look, Mom! I can see \"Be quiet, Ginny, and it''s rude to point.\" Mrs. Weasley smiled down at them. \" Busy year?\" she said. \" Very,\" said Harry. \" Thanks for the fudge and the sweater, Mrs. Weasley.\" \" Oh, it was nothing, dear.\" \" Ready, are you?\" It was Uncle Vernon, still purple-faced, still mustached, still looking furious at the nerve of Harry, carrying an owl in a cage in a station full of ordinary people. Behind him stood Aunt Petunia and Dudley, looking terrified at the very sight of Harry. \" You must be Harry''s family!\" said Mrs. Weasley. \" In a manner of speaking,\" said Uncle Vernon. \" Hurry up, boy, we haven''t got all day.\" He walked away. Harry hung back for a last word with Ron and Hermione. \" See you over the summer, then.\"</Body>\n        </Block>\n        <Block id=\"17#23\" wordCount=\"69\" sentimentScore=\"0.0\" fkGrade=\"5.48674626865672\">\n            <Emotion type=\"anger\" score=\"0.0\"/>\n            <Emotion type=\"anticipation\" score=\"0.04197014925373135\"/>\n            <Emotion type=\"disgust\" score=\"0.0\"/>\n            <Emotion type=\"fear\" score=\"0.0\"/>\n            <Emotion type=\"sadness\" score=\"0.0\"/>\n            <Emotion type=\"surprise\" score=\"0.02670149253731343\"/>\n            <Emotion type=\"trust\" score=\"0.029268656716417915\"/>\n            <Body>\" Hope you have -- er -- a good holiday,\" said Hermione, looking uncertainly after Uncle Vernon, shocked that anyone could be so unpleasant. \" Oh, I will,\" said Harry, and they were surprised at the grin that was spreading over his face. \" They don''t know we''re not allowed to use magic at home. I''m going to have a lot of fun with Dudley this summer....\" THE END</Body>\n        </Block>\n    </Chapter>\n</Book>\n'), NULL);
 INSERT INTO "PUBLIC"."BOOKS" VALUES(2, '108700212624021084744', 'Harry Potter & The Sorcerer''s Stone', 'J K Rowling', 4, TIMESTAMP '2021-03-19 15:52:45.51', SYSTEM_COMBINE_CLOB(3), SYSTEM_COMBINE_CLOB(4), SYSTEM_COMBINE_CLOB(5), TIMESTAMP '2021-04-29 18:38:35.937', TRUE, NULL, 'taciano.perez@gmail.com', 100, 0, TIMESTAMP '2021-03-19 15:52:46.000', TRUE);
+INSERT INTO "PUBLIC"."BOOKS" VALUES(3, '108700212624021084744', 'Harry Potter & The Sorcerer''s Stone INCOMPLETE', 'J K Rowling', 4, TIMESTAMP '2021-03-19 15:52:45.51', SYSTEM_COMBINE_CLOB(3), SYSTEM_COMBINE_CLOB(4), NULL, NULL, FALSE, NULL, 'taciano.perez@gmail.com', 0, NULL, NULL, TRUE);
 DROP TABLE IF EXISTS SYSTEM_LOB_STREAM;
 CALL SYSTEM_COMBINE_BLOB(-1);
 DROP ALIAS IF EXISTS SYSTEM_COMBINE_CLOB;

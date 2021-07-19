@@ -280,7 +280,7 @@ public class CustomSymbolAxis extends NumberAxis implements Serializable {
                     rotationAnchor = TextAnchor.TOP_CENTER;
                 }
 
-                Tick tick = new NumberTick(new java.lang.Double(currentTickValue), tickLabel, anchor, rotationAnchor, angle);
+                Tick tick = new NumberTick(currentTickValue, tickLabel, anchor, rotationAnchor, angle);
                 ticks.add(tick);
             }
         }
@@ -345,7 +345,7 @@ public class CustomSymbolAxis extends NumberAxis implements Serializable {
                     rotationAnchor = TextAnchor.CENTER_LEFT;
                 }
 
-                Tick tick = new NumberTick(new java.lang.Double(currentTickValue), tickLabel, anchor, rotationAnchor, angle);
+                Tick tick = new NumberTick(currentTickValue, tickLabel, anchor, rotationAnchor, angle);
                 ticks.add(tick);
             }
         }

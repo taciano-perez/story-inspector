@@ -31,7 +31,8 @@ public class GoogleId {
      * Retrieves UserInfo from Google API.
      *
      * @param idTokenString the id token
-     * @return UserInfo or null if an error occurs
+     * @return UserInfo
+     * @throws ForbiddenException if user information cannot be retrieved
      */
     public UserInfo retrieveUserInfo(final String idTokenString) throws ForbiddenException {
         logger.info("Active spring profile: " + activeSpringProfile);

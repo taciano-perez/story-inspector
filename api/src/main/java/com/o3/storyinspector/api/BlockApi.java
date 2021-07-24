@@ -3,6 +3,8 @@ package com.o3.storyinspector.api;
 import com.o3.storyinspector.annotation.blocks.SentenceSplitter;
 import com.o3.storyinspector.annotation.readability.FleschKincaidReadabilityInspector;
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.Block;
 import com.o3.storyinspector.domain.Blocks;
@@ -29,11 +31,16 @@ public class BlockApi {
     @Autowired
     private JdbcTemplate db;
 
+    @Autowired
+    private GoogleId userValidator;
+
     @GetMapping("/list/{bookId}")
-    public Blocks findAllByBook(@PathVariable final Long bookId) {
+    public Blocks findAllByBook(@PathVariable final Long bookId, @RequestParam("id_token") final String idToken) {
         logger.trace("LIST ALL BLOCKS bookId: " + bookId);
-        final List<Block> blockList = new ArrayList<>();
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
+        final List<Block> blockList = new ArrayList<>();
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));

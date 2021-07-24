@@ -1,5 +1,7 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.Chart;
 import com.o3.storyinspector.storydom.Block;
@@ -30,10 +32,15 @@ public class ChartApi {
     @Autowired
     private JdbcTemplate db;
 
+    @Autowired
+    private GoogleId userValidator;
+
     @GetMapping("/{id}/posneg/")
-    public Chart one(@PathVariable final Long id) {
+    public Chart one(@PathVariable final Long id, @RequestParam("id_token") final String idToken) {
         logger.trace("CHART SENTIMENT BOOK ID=[" + id + "]");
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(id, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         final Chart chart;
         try {
             chart = buildSentimentChartFromBook(bookDAO);
@@ -48,9 +55,11 @@ public class ChartApi {
     }
 
     @GetMapping("/{id}/{emotionName}/")
-    public Chart one(@PathVariable final Long id, @PathVariable final String emotionName) {
+    public Chart one(@PathVariable final Long id, @PathVariable final String emotionName, @RequestParam("id_token") final String idToken) {
         logger.trace("CHART EMOTION BOOK ID=[" + id + "], EMOTION=[" + emotionName + "]");
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(id, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         final Chart chart;
         try {
             final EmotionType emotionType = EmotionType.emotionTypeFor(emotionName);

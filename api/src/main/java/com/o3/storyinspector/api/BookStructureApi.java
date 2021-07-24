@@ -1,6 +1,8 @@
 package com.o3.storyinspector.api;
 
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.BookStructure;
 import com.o3.storyinspector.domain.Chapter;
@@ -30,10 +32,19 @@ public class BookStructureApi {
     @Autowired
     private JdbcTemplate db;
 
+    @Autowired
+    private GoogleId userValidator;
+
     @GetMapping("/{bookId}")
-    public BookStructure one(@PathVariable final Long bookId) {
+    public BookStructure one(@PathVariable final Long bookId, @RequestParam("id_token") final String idToken) {
         logger.trace("BOOK STRUCTURE BOOK ID=[" + bookId + "]");
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+
+        if (!user.isAdmin()) {
+            user.emailMatches(bookDAO.getUserEmail());
+        }
+
         BookStructure bookStructure;
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();

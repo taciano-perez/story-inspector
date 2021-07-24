@@ -1,5 +1,7 @@
 package com.o3.storyinspector.api.user;
 
+import com.o3.storyinspector.api.ApplicationConfig;
+
 /**
  * User information retrieved from Identity Management service.
  */
@@ -26,4 +28,17 @@ public class UserInfo {
     public String getEmail() {
         return email;
     }
+
+    public boolean isAdmin() {
+        return ApplicationConfig.ADMIN_USER_ID.equals(this.getId());
+    }
+
+    public void failIfNotAdmin() {
+        if (!this.isAdmin()) throw new ForbiddenException();
+    }
+
+    public boolean emailMatches(final String otherEmail) {
+        return (this.email != null && this.email.equals(otherEmail));
+    }
+
 }

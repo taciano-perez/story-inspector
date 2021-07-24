@@ -33,9 +33,10 @@ public class GoogleId {
      * @param idTokenString the id token
      * @return UserInfo or null if an error occurs
      */
-    public UserInfo retrieveUserInfo(final String idTokenString) {
+    public UserInfo retrieveUserInfo(final String idTokenString) throws ForbiddenException {
         logger.info("Active spring profile: " + activeSpringProfile);
         logger.trace("Client ID: " + clientId);
+        logger.trace("ID Token: " + idTokenString);
 
         if (PROFILE_DEV.equals(activeSpringProfile)) {
             logger.info("Using dev mode authentication");
@@ -74,7 +75,7 @@ public class GoogleId {
                 logger.error("Error recovering credentials from Google API. idToken:" + idTokenString + ", error: " + e.getMessage());
                 e.printStackTrace();
             }
-            return null;
+            throw new ForbiddenException();
         }
     }
 }

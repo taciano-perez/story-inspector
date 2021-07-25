@@ -160,6 +160,7 @@ class LocationApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId);
 
         // then
@@ -176,12 +177,13 @@ class LocationApiTest {
         // when
         final Response responsePost = RestAssured.given()
                 .param("ID", bookId)
-                .put(API_ROOT + "/" + bookId + "/2/Amsterdam");
+                .put(API_ROOT + "/" + bookId + "/2/Amsterdam/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value() ,responsePost.getStatusCode());
         final Response responseGet = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId);
         final String jsonOutput = responseGet.getBody().print();
         System.out.println("jsonOutput=[" +jsonOutput +"], expected=["+ EXPECTED_JSON_PUT +"]");
@@ -196,12 +198,13 @@ class LocationApiTest {
         // when
         final Response responsePost = RestAssured.given()
                 .param("ID", bookId)
-                .post(API_ROOT + "/rename/" + bookId + "/London/Bristol");
+                .post(API_ROOT + "/rename/" + bookId + "/London/Bristol/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value() ,responsePost.getStatusCode());
         final Response responseGet = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId);
         final String jsonOutput = responseGet.getBody().print();
         System.out.println("jsonOutput=[" +jsonOutput +"], expected=["+ EXPECTED_JSON_RENAME +"]");
@@ -216,7 +219,7 @@ class LocationApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
-                .delete(API_ROOT + "/" + bookId + "/London");
+                .delete(API_ROOT + "/" + bookId + "/London/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value() ,response.getStatusCode());

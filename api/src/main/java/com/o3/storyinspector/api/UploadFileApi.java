@@ -46,7 +46,7 @@ public class UploadFileApi {
         final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
         logger.trace(String.format("BOOK ID - %s", bookId));
 
-        ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
+        ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM + "/" + idToken, idToken, "ID", bookId.toString());
         return ResponseEntity.ok(bookId);
     }
 
@@ -67,7 +67,7 @@ public class UploadFileApi {
         final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
         logger.trace(String.format("BOOK ID - %s", bookId));
 
-        ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());
+        ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, idToken, "ID", bookId.toString());
         return ResponseEntity.ok().build();
     }
 

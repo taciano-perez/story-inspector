@@ -100,7 +100,9 @@ class ProcessBookApiTest {
 
         // when
         final long bookId = 123L;
-        final Response response = RestAssured.given().param("ID", Long.toString(bookId)).post(API_CREATE_DOM);
+        final Response response = RestAssured.given()
+                .param("ID", Long.toString(bookId))
+                .post(API_CREATE_DOM + "/id_token");
 
         // then
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
@@ -115,7 +117,7 @@ class ProcessBookApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", Long.toString(bookId))
-                .post(API_CREATE_DOM);
+                .post(API_CREATE_DOM + "/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
@@ -130,7 +132,7 @@ class ProcessBookApiTest {
         final Response givenResponse =
                 RestAssured.given()
                         .param("ID", bookId.toString())
-                        .post(API_CREATE_DOM);
+                        .post(API_CREATE_DOM + "/id_token");
         assertEquals(HttpStatus.OK.value(), givenResponse.getStatusCode());
         final JavaMailSender mailSenderMock = mock(JavaMailSender.class);
         when(mailSenderMock.createMimeMessage()).thenReturn(mock(MimeMessage.class));
@@ -153,7 +155,7 @@ class ProcessBookApiTest {
 
         // when
         final Response response = RestAssured.given()
-                .post(API_REPROCESS_BOOK + "/" + bookId);
+                .post(API_REPROCESS_BOOK + "/" + bookId + "/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
@@ -167,6 +169,7 @@ class ProcessBookApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", Long.toString(bookId))
+                .param("id_token", "")
                 .post(API_PROCESS_BOOK);
 
         // then

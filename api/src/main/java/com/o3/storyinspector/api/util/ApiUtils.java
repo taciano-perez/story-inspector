@@ -31,26 +31,30 @@ public class ApiUtils {
 
     public static final String API_PROCESS_BOOK_ENDPOINT = API_ROOT + "/process-book";
 
+    private static final String ID_TOKEN_PARAM_NAME = "id_token";
+
     @Async
-    public static void callAsyncApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
+    public static void callAsyncApiWithParameter(final String endpointPath, final String idToken, final String paramName, final String paramValue) {
         final String endpoint = getBaseUrl() + endpointPath;
         logger.trace("Calling async endpoint " + endpoint + " with parameter " + paramName + "=" + paramValue);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         final MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add(paramName, paramValue);
+        map.add(ID_TOKEN_PARAM_NAME, idToken);
         final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         final RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForEntity(endpoint, request, String.class);
     }
 
-    public static ResponseEntity<String> callApiWithParameter(final String endpointPath, final String paramName, final String paramValue) {
+    public static ResponseEntity<String> callApiWithParameter(final String endpointPath, final String idToken, final String paramName, final String paramValue) {
         final String endpoint = getBaseUrl() + endpointPath;
         logger.trace("Calling endpoint " + endpoint + " with parameter " + paramName + "=" + paramValue);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         final MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add(paramName, paramValue);
+        map.add(ID_TOKEN_PARAM_NAME, idToken);
         final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         final RestTemplate restTemplate = new RestTemplate();
         return restTemplate.postForEntity(endpoint, request, String.class);

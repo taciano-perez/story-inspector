@@ -29,7 +29,9 @@ class BookApiTest {
     @Test
     public void whenGetAllBooks_thenOK() {
         logger.trace("Connecting to: " + API_ALL_BOOKS);
-        final Response response = RestAssured.get(API_ALL_BOOKS);
+        final Response response = RestAssured.given()
+                .param("id_token", "")
+                .get(API_ALL_BOOKS);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
     }

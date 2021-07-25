@@ -78,12 +78,15 @@ public class ProcessBookApi {
         logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
     }
 
-    @RequestMapping(value = "/create-dom", method = RequestMethod.POST)
-    public ResponseEntity<Object> createDom(@RequestParam("ID") Long bookId) {
+    @RequestMapping(value = "/create-dom/{id_token}", method = RequestMethod.POST)
+    public ResponseEntity<Object> createDom(@RequestParam("ID") Long bookId,
+                                            @PathVariable("id_token") final String idToken) {
         logger.trace(String.format("CREATE DOM ID - %s", bookId));
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
 
         try {
             final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+            if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
 
             final Book importedBook =
                     PlainTextImporter.importBookFromReader(bookDAO.getTitle(), new StringReader(bookDAO.getRawInput()));

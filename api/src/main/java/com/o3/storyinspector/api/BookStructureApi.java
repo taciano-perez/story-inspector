@@ -40,11 +40,7 @@ public class BookStructureApi {
         logger.trace("BOOK STRUCTURE BOOK ID=[" + bookId + "]");
         final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
-
-        if (!user.isAdmin()) {
-            user.emailMatches(bookDAO.getUserEmail());
-        }
-
+        if (!user.isAdmin())  user.emailMatches(bookDAO.getUserEmail());
         BookStructure bookStructure;
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();

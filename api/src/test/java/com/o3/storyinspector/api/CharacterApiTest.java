@@ -158,6 +158,7 @@ class CharacterApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId);
 
         // then
@@ -174,12 +175,13 @@ class CharacterApiTest {
         // when
         final Response responsePost = RestAssured.given()
                 .param("ID", bookId)
-                .put(API_ROOT + "/" + bookId + "/1/Professor Moriarty");
+                .put(API_ROOT + "/" + bookId + "/1/Professor Moriarty/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value() ,responsePost.getStatusCode());
         final Response responseGet = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId);
         final String jsonOutput = responseGet.getBody().print();
         System.out.println("jsonOutput=[" +jsonOutput +"], expected=["+ EXPECTED_JSON_PUT +"]");
@@ -194,12 +196,13 @@ class CharacterApiTest {
         // when
         final Response responsePost = RestAssured.given()
                 .param("ID", bookId)
-                .post(API_ROOT + "/rename/" + bookId + "/Holmes/Sherlock Holmes");
+                .post(API_ROOT + "/rename/" + bookId + "/Holmes/Sherlock Holmes/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value() ,responsePost.getStatusCode());
         final Response responseGet = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId);
         final String jsonOutput = responseGet.getBody().print();
         System.out.println("jsonOutput=[" +jsonOutput +"], expected=["+ EXPECTED_JSON_RENAME +"]");
@@ -214,7 +217,7 @@ class CharacterApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
-                .delete(API_ROOT + "/" + bookId + "/Holmes");
+                .delete(API_ROOT + "/" + bookId + "/Holmes/id_token");
 
         // then
         assertEquals(HttpStatus.OK.value() ,response.getStatusCode());

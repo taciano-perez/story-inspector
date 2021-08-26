@@ -14,9 +14,31 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.o3.storyinspector</groupId>
+            <artifactId>story-dom</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.o3.storyinspector</groupId>
+            <artifactId>book-importer</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.o3.storyinspector</groupId>
+            <artifactId>annotation-engine</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 3rd party -->
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>11.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>11.1.0</version>
         </dependency>
     </dependencies>
     <build>

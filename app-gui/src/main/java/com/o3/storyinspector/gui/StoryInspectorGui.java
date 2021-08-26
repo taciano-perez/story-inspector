@@ -1,40 +1,56 @@
 package com.o3.storyinspector.gui;
 
+import com.o3.storyinspector.gui.addbook.AddBookWizard;
+import com.o3.storyinspector.gui.utils.I18N;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.controlsfx.control.StatusBar;
 
 /**
  * JavaFX App
  */
 public class StoryInspectorGui extends Application {
 
-    Button button1, button2;
-    Scene scene1, scene2;
-    Label label1, label2;
+    static String STORY_INSPECTOR_TITLE = "storyInspectorTitle";
+    static String BOOK_MENU = "bookMenu";
+    static String BOOK_MENU_QUIT = BOOK_MENU + "Quit";
+    static String BOOK_MENU_ADD = BOOK_MENU + "Add";
+
+    MenuBar menu;
+    TreeView bookTree;
+    ScrollPane reportArea;
+    StatusBar statusBar;
 
     @Override
     public void start(final Stage window) {
 
-        label1 = new Label("First scene");
-        button1 = new Button("go to scene 2");
-        button1.setOnAction(e -> window.setScene(scene2));
-        final VBox layout1 = new VBox(20);
-        layout1.getChildren().addAll(label1, button1);
-        scene1 = new Scene(layout1, 640, 480);
+        // init
+        menu = new MenuBar();
+        bookTree = new TreeView();
+        reportArea = new ScrollPane();
+        statusBar = new StatusBar();
 
-        label2 = new Label("Second scene");
-        button2 = new Button("back to scene 1");
-        button2.setOnAction(e -> window.setScene(scene1));
-        final VBox layout2 = new VBox(20);
-        layout2.getChildren().addAll(label2, button2);
-        scene2 = new Scene(layout2, 640, 480);
+        final Menu bookMenu = new Menu(I18N.stringFor(BOOK_MENU));
+        final MenuItem bookMenuAdd = new MenuItem(I18N.stringFor(BOOK_MENU_ADD));
+        bookMenuAdd.setOnAction(e -> AddBookWizard.addNewBook(window));
+        final MenuItem bookMenuQuit = new MenuItem(I18N.stringFor(BOOK_MENU_QUIT));
+        bookMenuQuit.setOnAction(e -> window.close());
+        bookMenu.getItems().addAll(bookMenuAdd, bookMenuQuit);
+        menu.getMenus().add(bookMenu);
 
-        window.setTitle("Story Inspector");
-        window.setScene(scene1);
+        // layout
+        final BorderPane mainWindowLayout = new BorderPane();
+        mainWindowLayout.setTop(menu);
+        mainWindowLayout.setLeft(bookTree);
+        mainWindowLayout.setCenter(reportArea);
+        mainWindowLayout.setBottom(statusBar);
+
+        final Scene mainScene = new Scene(mainWindowLayout);
+        window.setTitle(I18N.stringFor(STORY_INSPECTOR_TITLE));
+        window.setScene(mainScene);
         window.show();
     }
 

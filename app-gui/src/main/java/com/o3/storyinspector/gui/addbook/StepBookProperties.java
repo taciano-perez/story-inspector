@@ -41,14 +41,20 @@ public class StepBookProperties extends WizardPane {
         final Label titleLabel = new Label(I18N.stringFor(BOOK_PROPS_TITLE));
         bookInfoForm.add(titleLabel, 0, 1);
         titleField = TextFields.createClearableTextField();
-        titleField.setOnKeyTyped(e -> refreshWizardValidity(wizard));
+        titleField.setOnKeyTyped(e -> {
+            wizard.getProperties().put(AddBookWizard.PROP_BOOK_TITLE, titleField.getText());
+            refreshWizardValidity(wizard);
+        });
         bookInfoForm.add(titleField, 1, 1);
 
         // author field
         final Label authorLabel = new Label(I18N.stringFor(BOOK_PROPS_AUTHOR));
         bookInfoForm.add(authorLabel, 0, 2);
         authorField = TextFields.createClearableTextField();
-        authorField.setOnKeyTyped(e -> refreshWizardValidity(wizard));
+        authorField.setOnKeyTyped(e -> {
+            wizard.getProperties().put(AddBookWizard.PROP_BOOK_AUTHOR, authorField.getText());
+            refreshWizardValidity(wizard);
+        });
         bookInfoForm.add(authorField, 1, 2);
 
         // file field
@@ -63,13 +69,21 @@ public class StepBookProperties extends WizardPane {
                 if (selectedFile != null) {
                     selectedFileName = selectedFile.getName();
                     selectedFileField.setText(selectedFileName);
-                    wizard.getProperties().put("SEL_FILE", selectedFile);
+                    wizard.getProperties().put(AddBookWizard.PROP_SELECTED_FILE, selectedFile);
                     refreshWizardValidity(wizard);
                 }
             });
         final HBox innerHBox = new HBox();
         innerHBox.getChildren().addAll(selectedFileField, selectFileButton);
         bookInfoForm.add(innerHBox, 1, 3);
+
+        // default contents
+        titleField.setText("Book title");
+        wizard.getProperties().put(AddBookWizard.PROP_BOOK_TITLE, titleField.getText());
+        authorField.setText("Author name");
+        wizard.getProperties().put(AddBookWizard.PROP_BOOK_AUTHOR, authorField.getText());
+        // FIXME: temporary value
+        fileChooser.setInitialDirectory(new File("C:\\Users\\tdper\\OneDrive"));
 
         this.setContent(bookInfoForm);
     }

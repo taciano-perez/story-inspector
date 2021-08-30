@@ -5,12 +5,13 @@ import com.o3.storyinspector.gui.utils.I18N;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 
 /**
- * JavaFX App
+ * Main StoryInspector GUI application
  */
 public class StoryInspectorGui extends Application {
 
@@ -18,6 +19,8 @@ public class StoryInspectorGui extends Application {
     static String BOOK_MENU = "bookMenu";
     static String BOOK_MENU_QUIT = BOOK_MENU + "Quit";
     static String BOOK_MENU_ADD = BOOK_MENU + "Add";
+
+    static String ICON_FILENAME = "/logo.png";
 
     MenuBar menu;
     TreeView bookTree;
@@ -48,8 +51,12 @@ public class StoryInspectorGui extends Application {
         mainWindowLayout.setCenter(reportArea);
         mainWindowLayout.setBottom(statusBar);
 
+        // icon
+        window.getIcons().add(new Image(getClass().getResourceAsStream(ICON_FILENAME)));
+
         final Scene mainScene = new Scene(mainWindowLayout);
         window.setTitle(I18N.stringFor(STORY_INSPECTOR_TITLE));
+        window.setMinWidth(800);
         window.setScene(mainScene);
         window.show();
     }

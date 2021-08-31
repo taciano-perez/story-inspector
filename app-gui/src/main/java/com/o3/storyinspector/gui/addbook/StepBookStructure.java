@@ -1,7 +1,7 @@
 package com.o3.storyinspector.gui.addbook;
 
 import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
-import com.o3.storyinspector.gui.core.BookCore;
+import com.o3.storyinspector.gui.core.BookManager;
 import com.o3.storyinspector.gui.utils.I18N;
 import com.o3.storyinspector.storydom.Chapter;
 import javafx.scene.control.CheckBox;
@@ -20,11 +20,12 @@ public class StepBookStructure extends WizardPane {
 
     static String BOOK_STRUCT_CHAPTER_AREA = "bookStructChapterArea";
     static String BOOK_STRUCT_INTRO = "bookStructIntro";
+    static String BOOK_STRUCT_CHAPTER_ENTRY = "bookStructChapterEntry";
     static String BOOK_STRUCT_CHECK = "bookStructCheck";
     static String BOOK_STRUCT_END = "bookStructEnd";
 
-    TextArea bookChapters;
     Label headerLabel;
+    TextArea bookChapters;
     CheckBox bookStructCheck;
 
     int numOfChapters = 0;
@@ -63,14 +64,15 @@ public class StepBookStructure extends WizardPane {
     }
 
     private String getChapterList(final File bookFile) {
-        String chapterListAsString = "";
+        final StringBuilder chapterListBuilder = new StringBuilder();
+        final List<Chapter> chapters = BookManager.readChapterList(bookFile);
         int chapterCount = 0;
-        final List<Chapter> chapters = BookCore.readChapterList(bookFile);
         for (final Chapter chapter : chapters) {
             final long chapterWordcount = WordCountInspector.inspectChapterWordCount(chapter);
-            chapterListAsString += "" + ++chapterCount + "- " + chapter.getTitle() + " (" + chapterWordcount + " words)\n";
+            if (chapterCount > 0) chapterListBuilder.append("\n");
+            chapterListBuilder.append(String.format(I18N.stringFor(BOOK_STRUCT_CHAPTER_ENTRY), ++chapterCount, chapter.getTitle(), chapterWordcount));
         }
         numOfChapters = chapterCount;
-        return chapterListAsString;
+        return chapterListBuilder.toString();
     }
 }

@@ -78,9 +78,9 @@ public class StepBookProperties extends WizardPane {
         bookInfoForm.add(innerHBox, 1, 3);
 
         // default contents
-        titleField.setText("Book title");
+        titleField.setText("Title");
         wizard.getProperties().put(AddBookWizard.PROP_BOOK_TITLE, titleField.getText());
-        authorField.setText("Author name");
+        authorField.setText("Author");
         wizard.getProperties().put(AddBookWizard.PROP_BOOK_AUTHOR, authorField.getText());
         // FIXME: temporary value
         fileChooser.setInitialDirectory(new File("C:\\Users\\tdper\\OneDrive"));

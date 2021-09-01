@@ -52,10 +52,26 @@ public class BookTree extends TreeView implements BookEventListener {
     }
 
     private void addBook(final Book book) {
-        final BookTreeItem<String> item = new BookTreeItem<> (
+        // book
+        final BookTreeItem<String> bookItem = new BookTreeItem<> (
+                BookTreeItem.TYPE_BOOK,
                 book.getTitle() + " " + I18N.stringFor(BOOK_BY) + " " + book.getAuthor(),
                 IconUtils.getIcon(FontAwesome.Glyph.BOOK), book);
-        rootItem.getChildren().add(item);
+        rootItem.getChildren().add(bookItem);
+
+        // reports
+        final BookTreeItem<String> reportStructItem = new BookTreeItem<>(
+                BookTreeItem.TYPE_REPORT_STRUCTURE, "Book Structure Report",
+                IconUtils.getIcon(FontAwesome.Glyph.TREE), book);
+        bookItem.getChildren().add(reportStructItem);
+        final BookTreeItem<String> reportCharacterItem = new BookTreeItem<>(
+                BookTreeItem.TYPE_REPORT_CHARACTER, "Character Report",
+                IconUtils.getIcon(FontAwesome.Glyph.USERS), book);
+        bookItem.getChildren().add(reportCharacterItem);
+        final BookTreeItem<String> emotionCharacterItem = new BookTreeItem<>(
+                BookTreeItem.TYPE_REPORT_EMOTION, "Emotion Report",
+                IconUtils.getIcon(FontAwesome.Glyph.HEART), book);
+        bookItem.getChildren().add(emotionCharacterItem);
     }
 
     @Override
@@ -72,7 +88,13 @@ public class BookTree extends TreeView implements BookEventListener {
             final BookTreeItem clickedItem = (BookTreeItem) this.getSelectionModel().getSelectedItem();
             final String name = (String) clickedItem.getValue();
             LOGGER.info("Node click: " + name);
-            ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_BOOK_STRUCTURE, clickedItem.getBook()));
+            if (clickedItem.getType() == BookTreeItem.TYPE_REPORT_STRUCTURE) {
+                ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_BOOK_STRUCTURE, clickedItem.getBook()));
+            } else if (clickedItem.getType() == BookTreeItem.TYPE_REPORT_CHARACTER) {
+                ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_CHARACTER, clickedItem.getBook()));
+            } else if (clickedItem.getType() == BookTreeItem.TYPE_REPORT_EMOTION) {
+                ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_EMOTION, clickedItem.getBook()));
+            }
         }
     }
 }

@@ -21,7 +21,6 @@ public class BookApi {
 
     final Logger logger = LoggerFactory.getLogger(BookApi.class);
 
-
     private static List<BookDAO> bookList = new ArrayList<>();
 
     @Autowired

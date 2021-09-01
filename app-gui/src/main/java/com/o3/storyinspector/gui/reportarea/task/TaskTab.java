@@ -1,4 +1,4 @@
-package com.o3.storyinspector.gui.reportarea;
+package com.o3.storyinspector.gui.reportarea.task;
 
 import com.o3.storyinspector.gui.status.TaskManager;
 import com.o3.storyinspector.gui.utils.I18N;

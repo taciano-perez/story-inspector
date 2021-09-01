@@ -1,8 +1,8 @@
-package com.o3.storyinspector.gui.reportarea;
+package com.o3.storyinspector.gui.reportarea.structure;
 
 import com.o3.storyinspector.gui.skin.Styles;
 import com.o3.storyinspector.gui.utils.IconUtils;
-import com.o3.storyinspector.gui.utils.NumberFormatter;
+import com.o3.storyinspector.gui.utils.StringFormatter;
 import com.o3.storyinspector.gui.view.BorderedTitledPane;
 import com.o3.storyinspector.gui.view.LineBreakSeparator;
 import com.o3.storyinspector.storydom.Book;
@@ -17,6 +17,7 @@ public class BookStructureReportTab extends Tab {
 
     public BookStructureReportTab(Book book) {
         super(book.getTitle() + " (Book Structure)");
+        this.setGraphic(IconUtils.getIcon(FontAwesome.Glyph.TREE));
 
         VBox stackedTitledPanes = new VBox();
 
@@ -26,10 +27,10 @@ public class BookStructureReportTab extends Tab {
         stackedTitledPanes.getChildren().add(chapterLengthChart);
 
         // dynamic panes per chapter
-        book.getChapters().stream().forEach(chapter -> {
+        book.getChapters().forEach(chapter -> {
             final HBox wordcountBox = new HBox();
             final Node wordcountIcon = IconUtils.getIcon(FontAwesome.Glyph.CALCULATOR);
-            final Label wordcountLabel = new Label(" " + NumberFormatter.formatInteger(chapter.getMetadata().getWordCount()) + " words");
+            final Label wordcountLabel = new Label(" " + StringFormatter.formatInteger(chapter.getMetadata().getWordCount()) + " words");
             wordcountBox.getChildren().addAll(wordcountIcon, wordcountLabel);
             final HBox readabilityBox = new HBox();
             final Node readabilityIcon = IconUtils.getIcon(FontAwesome.Glyph.PENCIL);
@@ -43,7 +44,7 @@ public class BookStructureReportTab extends Tab {
             layoutCharacters.setHgap(5);
             layoutCharacters.setVgap(5);
             chapter.getMetadata().getCharacters().getCharacters()
-                    .stream().forEach(character -> {
+                    .forEach(character -> {
                         final MenuItem menuItem1 = new MenuItem("Rename Character");
                         final MenuItem menuItem2 = new MenuItem("Delete Character");
                         final MenuButton menuButton = new MenuButton(character.getName(),
@@ -59,7 +60,7 @@ public class BookStructureReportTab extends Tab {
             layoutLocations.setHgap(5);
             layoutLocations.setVgap(5);
             chapter.getMetadata().getLocations().getLocations()
-                    .stream().forEach( location -> {
+                    .forEach( location -> {
                         final MenuItem menuItem1 = new MenuItem("Rename Location");
                         final MenuItem menuItem2 = new MenuItem("Delete Location");
                         final MenuButton menuButton = new MenuButton(location.getName(),

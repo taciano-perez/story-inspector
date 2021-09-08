@@ -1,4 +1,4 @@
-package com.o3.storyinspector.domain;
+package com.o3.storyinspector.gui.core.domain;
 
 import com.o3.storyinspector.storydom.Block;
 import com.o3.storyinspector.storydom.Book;
@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Domain object for chart entities.
  */
-public class Chart {
+public class EmotionChartData {
 
     private String bookTitle;
     private String bookAuthor;
@@ -25,7 +25,7 @@ public class Chart {
     private List<Double> scores;
     private List<Integer> chapterDividers;
 
-    public Chart(final String bookTitle, final String bookAuthor, final List<String> labels, final List<String> blocks, final List<Double> scores, final List<Integer> chapterDividers) {
+    public EmotionChartData(final String bookTitle, final String bookAuthor, final List<String> labels, final List<String> blocks, final List<Double> scores, final List<Integer> chapterDividers) {
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
         this.labels = labels;
@@ -80,7 +80,7 @@ public class Chart {
         return scoresByBlock;
     }
 
-    public static Chart buildSentimentChartFromBook(final Book book) {
+    public static EmotionChartData buildSentimentChartFromBook(final Book book) throws JAXBException {
         final List<String> labels = new ArrayList<>();
         final List<String> blocks = new ArrayList<>();
         final List<Double> scores = new ArrayList<>();
@@ -97,10 +97,10 @@ public class Chart {
             chapterDividers.add(counter);
         }
         chapterDividers.remove(chapterDividers.size()-1);  // remove last marker
-        return new Chart(book.getTitle(), book.getAuthor(), labels, blocks, scores, chapterDividers);
+        return new EmotionChartData(book.getTitle(), book.getAuthor(), labels, blocks, scores, chapterDividers);
     }
 
-    public static Chart buildEmotionChartFromBook(final Book book, final EmotionType emotionType) throws JAXBException {
+    public static EmotionChartData buildEmotionChartFromBook(final Book book, final EmotionType emotionType) throws JAXBException {
         final double maxEmotionScore = StoryDomUtils.getMaxEmotionScore(book);
         final List<String> labels = new ArrayList<>();
         final List<String> blocks = new ArrayList<>();
@@ -120,8 +120,7 @@ public class Chart {
             chapterDividers.add(counter);
         }
         chapterDividers.remove(chapterDividers.size()-1);  // remove last marker
-        return new Chart(book.getTitle(), book.getAuthor(), labels, blocks, scores, chapterDividers);
+        return new EmotionChartData(book.getTitle(), book.getAuthor(), labels, blocks, scores, chapterDividers);
     }
-
 
 }

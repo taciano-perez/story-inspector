@@ -38,7 +38,7 @@ public class CharacterDistributionChart extends BarChart {
         chart.getData().add(dataSeries1);
 
         // tooltip (hover box)
-        dataSeries1.getData().stream()
+        dataSeries1.getData()
                 .forEach( item -> {
                     final Data data = (Data) item;
                     final String percentage = StringFormatter.formatPercentage((double)data.getYValue());

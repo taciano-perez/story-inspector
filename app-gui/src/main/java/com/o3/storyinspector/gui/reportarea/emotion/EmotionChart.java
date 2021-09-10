@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Optional;
 
 public class EmotionChart<T1, T2> extends StackedAreaChartWithMarkers {
 
@@ -124,7 +123,7 @@ public class EmotionChart<T1, T2> extends StackedAreaChartWithMarkers {
 //                stackPane.setVisible(false); // hide symbol
                 final String block = emotionChartData.getBlocks().get(blockNumber);
                 final String percentage = seriesName + ": " + StringFormatter.formatPercentage(emotionChartData.getScores().get(blockNumber));
-                final String chapterCaption = "Chapter " + getChapterNumber(blockNumber, emotionChartData.getChapterDividers());
+                final String chapterCaption = "Chapter " + EmotionChartData.getChapterNumber(blockNumber, emotionChartData.getChapterDividers());
                 blockNumber++;
 
                 final Tooltip tooltip = new Tooltip(chapterCaption + "\n"
@@ -159,19 +158,6 @@ public class EmotionChart<T1, T2> extends StackedAreaChartWithMarkers {
         }
 
         return dataSeries;
-    }
-
-    private int getChapterNumber(final int blockNumber, final List<Integer> chapterDividers) {
-        Optional<Integer> chapterNumber = chapterDividers.stream()
-                .filter(num -> num > blockNumber).findFirst();
-            if (chapterNumber.isPresent()) {
-                final int index = chapterDividers.indexOf(chapterNumber.get());
-                return index+1;
-            } else {
-                // last chapter
-                final int size = chapterDividers.size();
-                return size+1;
-            }
     }
 
 }

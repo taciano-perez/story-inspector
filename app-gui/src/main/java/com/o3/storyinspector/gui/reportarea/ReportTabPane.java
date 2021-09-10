@@ -3,6 +3,8 @@ package com.o3.storyinspector.gui.reportarea;
 import com.o3.storyinspector.gui.core.*;
 import com.o3.storyinspector.gui.reportarea.character.CharacterReportTab;
 import com.o3.storyinspector.gui.reportarea.emotion.EmotionReportTab;
+import com.o3.storyinspector.gui.reportarea.readability.ReadabilityReportTab;
+import com.o3.storyinspector.gui.reportarea.sentence.SentenceVarietyReportTab;
 import com.o3.storyinspector.gui.reportarea.structure.BookStructureReportTab;
 import com.o3.storyinspector.gui.reportarea.task.TaskTab;
 import javafx.scene.control.TabPane;
@@ -29,6 +31,14 @@ public class ReportTabPane extends TabPane implements ReportEventListener, BookE
         } else if (event.getType() == ReportEvent.OPEN_REPORT_EMOTION) {
             final EmotionReportTab emotionReportTab = new EmotionReportTab(event.getBook());
             this.getTabs().add(emotionReportTab);
+            this.getSelectionModel().selectLast();  // focus on new tab
+        } else if (event.getType() == ReportEvent.OPEN_REPORT_READABILITY) {
+            final ReadabilityReportTab readabilityReportTab = new ReadabilityReportTab(event.getBook());
+            this.getTabs().add(readabilityReportTab);
+            this.getSelectionModel().selectLast();  // focus on new tab
+        } else if (event.getType() == ReportEvent.OPEN_REPORT_SENTENCE_VARIETY) {
+            final SentenceVarietyReportTab sentenceVarietyReportTab = new SentenceVarietyReportTab(event.getBook());
+            this.getTabs().add(sentenceVarietyReportTab);
             this.getSelectionModel().selectLast();  // focus on new tab
         }
     }

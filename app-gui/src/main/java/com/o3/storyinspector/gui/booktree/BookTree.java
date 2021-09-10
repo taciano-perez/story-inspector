@@ -42,7 +42,7 @@ public class BookTree extends TreeView implements BookEventListener {
         }
 
         // handle clicks
-        EventHandler<MouseEvent> mouseEventHandle = (MouseEvent event) -> {
+        EventHandler<MouseEvent> mouseEventHandle = (event) -> {
             handleMouseClicked(event);
         };
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandle);
@@ -68,10 +68,18 @@ public class BookTree extends TreeView implements BookEventListener {
                 BookTreeItem.TYPE_REPORT_CHARACTER, "Character Report",
                 IconUtils.getIcon(FontAwesome.Glyph.USERS), book);
         bookItem.getChildren().add(reportCharacterItem);
-        final BookTreeItem<String> emotionCharacterItem = new BookTreeItem<>(
+        final BookTreeItem<String> reportEmotionItem = new BookTreeItem<>(
                 BookTreeItem.TYPE_REPORT_EMOTION, "Emotion Report",
                 IconUtils.getIcon(FontAwesome.Glyph.HEART), book);
-        bookItem.getChildren().add(emotionCharacterItem);
+        bookItem.getChildren().add(reportEmotionItem);
+        final BookTreeItem<String> reportReadabilityItem = new BookTreeItem<>(
+                BookTreeItem.TYPE_REPORT_READABILITY, "Readability Report",
+                IconUtils.getIcon(FontAwesome.Glyph.PENCIL), book);
+        bookItem.getChildren().add(reportReadabilityItem);
+        final BookTreeItem<String> reportSentenceVarietyItem = new BookTreeItem<>(
+                BookTreeItem.TYPE_REPORT_SENTENCE_VARIETY, "Sentence Variety Report",
+                IconUtils.getIcon(FontAwesome.Glyph.EDIT), book);
+        bookItem.getChildren().add(reportSentenceVarietyItem);
     }
 
     @Override
@@ -94,6 +102,10 @@ public class BookTree extends TreeView implements BookEventListener {
                 ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_CHARACTER, clickedItem.getBook()));
             } else if (clickedItem.getType() == BookTreeItem.TYPE_REPORT_EMOTION) {
                 ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_EMOTION, clickedItem.getBook()));
+            } else if (clickedItem.getType() == BookTreeItem.TYPE_REPORT_READABILITY) {
+                ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_READABILITY, clickedItem.getBook()));
+            } else if (clickedItem.getType() == BookTreeItem.TYPE_REPORT_SENTENCE_VARIETY) {
+                ReportManager.fireReportEvent(new ReportEvent(ReportEvent.OPEN_REPORT_SENTENCE_VARIETY, clickedItem.getBook()));
             }
         }
     }

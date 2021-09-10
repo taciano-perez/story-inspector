@@ -51,7 +51,7 @@ public class StoryInspectorGui extends Application {
         // init
         this.window = window;
         this.menu = new MenuBar();
-        LOGGER.debug("Initializing book tree...");
+        LOGGER.info("Initializing book tree...");
         this.bookTree = new BookTree();
         this.reportArea = new ReportTabPane();
         this.statusBar = new StoryInspectorStatusBar();
@@ -79,7 +79,7 @@ public class StoryInspectorGui extends Application {
         final Scene mainScene = new Scene(mainWindowLayout);
         window.setTitle(I18N.stringFor(STORY_INSPECTOR_TITLE));
         mainScene.getStylesheets().add(getResourceURL(Styles.STORY_INSPECTOR_CSS).toExternalForm());
-        window.setMinWidth(800);
+        window.setMinWidth(900);
         window.setScene(mainScene);
         window.show();
     }

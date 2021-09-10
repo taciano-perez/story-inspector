@@ -8,10 +8,7 @@ import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.util.StoryDomUtils;
 
 import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Domain object for chart entities.
@@ -80,7 +77,7 @@ public class EmotionChartData {
         return scoresByBlock;
     }
 
-    public static EmotionChartData buildSentimentChartFromBook(final Book book) throws JAXBException {
+    public static EmotionChartData buildSentimentChartFromBook(final Book book) {
         final List<String> labels = new ArrayList<>();
         final List<String> blocks = new ArrayList<>();
         final List<Double> scores = new ArrayList<>();
@@ -122,5 +119,19 @@ public class EmotionChartData {
         chapterDividers.remove(chapterDividers.size()-1);  // remove last marker
         return new EmotionChartData(book.getTitle(), book.getAuthor(), labels, blocks, scores, chapterDividers);
     }
+
+    public static int getChapterNumber(final int blockNumber, final List<Integer> chapterDividers) {
+        Optional<Integer> chapterNumber = chapterDividers.stream()
+                .filter(num -> num > blockNumber).findFirst();
+        if (chapterNumber.isPresent()) {
+            final int index = chapterDividers.indexOf(chapterNumber.get());
+            return index+1;
+        } else {
+            // last chapter
+            final int size = chapterDividers.size();
+            return size+1;
+        }
+    }
+
 
 }

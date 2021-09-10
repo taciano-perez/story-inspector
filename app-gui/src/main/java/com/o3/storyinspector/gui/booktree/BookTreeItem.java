@@ -10,6 +10,8 @@ public class BookTreeItem<T> extends TreeItem<T> {
     public static final int TYPE_REPORT_STRUCTURE = 1;
     public static final int TYPE_REPORT_CHARACTER = 2;
     public static final int TYPE_REPORT_EMOTION = 3;
+    public static final int TYPE_REPORT_READABILITY = 4;
+    public static final int TYPE_REPORT_SENTENCE_VARIETY = 5;
 
     int type;
     Book book;

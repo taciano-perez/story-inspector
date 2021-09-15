@@ -26,7 +26,7 @@ public class EmotionChart<T1, T2> extends StackedAreaChartWithMarkers {
 
     public static EmotionChart buildEmotionChart(final Book book, final EmotionType emotionType) {
         CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setLabel("Paragraphs");
+        xAxis.setLabel("Pages");
 
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Emotion Score");
@@ -50,7 +50,7 @@ public class EmotionChart<T1, T2> extends StackedAreaChartWithMarkers {
 
     public static EmotionChart buildSentimentChart(final Book book) {
         CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setLabel("Paragraphs");
+        xAxis.setLabel("Pages");
 
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Sentiment Score");
@@ -127,11 +127,12 @@ public class EmotionChart<T1, T2> extends StackedAreaChartWithMarkers {
                 blockNumber++;
 
                 final Tooltip tooltip = new Tooltip(chapterCaption + "\n"
-                        + "Paragraph #" + blockNumber + "\n"
+                        + "Page #" + blockNumber + "\n"
                         + percentage + "\n" + block);
                 tooltip.setPrefWidth(500);
                 tooltip.setWrapText(true);
                 tooltip.setShowDelay(Duration.seconds(0));
+                tooltip.setShowDuration(Duration.INDEFINITE);
                 Tooltip.install(stackPane, tooltip);
             }
         }

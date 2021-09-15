@@ -39,6 +39,7 @@ public class ChapterLengthChart extends BarChart {
             final String wordcount = StringFormatter.formatInteger(chapter.getMetadata().getWordCount());
             final Tooltip tooltip = new Tooltip(chapter.getTitle() + "\n" + wordcount + " words");
             tooltip.setShowDelay(Duration.seconds(0));
+            tooltip.setShowDuration(Duration.INDEFINITE);
             Tooltip.install(data.getNode(), tooltip);
         }
 

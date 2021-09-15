@@ -44,6 +44,7 @@ public class CharacterDistributionChart extends BarChart {
                     final String percentage = StringFormatter.formatPercentage((double)data.getYValue());
                     final Tooltip tooltip = new Tooltip(data.getXValue() + "\n" + percentage + " of all chapters");
                     tooltip.setShowDelay(Duration.seconds(0));
+                    tooltip.setShowDuration(Duration.INDEFINITE);
                     Tooltip.install(data.getNode(), tooltip);
                 });
 

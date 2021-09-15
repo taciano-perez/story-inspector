@@ -12,6 +12,14 @@ public class Blocks {
 
     private static double FK_GRADE_UNKNOWN = -256;
 
+    public static String VARIETY_POOR = "poor";
+    public static String VARIETY_FAIR = "fair";
+    public static String VARIETY_GOOD = "good";
+    public static String VARIETY_EXCELLENT = "excellent";
+    public static String VARIETY_NA = "(not applicable)";
+    public static String VARIETY_UNKNOWN = "(could not calculate sentence variety)";
+
+
     private String bookTitle;
     private String bookAuthor;
     private List<Block> blocks;
@@ -91,6 +99,21 @@ public class Blocks {
             fkGradeMsg = "(Readability not calculated. Re-upload your book to calculate.)";
         }
         return fkGradeMsg;
+    }
+
+    public static String getSentenceVarietyMessage(final double stdDev, final Block block) {
+        if (block != null && block.getSentences().size() <= 1) {
+            return VARIETY_NA;
+        } else if (stdDev <= 5) {
+            return VARIETY_POOR;
+        } else if (stdDev > 5 && stdDev <= 9) {
+            return VARIETY_FAIR;
+        } else if (stdDev > 9 && stdDev <= 14) {
+            return VARIETY_GOOD;
+        } else if (stdDev > 14) {
+            return VARIETY_EXCELLENT;
+        }
+        return VARIETY_UNKNOWN;
     }
 
 }

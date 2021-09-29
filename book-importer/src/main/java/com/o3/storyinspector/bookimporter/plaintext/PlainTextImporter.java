@@ -3,6 +3,7 @@ package com.o3.storyinspector.bookimporter.plaintext;
 import com.o3.storyinspector.bookimporter.breakdown.ChapterTokenizer;
 import com.o3.storyinspector.storydom.Book;
 
+import java.io.FileNotFoundException;
 import java.io.Reader;
 
 public class PlainTextImporter {

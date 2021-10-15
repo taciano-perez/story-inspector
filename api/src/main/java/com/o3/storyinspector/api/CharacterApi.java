@@ -1,5 +1,7 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.Characters;
 import com.o3.storyinspector.storydom.Book;
@@ -30,10 +32,15 @@ public class CharacterApi {
     @Autowired
     private JdbcTemplate db;
 
+    @Autowired
+    private GoogleId userValidator;
+
     @GetMapping("/{bookId}")
-    public Characters one(@PathVariable final Long bookId) {
+    public Characters one(@PathVariable final Long bookId, @RequestParam("id_token") final String idToken) {
         logger.trace("GET CHARACTERS BOOK ID=[" + bookId + "]");
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         Characters characters;
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -48,10 +55,15 @@ public class CharacterApi {
         return characters;
     }
 
-    @PutMapping("/{bookId}/{chapterId}/{characterName}")
-    public ResponseEntity<Long> putCharacter(@PathVariable final Long bookId, @PathVariable final String chapterId, @PathVariable final String characterName) {
+    @PutMapping("/{bookId}/{chapterId}/{characterName}/{id_token}")
+    public ResponseEntity<Long> putCharacter(@PathVariable final Long bookId,
+                                             @PathVariable final String chapterId,
+                                             @PathVariable final String characterName,
+                                             @PathVariable("id_token") final String idToken) {
         logger.trace("PUT CHARACTER BOOK ID: " + bookId + ", CHAPTER ID: " + chapterId + ", NAME: " + characterName);
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         try {
             // unmarshal storydom
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -73,7 +85,7 @@ public class CharacterApi {
             }
 
             // update re-marshalled storydom in db
-            bookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
+            BookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when putting new character. Book bookId: " + bookId +
                     ", chapterId: " + chapterId +
@@ -85,10 +97,15 @@ public class CharacterApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/rename/{bookId}/{characterName}/{newCharacterName}")
-    public ResponseEntity<Long> renameCharacter(@PathVariable final Long bookId, @PathVariable final String characterName, @PathVariable final String newCharacterName) {
+    @PostMapping("/rename/{bookId}/{characterName}/{newCharacterName}/{id_token}")
+    public ResponseEntity<Long> renameCharacter(@PathVariable final Long bookId,
+                                                @PathVariable final String characterName,
+                                                @PathVariable final String newCharacterName,
+                                                @PathVariable("id_token") final String idToken) {
         logger.trace("RENAME CHARACTER BOOK ID: " + bookId + ", NAME: " + characterName + ", NEW NAME: " + newCharacterName);
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         try {
             // unmarshal storydom
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -103,21 +120,25 @@ public class CharacterApi {
             book.getModifications().add(renameCharacter);
 
             // update re-marshalled storydom in db
-            bookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
+            BookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when renaming character. Book bookId: " +
                     bookId + " characterName: " + characterName + ", newCharacterName: " + newCharacterName +
                     ", Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
-            return null;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{bookId}/{characterName}")
-    public ResponseEntity<Long> deleteCharacter(@PathVariable final Long bookId, @PathVariable final String characterName) {
+    @DeleteMapping("/{bookId}/{characterName}/{id_token}")
+    public ResponseEntity<Long> deleteCharacter(@PathVariable final Long bookId,
+                                                @PathVariable final String characterName,
+                                                @PathVariable("id_token") final String idToken) {
         logger.trace("DELETE CHARACTER BOOK ID: " + bookId + ", NAME: " + characterName);
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         try {
             // unmarshal storydom
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -131,7 +152,7 @@ public class CharacterApi {
             book.getModifications().add(deleteCharacter);
 
             // update re-marshalled storydom in db
-            bookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
+            BookDAO.updateBook(db, XmlWriter.exportBookToString(book), bookId);
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when deleting character. Book bookId: " +
                     bookId + " characterName: " + characterName + ", Exception: " + e.getLocalizedMessage();

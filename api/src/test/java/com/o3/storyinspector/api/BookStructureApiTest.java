@@ -81,6 +81,7 @@ class BookStructureApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId);
 
         // then

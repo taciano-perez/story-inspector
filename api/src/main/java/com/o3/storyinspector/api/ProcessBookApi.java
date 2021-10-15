@@ -1,7 +1,8 @@
 package com.o3.storyinspector.api;
 
 import com.o3.storyinspector.api.task.AnnotateBookTask;
-import com.o3.storyinspector.api.util.ApiUtils;
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.bookimporter.plaintext.PlainTextImporter;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.storydom.Book;
@@ -40,16 +41,18 @@ public class ProcessBookApi {
     @Autowired
     private JavaMailSender emailSender;
 
+    @Autowired
+    private GoogleId userValidator;
+
     @RequestMapping(value = "/process-book", method = RequestMethod.POST)
-    public void processBook(@RequestParam("ID") Long bookId) {
+    public void processBook(@RequestParam("ID") Long bookId, @RequestParam("id_token") final String idToken) {
         logger.trace(String.format("PROCESS BOOK ID - %s", bookId));
 
-        final ResponseEntity<String> res1 = ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
-        if (res1.getStatusCode() != HttpStatus.OK) {
-            logger.error("PROCESS BOOK ID - ERROR CREATING DOM " + res1.getBody());
-            return;
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
+        if (!user.isAdmin()) {
+            final BookDAO book = BookDAO.findByBookId(bookId, db);
+            user.emailMatches(book.getUserEmail());
         }
-        logger.trace("PROCESS BOOK ID - DOM CREATED");
 
         BookDAO.updateBookValidation(db, true, bookId);
 
@@ -58,29 +61,32 @@ public class ProcessBookApi {
     }
 
     @GetMapping("/admin/task-queue/{userId}")
-    public Long adminQueryTaskQueue(@PathVariable("userId") final String userId) {
+    public Long adminQueryTaskQueue(@PathVariable("userId") final String userId, @RequestParam("id_token") final String idToken) {
         logger.trace("ADMIN QUERY TASK QUEUE userId: " + userId);
-        if (ApplicationConfig.ADMIN_USER_ID.equals(userId)) {
-            final ScheduledThreadPoolExecutor executor = taskScheduler.getScheduledThreadPoolExecutor();
-            return executor.getTaskCount() - executor.getCompletedTaskCount();
-        } else {
-            return null;
-        }
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
+        user.failIfNotAdmin();
+        final ScheduledThreadPoolExecutor executor = taskScheduler.getScheduledThreadPoolExecutor();
+        return executor.getTaskCount() - executor.getCompletedTaskCount();
     }
 
-    @RequestMapping(value = "/reprocess-book/{bookId}", method = RequestMethod.POST)
-    public void reprocessBook(@PathVariable("bookId") Long bookId) {
+    @RequestMapping(value = "/reprocess-book/{bookId}/{id_token}", method = RequestMethod.POST)
+    public void reprocessBook(@PathVariable("bookId") Long bookId, @PathVariable("id_token") final String idToken) {
         logger.trace(String.format("REPROCESS BOOK ID - %s", bookId));
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
+        user.failIfNotAdmin();
         taskScheduler.execute(new AnnotateBookTask(db, bookId, null));
         logger.trace("PROCESS BOOK ID - BOOK SCHEDULED FOR ANNOTATION");
     }
 
-    @RequestMapping(value = "/create-dom", method = RequestMethod.POST)
-    public ResponseEntity<Object> createDom(@RequestParam("ID") Long bookId) {
+    @RequestMapping(value = "/create-dom/{id_token}", method = RequestMethod.POST)
+    public ResponseEntity<Object> createDom(@RequestParam("ID") Long bookId,
+                                            @PathVariable("id_token") final String idToken) {
         logger.trace(String.format("CREATE DOM ID - %s", bookId));
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
 
         try {
             final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+            if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
 
             final Book importedBook =
                     PlainTextImporter.importBookFromReader(bookDAO.getTitle(), new StringReader(bookDAO.getRawInput()));

@@ -84,6 +84,7 @@ class BlockApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/list/" + bookId);
 
         // then

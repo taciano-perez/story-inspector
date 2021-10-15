@@ -42,17 +42,12 @@ public class UploadFileApi {
         logger.trace(String.format("CONTENT - %s", content));
 
         final UserInfo userInfo = idValidator.retrieveUserInfo(idToken);
-        if (userInfo != null) {
-            logger.trace("User name: " + userInfo.getName() + ", email: " + userInfo.getEmail());
-            final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
-            logger.trace(String.format("BOOK ID - %s", bookId));
+        logger.trace("User name: " + userInfo.getName() + ", email: " + userInfo.getEmail());
+        final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
+        logger.trace(String.format("BOOK ID - %s", bookId));
 
-            ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM, "ID", bookId.toString());
-            return ResponseEntity.ok(bookId);
-        } else {
-            logger.error("Could not upload book, error authenticating user. Title: " + title + ", author:" + author + ", token: " + idToken);
-            return ResponseEntity.unprocessableEntity().build();
-        }
+        ApiUtils.callApiWithParameter(ApiUtils.API_CREATE_DOM + "/" + idToken, idToken, "ID", bookId.toString());
+        return ResponseEntity.ok(bookId);
     }
 
     @RequestMapping(value = "/book", method = RequestMethod.POST, consumes = {"multipart/form-data"})
@@ -68,17 +63,12 @@ public class UploadFileApi {
         logger.trace(String.format("CONTENT - %s", content));
 
         final UserInfo userInfo = idValidator.retrieveUserInfo(idToken);
-        if (userInfo != null) {
-            logger.trace("User name: " + userInfo.getName() + ", email: " + userInfo.getEmail());
-            final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
-            logger.trace(String.format("BOOK ID - %s", bookId));
+        logger.trace("User name: " + userInfo.getName() + ", email: " + userInfo.getEmail());
+        final Long bookId = BookDAO.saveBook(db, userInfo.getId(), userInfo.getEmail(), title, author, content, null, null, null);
+        logger.trace(String.format("BOOK ID - %s", bookId));
 
-            ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, "ID", bookId.toString());
-            return ResponseEntity.ok().build();
-        } else {
-            logger.error("Could not upload book, error authenticating user. Title: " + title + ", author:" + author + ", token: " + idToken);
-            return ResponseEntity.unprocessableEntity().build();
-        }
+        ApiUtils.callAsyncApiWithParameter(ApiUtils.API_PROCESS_BOOK_ENDPOINT, idToken, "ID", bookId.toString());
+        return ResponseEntity.ok().build();
     }
 
     private String getFileContent(final MultipartFile file) throws IOException {

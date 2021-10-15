@@ -244,6 +244,10 @@ public class BookDAO {
         throw new RuntimeException("No generated book id returned.");
     }
 
+    public static void deleteBook(final JdbcTemplate db, final BookDAO book) {
+        db.execute("DELETE FROM books WHERE book_id=" + book.getId());
+    }
+
     public static void updateBookProgress(final JdbcTemplate db, final int percentageComplete, final int remainingMinutes, final long bookId) {
         final String sql = "UPDATE books SET percent_complete = ?, remain_mins = ? WHERE book_id = ?";
         final Object[] params = {percentageComplete, remainingMinutes, bookId};

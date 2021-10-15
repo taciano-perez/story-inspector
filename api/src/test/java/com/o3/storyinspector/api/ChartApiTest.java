@@ -84,6 +84,7 @@ class ChartApiTest {
         // when
         final Response response = RestAssured.given()
                 .param("ID", bookId)
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId + "/posneg/");
 
         // then
@@ -98,6 +99,7 @@ class ChartApiTest {
 
         // when
         final Response response = RestAssured.given()
+                .param("id_token", "")
                 .get(API_ROOT + "/" + bookId + "/anger/");
 
         // then

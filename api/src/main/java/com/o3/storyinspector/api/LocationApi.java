@@ -1,5 +1,7 @@
 package com.o3.storyinspector.api;
 
+import com.o3.storyinspector.api.user.GoogleId;
+import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.db.BookDAO;
 import com.o3.storyinspector.domain.Locations;
 import com.o3.storyinspector.storydom.Book;
@@ -30,10 +32,15 @@ public class LocationApi {
     @Autowired
     private JdbcTemplate db;
 
+    @Autowired
+    private GoogleId userValidator;
+
     @GetMapping("/{bookId}")
-    public Locations one(@PathVariable final Long bookId) {
+    public Locations one(@PathVariable final Long bookId, @RequestParam("id_token") final String idToken) {
         logger.trace("GET LocationS BOOK ID=[" + bookId + "]");
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         Locations locations;
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -48,10 +55,15 @@ public class LocationApi {
         return locations;
     }
 
-    @PutMapping("/{bookId}/{chapterId}/{LocationName}")
-    public ResponseEntity<Long> putLocation(@PathVariable final Long bookId, @PathVariable final String chapterId, @PathVariable final String LocationName) {
+    @PutMapping("/{bookId}/{chapterId}/{LocationName}/{id_token}")
+    public ResponseEntity<Long> putLocation(@PathVariable final Long bookId,
+                                            @PathVariable final String chapterId,
+                                            @PathVariable final String LocationName,
+                                            @PathVariable("id_token") final String idToken) {
         logger.trace("PUT Location BOOK ID: " + bookId + ", CHAPTER ID: " + chapterId + ", NAME: " + LocationName);
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         try {
             // unmarshal storydom
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -85,10 +97,15 @@ public class LocationApi {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/rename/{bookId}/{LocationName}/{newLocationName}")
-    public ResponseEntity<Long> renameLocation(@PathVariable final Long bookId, @PathVariable final String LocationName, @PathVariable final String newLocationName) {
+    @PostMapping("/rename/{bookId}/{LocationName}/{newLocationName}/{id_token}")
+    public ResponseEntity<Long> renameLocation(@PathVariable final Long bookId,
+                                               @PathVariable final String LocationName,
+                                               @PathVariable final String newLocationName,
+                                               @PathVariable("id_token") final String idToken) {
         logger.trace("RENAME Location BOOK ID: " + bookId + ", NAME: " + LocationName + ", NEW NAME: " + newLocationName);
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         try {
             // unmarshal storydom
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -109,15 +126,19 @@ public class LocationApi {
                     bookId + " LocationName: " + LocationName + ", newLocationName: " + newLocationName +
                     ", Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
-            return null;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{bookId}/{LocationName}")
-    public ResponseEntity<Long> deleteLocation(@PathVariable final Long bookId, @PathVariable final String LocationName) {
+    @DeleteMapping("/{bookId}/{LocationName}/{id_token}")
+    public ResponseEntity<Long> deleteLocation(@PathVariable final Long bookId,
+                                               @PathVariable final String LocationName,
+                                               @PathVariable("id_token") final String idToken) {
         logger.trace("DELETE Location BOOK ID: " + bookId + ", NAME: " + LocationName);
+        final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
+        if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
         try {
             // unmarshal storydom
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
@@ -136,7 +157,7 @@ public class LocationApi {
             final String errMsg = "Unexpected error when deleting Location. Book bookId: " +
                     bookId + " LocationName: " + LocationName + ", Exception: " + e.getLocalizedMessage();
             logger.error(errMsg);
-            return null;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

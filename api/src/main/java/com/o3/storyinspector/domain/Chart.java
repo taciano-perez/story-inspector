@@ -7,6 +7,8 @@ import com.o3.storyinspector.storydom.Emotion;
 import com.o3.storyinspector.storydom.constants.EmotionType;
 import com.o3.storyinspector.storydom.util.StoryDomUtils;
 
+import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,5 +79,49 @@ public class Chart {
         }
         return scoresByBlock;
     }
+
+    public static Chart buildSentimentChartFromBook(final Book book) {
+        final List<String> labels = new ArrayList<>();
+        final List<String> blocks = new ArrayList<>();
+        final List<Double> scores = new ArrayList<>();
+        final List<Integer> chapterDividers = new ArrayList<>();
+        int counter = 0;
+        for (final Chapter chapter : book.getChapters()) {
+            for (final Block block : chapter.getBlocks()) {
+                counter++;
+                final double sentimentScore = block.getSentimentScore().doubleValue();
+                labels.add("#" + counter);
+                blocks.add(block.getBody());
+                scores.add(sentimentScore);
+            }
+            chapterDividers.add(counter);
+        }
+        chapterDividers.remove(chapterDividers.size()-1);  // remove last marker
+        return new Chart(book.getTitle(), book.getAuthor(), labels, blocks, scores, chapterDividers);
+    }
+
+    public static Chart buildEmotionChartFromBook(final Book book, final EmotionType emotionType) throws JAXBException {
+        final double maxEmotionScore = StoryDomUtils.getMaxEmotionScore(book);
+        final List<String> labels = new ArrayList<>();
+        final List<String> blocks = new ArrayList<>();
+        final List<Double> scores = new ArrayList<>();
+        final List<Integer> chapterDividers = new ArrayList<>();
+        int counter = 0;
+        for (final Chapter chapter : book.getChapters()) {
+            for (final Block block : chapter.getBlocks()) {
+                counter++;
+                final Emotion emotion = StoryDomUtils.findEmotion(emotionType, block.getEmotions());
+                final double emotionScore = emotion.getScore().doubleValue();
+                final double normalizedEmotionScore = emotionScore / maxEmotionScore;
+                labels.add("#" + counter);
+                blocks.add(block.getBody());
+                scores.add(normalizedEmotionScore);
+            }
+            chapterDividers.add(counter);
+        }
+        chapterDividers.remove(chapterDividers.size()-1);  // remove last marker
+        return new Chart(book.getTitle(), book.getAuthor(), labels, blocks, scores, chapterDividers);
+    }
+
 
 }

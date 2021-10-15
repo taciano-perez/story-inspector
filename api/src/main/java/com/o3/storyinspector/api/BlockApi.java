@@ -1,14 +1,9 @@
 package com.o3.storyinspector.api;
 
-import com.o3.storyinspector.annotation.blocks.SentenceSplitter;
-import com.o3.storyinspector.annotation.readability.FleschKincaidReadabilityInspector;
-import com.o3.storyinspector.annotation.wordcount.WordCountInspector;
 import com.o3.storyinspector.api.user.GoogleId;
 import com.o3.storyinspector.api.user.UserInfo;
 import com.o3.storyinspector.db.BookDAO;
-import com.o3.storyinspector.domain.Block;
 import com.o3.storyinspector.domain.Blocks;
-import com.o3.storyinspector.domain.Sentence;
 import com.o3.storyinspector.storydom.Book;
 import com.o3.storyinspector.storydom.io.XmlReader;
 import org.slf4j.Logger;
@@ -18,8 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/blocks")
@@ -40,25 +33,10 @@ public class BlockApi {
         final UserInfo user = userValidator.retrieveUserInfo(idToken);
         final BookDAO bookDAO = BookDAO.findByBookId(bookId, db);
         if (!user.isAdmin()) user.emailMatches(bookDAO.getUserEmail());
-        final List<Block> blockList = new ArrayList<>();
         try {
             final String annotatedStoryDom = bookDAO.getAnnotatedStoryDom();
             final Book book = XmlReader.readBookFromXmlStream(new StringReader(annotatedStoryDom));
-            Integer chapterId = 1;
-            Integer blockId = 1;
-            for (final com.o3.storyinspector.storydom.Chapter chapter : book.getChapters()) {
-                final String chapterTitle = "Chapter #" + chapterId++ + " " + chapter.getTitle();
-                for (final com.o3.storyinspector.storydom.Block domBlock : chapter.getBlocks()) {
-                    final List<Sentence> sentences = new ArrayList<>();
-                    for (final String sentenceText : SentenceSplitter.splitSentences(domBlock)) {
-                        final int wordCount = WordCountInspector.inspectWordCount(sentenceText);
-                        double fkGradeLevel = FleschKincaidReadabilityInspector.inspectFKGradeLevel(sentenceText);
-                        sentences.add(new Sentence(sentenceText, fkGradeLevel, wordCount));
-                    }
-                    blockList.add(new Block(blockId++, domBlock, chapterTitle, sentences));
-                }
-            }
-            return new Blocks(bookDAO.getTitle(), bookDAO.getAuthor(), blockList);
+            return Blocks.buildBlocks(book, bookDAO.getTitle(), bookDAO.getAuthor());
         } catch (final Exception e) {
             final String errMsg = "Unexpected error when listing book blocks. Book bookId: " +
                     bookId + ", Exception: " + e.getLocalizedMessage();
@@ -67,5 +45,6 @@ public class BlockApi {
             return null;
         }
     }
+
 
 }

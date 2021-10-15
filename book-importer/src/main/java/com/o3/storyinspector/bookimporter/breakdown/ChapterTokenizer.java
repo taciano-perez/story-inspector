@@ -5,15 +5,28 @@ import com.o3.storyinspector.storydom.Chapter;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.SentenceUtils;
 import edu.stanford.nlp.process.DocumentPreprocessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChapterTokenizer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChapterTokenizer.class);
+
     public static List<Chapter> tokenizeFromFile(final String inputFilePath) {
-        return tokenize(new DocumentPreprocessor(inputFilePath));
+        LOGGER.info("Preparing to tokenize file: " + inputFilePath);
+        try {
+            return tokenizeFromReader(new FileReader(inputFilePath));
+        } catch (FileNotFoundException fileNotFoundException) {
+            LOGGER.error(fileNotFoundException.getMessage());
+            fileNotFoundException.printStackTrace();
+            return null;
+        }
     }
 
     public static List<Chapter> tokenizeFromReader(final Reader inputBookReader) {

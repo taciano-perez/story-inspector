@@ -1,0 +1,50 @@
+.buttonCharacter {
+    -fx-background-color: #0d6efd;
+    -fx-border-color: #0d6efd;
+}
+
+.buttonCharacter .label{
+    -fx-text-fill: white;
+}
+
+.buttonCharacter:focused {
+     -fx-background-color: darkgray;
+}
+
+.buttonCharacter:focused .label {
+    -fx-text-fill: blue;
+}
+
+.buttonLocation {
+    -fx-background-color: #0dcaf0;
+    -fx-border-color: #0dcaf0;
+}
+
+.buttonLocation .label{
+    -fx-text-fill: white;
+}
+
+.buttonLocation:focused {
+     -fx-background-color: darkgray;
+}
+
+.buttonLocation:focused .label {
+    -fx-text-fill: #0dcaf0;
+}
+
+.bordered-titled-title {
+  -fx-background-color: white;
+  -fx-translate-y: -16;
+}
+
+.bordered-titled-border {
+  -fx-content-display: top;
+  -fx-border-insets: 20 15 15 15;
+  -fx-background-color: white;
+  -fx-border-color: black;
+  -fx-border-width: 2;
+}
+
+.bordered-titled-content {
+  -fx-padding: 26 10 10 10;
+}

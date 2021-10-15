@@ -3,7 +3,7 @@ A tool for analyzing book structure using NLP techniques. See the forest instead
 
 Story Inspector consists of the following components:
 
-![Components of Story Inspector](https://raw.githubusercontent.com/taciano-perez/story-inspector/master/documentation/images/architecture_overview.jpg)
+![Components of Story Inspector](documentation/images/architecture_overview.jpg)
 
 - An **ETL Tool** (Extraction, Transform, Load) that takes books in various formats (HTML, ePUB, PDF, etc.) as input and produces a StoryDOM (Document Object Model) file breaking down the book in its structural elements (parts, chapters, and paragraphs).
 * An **Annotation Engine** that uses NLP to produce metadata from StoryDOM files, enriching the files with metadata annotations. Examples of metadata include:

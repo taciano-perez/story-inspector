@@ -1,0 +1,11 @@
+    body {
+        font-family: 'Nunito';
+    }
+    .image-style {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+    .nav {
+        color: black;
+        text-decoration: none; /* no underline */
+    }

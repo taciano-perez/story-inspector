@@ -6,7 +6,7 @@
         </Block>
     </Chapter>
     <Chapter title="Chapter 2 - The test continues">
-        <Block sentimentScore="-1">
+        <Block sentimentScore="-1.0">
             <Body>This is the body of chapter 2.</Body>
         </Block>
     </Chapter>

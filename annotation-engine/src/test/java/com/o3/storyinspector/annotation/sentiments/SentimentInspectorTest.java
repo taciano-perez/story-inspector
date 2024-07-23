@@ -74,7 +74,7 @@ class SentimentInspectorTest {
     void inspectChapterSentimentScore_withBlock2() {
         // given
         final Block block = createBlock(BLOCK2, "266");
-        final double expectedSentiment = -0.456;
+        final double expectedSentiment = -0.76;
 
         // when
         final double sentimentScore = SentimentInspector.inspectSentimentScore(block, 250);

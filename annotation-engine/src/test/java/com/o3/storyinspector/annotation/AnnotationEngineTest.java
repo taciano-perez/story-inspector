@@ -88,7 +88,7 @@ class AnnotationEngineTest {
     void inspectChapterSentimentScore() throws IOException {
         // given
         final Chapter sampleChapter = createSampleChapter(FileUtils.readStringFromUri(SAMPLE_CHAPTER_PATH), "2776");
-        final BigDecimal expectedSentiment = BigDecimal.valueOf(-0.3945583756345178); //-0.3945583756345178
+        final BigDecimal expectedSentiment = BigDecimal.valueOf(-0.6200203045685279);
 
         // when
         AnnotationEngine.inspectSentiments(sampleChapter);

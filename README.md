@@ -16,9 +16,8 @@ Story Inspector consists of the following components:
 * A **Visualization Tool** for authors to interpret the results.
 * A **Web Visualization Tool** is hosted at https://github.com/taciano-perez/story-inspector-web.
   
-Note: Story Inspector is a work in progress, and not fully functional yet.
-
 Limitations
-- Story Inspector cannot analyze sentiment nor extract named entities (locations, characters) from sentences larges than 250 words.
+- Story Inspector cannot analyze sentiment nor extract named entities (locations, characters) from sentences larger than 250 words.
+- Story Inspector cannot yet rename or delete characters or locations via the UI
 
 \* [Logo image designed by macrovector / Freepik](http://www.freepik.com)

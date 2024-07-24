@@ -18,7 +18,7 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <version.springboot>2.3.4.RELEASE</version.springboot>
+        <version.springboot>2.5.12</version.springboot>
     </properties>
 
     <dependencies>
@@ -93,6 +93,16 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${version.springboot}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -134,7 +144,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.3.1</version>
                 <configuration>
                     <argLine>--enable-preview</argLine>
                 </configuration>

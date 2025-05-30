@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/charts")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ChartApi {
 
     final Logger logger = LoggerFactory.getLogger(ChartApi.class);

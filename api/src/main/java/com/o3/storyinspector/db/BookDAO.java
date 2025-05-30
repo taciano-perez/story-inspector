@@ -245,7 +245,13 @@ public class BookDAO {
     }
 
     public static void deleteBook(final JdbcTemplate db, final BookDAO book) {
-        db.execute("DELETE FROM books WHERE book_id=" + book.getId());
+        final String sql = "DELETE FROM books WHERE book_id = ?";
+        final Object[] params = {book.getId()};
+        final int[] types = {Types.INTEGER};
+        final int deletedRowCount = db.update(sql, params, types);
+        if (deletedRowCount != 1) {
+            logger.error("Unexpected error when deleting book. Book id: " + book.getId() + ", deleted row count: " + deletedRowCount);
+        }
     }
 
     public static void updateBookProgress(final JdbcTemplate db, final int percentageComplete, final int remainingMinutes, final long bookId) {

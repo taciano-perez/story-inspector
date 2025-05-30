@@ -11,6 +11,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Properties;
 
@@ -49,19 +52,52 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().sameOrigin();
-        http.cors();
+        http.cors().configurationSource(corsConfigurationSource());
         http.authorizeRequests()
                 .anyRequest()
-                .permitAll()
-                .and().csrf().disable();
+                .permitAll();
+        
         if (PROFILE_DEV.equals(activeSpringProfile)) {
-            logger.warn("Using dev security configuration");
+            logger.warn("Using dev security configuration - CSRF disabled for development");
+            http.csrf().disable();
         } else {
-            logger.info("Using production security configuration");
+            logger.info("Using production security configuration - CSRF enabled");
+            http.csrf()
+                .ignoringAntMatchers("/h2-console/**"); // Allow H2 console in dev
             http.requiresChannel()
                     .anyRequest()
                     .requiresSecure();
         }
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        
+        if (PROFILE_DEV.equals(activeSpringProfile)) {
+            // Development: Allow localhost origins
+            configuration.addAllowedOrigin("http://localhost:3000");
+            configuration.addAllowedOrigin("http://localhost:8080");
+            configuration.addAllowedOrigin("http://localhost:8081");
+            logger.warn("CORS: Development mode - allowing localhost origins only");
+        } else {
+            // Production: Restrict to specific domains
+            configuration.addAllowedOrigin("https://story-inspector-web.herokuapp.com");
+            configuration.addAllowedOrigin("https://storyinspector.com");
+            logger.info("CORS: Production mode - allowing specific domains only");
+        }
+        
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("DELETE");
+        configuration.addAllowedMethod("OPTIONS");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", configuration);
+        return source;
     }
 
     @Bean

@@ -16,7 +16,6 @@ import java.io.StringReader;
 
 @RestController
 @RequestMapping("/api/blocks")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BlockApi {
 
     final Logger logger = LoggerFactory.getLogger(BlockApi.class);

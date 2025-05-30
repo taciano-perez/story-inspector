@@ -35,7 +35,18 @@ cd api && mvn spring-boot:run
 
 **Desktop GUI (JavaFX):**
 ```bash
+# IMPORTANT: JavaFX requires a graphical display environment
+# This will NOT work in headless environments (WSL without X11, SSH, Docker, CI/CD)
+
+# Error in headless environments:
+# - "java.lang.UnsupportedOperationException: Internal Error" 
+# - "JavaFX runtime components are missing"
+
+# For systems with graphical display:
 cd app-gui && mvn javafx:run
+
+# To run in WSL2, you need X11 forwarding or Windows display server
+# See: https://docs.microsoft.com/en-us/windows/wsl/tutorials/gui-apps
 ```
 
 **Command Line Tools:**

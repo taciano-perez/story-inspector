@@ -24,6 +24,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
+    defer-datasource-initialization: true
   servlet:
     multipart:
       max-file-size: 3MB
@@ -65,6 +66,7 @@ spring:
       hibernate:
         ddl-auto: none
         show_sql: true
+    defer-datasource-initialization: true
   cloud:
     appId: story-inspector
     gcp:

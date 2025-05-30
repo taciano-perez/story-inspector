@@ -19,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BookApi {
 
     final Logger logger = LoggerFactory.getLogger(BookApi.class);

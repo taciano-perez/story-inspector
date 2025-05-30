@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Random;
 
@@ -35,7 +37,7 @@ class UploadFileApiTest {
             "Chapter 2: The Unexciting Aftermath.\n" +
             "This is another example chapter, but the action seems to unfold slower than expected. \n";
 
-    private static final String USER_ID = "108700212624021084744";
+    private static final String USER_ID = "999999999999999999999"; // Use different user ID to avoid conflicts with data.sql
 
     private static final String BOUNDARY = "q1w2e3r4t5y6u7i8o9";
 
@@ -46,8 +48,18 @@ class UploadFileApiTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @MockBean
     private GoogleId idValidator;
+
+    @BeforeEach
+    void setUp() {
+        // Reset auto-increment sequence to start from a unique time-based number to avoid conflicts
+        long uniqueId = 10000 + (System.currentTimeMillis() % 1000000);
+        jdbcTemplate.execute("ALTER TABLE books ALTER COLUMN book_id RESTART WITH " + uniqueId);
+    }
 
     @Test
     void testUploadSmallFile(@LocalServerPort int port) throws Exception {
@@ -80,7 +92,7 @@ class UploadFileApiTest {
         builder.param("title", "Mock Title")
                 .param("author", "Mock Author")
                 .param("id_token", USER_ID);
-        given(idValidator.retrieveUserInfo(any())).willReturn(new UserInfo("1", "Test User", "contact@storyinspector.com"));
+        given(idValidator.retrieveUserInfo(any())).willReturn(new UserInfo(USER_ID, "Test User", "contact@storyinspector.com"));
 
         // when
         mockMvc.perform(builder

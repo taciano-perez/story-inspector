@@ -7,6 +7,7 @@ import io.restassured.response.Response;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,12 +131,19 @@ class LocationApiTest {
             "{\"name\":\"Paris\",\"chapters\":[2],\"totalPercentageOfChapters\":0.5}" +
             "],\"totalNumOfChapters\":2}";
 
-    private static final String USER_ID = "108700212624021084744";
+    private static final String USER_ID = "999999999999999999999"; // Use different user ID to avoid conflicts with data.sql
 
     private static final String USER_EMAIL = "contact@storyinspector.com";
 
     @Autowired
     private JdbcTemplate db;
+
+    @BeforeEach
+    void setUpEach() {
+        // Reset auto-increment sequence to start from a unique time-based number to avoid conflicts
+        long uniqueId = 50000 + (System.currentTimeMillis() % 1000000);
+        db.execute("ALTER TABLE books ALTER COLUMN book_id RESTART WITH " + uniqueId);
+    }
 
     private static SimpleSmtpServer testSmtpServer;
 

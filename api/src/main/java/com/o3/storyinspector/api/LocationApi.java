@@ -25,7 +25,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/location")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class LocationApi {
     final Logger logger = LoggerFactory.getLogger(LocationApi.class);
 

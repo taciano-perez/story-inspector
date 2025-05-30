@@ -25,7 +25,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @RestController
 @RequestMapping("/api/process-book")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProcessBookApi {
 
     final static Logger logger = LoggerFactory.getLogger(ProcessBookApi.class);

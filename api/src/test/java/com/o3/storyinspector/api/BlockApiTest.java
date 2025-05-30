@@ -4,6 +4,7 @@ import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.json.JSONException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ class BlockApiTest {
             "\"blocks\":[{\"id\":1,\"body\":\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\"chapterName\":\"Chapter #1 Chapter 1\",\"fkGrade\":5.1,\"sentences\":[{\"body\":\"This is an example chapter wherein wondrous things would be expected by its eager author .\",\"fkGrade\":9.92666666666667,\"wordCount\":16}]},{\"id\":2,\"body\":\"This is another example chapter , but the action seems to unfold slower than expected .\",\"chapterName\":\"Chapter #2 Chapter 2\",\"fkGrade\":5.1,\"sentences\":[{\"body\":\"This is another example chapter , but the action seems to unfold slower than expected .\"," +
             "\"fkGrade\":11.784285714285716,\"wordCount\":16}]}]}";
 
-    private static final String USER_ID = "108700212624021084744";
+    private static final String USER_ID = "999999999999999999999"; // Use different user ID to avoid conflicts with data.sql
 
     private static final String USER_EMAIL = "contact@storyinspector.com";
 
@@ -72,6 +73,13 @@ class BlockApiTest {
 
     @Autowired
     private JdbcTemplate db;
+
+    @BeforeEach
+    void setUp() {
+        // Reset auto-increment sequence to start from a unique time-based number to avoid conflicts
+        long uniqueId = 40000 + (System.currentTimeMillis() % 1000000);
+        db.execute("ALTER TABLE books ALTER COLUMN book_id RESTART WITH " + uniqueId);
+    }
 
     @Test
     void findAllByBook() throws JSONException {

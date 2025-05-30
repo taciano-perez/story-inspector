@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.internet.MimeMessage;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -84,12 +85,19 @@ class ProcessBookApiTest {
             "    </Chapter>\n" +
             "</Book>";
 
-    private static final String USER_ID = "108700212624021084744";
+    private static final String USER_ID = "999999999999999999999"; // Use different user ID to avoid conflicts with data.sql
 
     private static final String USER_EMAIL = "contact@storyinspector.com";
 
     @Autowired
     private JdbcTemplate db;
+
+    @BeforeEach
+    void setUp() {
+        // Reset auto-increment sequence to start from a unique time-based number to avoid conflicts
+        long uniqueId = 20000 + (System.currentTimeMillis() % 1000000);
+        db.execute("ALTER TABLE books ALTER COLUMN book_id RESTART WITH " + uniqueId);
+    }
 
     @Test
     void whenProcessBook_CreateDom_noBookExists() {

@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/bookstructure")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BookStructureApi {
 
     final static Logger logger = LoggerFactory.getLogger(BookStructureApi.class);

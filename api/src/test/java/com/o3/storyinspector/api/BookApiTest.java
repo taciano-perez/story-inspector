@@ -19,7 +19,7 @@ class BookApiTest {
 
     private static final String API_ROOT = BASE_URI + "/api/books/list";
 
-    private static final String PARAMS = "userId=108700212624021084744";
+    private static final String PARAMS = "userId=999999999999999999999"; // Use different user ID to avoid conflicts with data.sql
 
     private static final String API_ALL_BOOKS = API_ROOT + "?" + PARAMS;
 

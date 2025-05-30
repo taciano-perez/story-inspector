@@ -4,6 +4,7 @@ import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.json.JSONException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +67,19 @@ class ChartApiTest {
             "\"This is another example chapter , but the action seems to unfold slower than expected .\"]," +
             "\"scores\":[0.0,0.0],\"chapterDividers\":[1]}";
 
-    private static final String USER_ID = "108700212624021084744";
+    private static final String USER_ID = "999999999999999999999"; // Use different user ID to avoid conflicts with data.sql
 
     private static final String USER_EMAIL = "contact@storyinspector.com";
 
     @Autowired
     private JdbcTemplate db;
+
+    @BeforeEach
+    void setUp() {
+        // Reset auto-increment sequence to start from a unique time-based number to avoid conflicts
+        long uniqueId = 70000 + (System.currentTimeMillis() % 1000000);
+        db.execute("ALTER TABLE books ALTER COLUMN book_id RESTART WITH " + uniqueId);
+    }
 
     @Test
     void testSentiment() throws JSONException {

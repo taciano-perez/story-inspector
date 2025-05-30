@@ -4,6 +4,7 @@ import com.o3.storyinspector.db.BookDAO;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.json.JSONException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,12 +64,19 @@ class BookStructureApiTest {
     private final static String EXPECTED_JSON_STRUCTURE =
             "{\"title\":\"Example Book\",\"author\":\"Example Author\",\"wordcount\":32,\"chapters\":[{\"id\":1,\"title\":\"Chapter 1\",\"wordcount\":16,\"fkGrade\":5.1,\"dominantEmotions\":[\"ANTICIPATION\",\"TRUST\"],\"locations\":[\"London\"],\"characters\":[\"Holmes\"]},{\"id\":2,\"title\":\"Chapter 2\",\"wordcount\":16,\"fkGrade\":5.1,\"dominantEmotions\":[\"ANTICIPATION\"],\"locations\":[\"Paris\"],\"characters\":[\"Watson\"]}]}";
 
-    private static final String USER_ID = "108700212624021084744";
+    private static final String USER_ID = "999999999999999999999"; // Use different user ID to avoid conflicts with data.sql
 
     private static final String USER_EMAIL = "contact@storyinspector.com";
 
     @Autowired
     private JdbcTemplate db;
+
+    @BeforeEach
+    void setUp() {
+        // Reset auto-increment sequence to start from a unique time-based number to avoid conflicts
+        long uniqueId = 60000 + (System.currentTimeMillis() % 1000000);
+        db.execute("ALTER TABLE books ALTER COLUMN book_id RESTART WITH " + uniqueId);
+    }
 
     @Test
     void testBookStructure() throws JSONException {
